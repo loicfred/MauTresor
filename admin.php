@@ -1,0 +1,287 @@
+<?php
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head id="master-head">
+    <title>Admin | MauDonate</title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#822BD9">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="icon"  href="assetsassets/img/logo.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="assets/css/main.css">
+
+    <style>
+        .settings-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+
+        .request-card, .delivery-card, .modal-content {
+            margin: 2px;
+            border-radius: 10px;
+        }
+        .request-card {
+            background-color: var(--primary-color-lighter);
+        }
+        .modal-content {
+            background-color: var(--main-color-lighter);
+        }
+        .delivery-card {
+            background-color: var(--delivery-card);
+            background-image: url('assets/img/warehouse_bg.png');
+            background-size: cover;
+            background-position-x: -100px; background-position-y: -20px;
+            background-repeat: no-repeat;
+            border: var(--secondary-color) 3px solid;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .delivery-card:hover {
+            box-shadow: whitesmoke 0 0 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+<?php
+require 'fragments/header.html'; // adds header
+?>
+
+<main class="page-wrap" id="pageWrap">
+    <div class="page-carousel" id="pageCarousel">
+
+        <!-- PAGE 1 -->
+        <section class="page">
+
+        </section>
+
+        <!-- PAGE 2 -->
+        <section class="page">
+
+        </section>
+
+        <!-- PAGE 3 -->
+        <section class="page">
+
+        </section>
+
+        <!-- PAGE 4 -->
+        <section class="page">
+            <h2 class="settings-header">Database Accessor</h2>
+
+            <form id="databaseForm">
+                <div class="mb-3 d-flex align-items-center">
+                    <label for="tableSelect" class="form-label mb-0 w-25 me-1">Table</label>
+                    <select id="tableSelect" onchange="addSelect(this)" class="form-select">
+                        <option value="" disabled selected>- Public -</option>
+                        <option value="User">User Accounts</option>
+                        <option value="Donation_Request">Donation request</option>
+                        <option value="Donation">Donations</option>
+                        <option value="Fundraising">Fundraising</option>
+                        <option value="Association">Association</option>
+                        <option value="Campaign">Campaigns</option>
+                        <option value="" disabled>- Private -</option>
+                        <option value="Staff">Staffs</option>
+                        <option value="Vehicle">Vehicles</option>
+                        <option value="Warehouse">Warehouses</option>
+                        <option value="Trip">Trips</option>
+                        <option value="" disabled>- Other -</option>
+                        <option value="Email_Verification">Email verifications</option>
+                    </select>
+                </div>
+
+                <div class="mb-3 d-flex align-items-center">
+                    <label for="ID" class="form-label w-25 me-1">ID</label>
+                    <select id="IDs" class="form-control me-1" style="width: 50%" disabled></select>
+                    <input type="text" id="ID" maxlength="16" style="width: 50%" class="form-control" disabled>
+                </div>
+
+                <div class="mb-3">
+                    <h5 class="form-label">Database information:</h5>
+<!--                    <p class="mb-0" th:text="${'Table count: ' + dbstat.totalTables}"></p>-->
+<!--                    <p class="mb-0" th:text="${'Views count: ' + dbstat.totalViews}"></p>-->
+<!--                    <p class="mb-0" th:text="${'Total rows: ' + dbstat.totalRows}"></p>-->
+                </div>
+                <div class="mb-3 d-none" id="TableDetails">
+                    <h5 class="form-label">Table information:</h5>
+                    <p class="mb-0" id="TableDetailsName"></p>
+                    <p class="mb-0" id="TableDetailsRows"></p>
+                    <p class="mb-0" id="TableDetailsColumns"></p>
+                </div>
+
+<!--                <div th:if="${param.errorDb}" class="alert alert-danger">Please input a valid and existing entry.</div>-->
+
+                <div class="d-flex mb-3">
+                    <button type="submit" id="submitDb" class="btn btn-primary w-50 me-1" disabled>Go to entry</button>
+                    <button type="button" id="insertDb" class="btn btn-primary w-50 ms-1" disabled>Add new entry</button>
+                </div>
+
+                <div class="mb-3 pt-2" style="border-top: 1px solid gray;">
+                    <h5 class="form-label">Statistics:</h5>
+<!--                    <p class="mb-0" th:text="${'Total USD Raised: ' + tstats.get('TotalFundraiseUSD')}"></p>-->
+<!--                    <p class="mb-0" th:text="${'Total Donations: ' + tstats.get('TotalDonations')}"></p>-->
+<!--                    <p class="mb-0" th:text="${'Total Items Donated: ' + tstats.get('TotalItemsDonated')}"></p>-->
+<!--                    <p class="mb-0" th:text="${'Total Donation Requests: ' + tstats.get('TotalRequests')}"></p>-->
+                </div>
+                <div class="mb-3" >
+                    <div class="mb-1 d-flex align-items-center">
+                        <h5 class="form-label mb-0 me-3 w-50">Monthly statistics:</h5>
+                        <select id="monthlySelect" onchange="addStats()" class="form-select w-50"></select>
+                    </div>
+                    <p class="mb-0" ID="MonthlyDonationReqCount"></p>
+                    <p class="mb-0" ID="MonthlyDonationCount"></p>
+                    <p class="mb-0" ID="MonthlyFundraiseCount"></p>
+                    <p class="mb-0" ID="MonthlyFundraiseUSD"></p>
+                </div>
+
+                <script>
+                    const submitDb = document.getElementById('submitDb');
+                    const insertDb = document.getElementById('insertDb');
+                    const tableSelect = document.getElementById('tableSelect');
+
+                    const id = document.getElementById('ID');
+                    const ids = document.getElementById('IDs');
+
+                    function addSelect(select) {
+                        fetch('/admin/list/' + select.value)
+                            .then(res => res.json())
+                            .then(data => {
+                                insertDb.disabled = false;
+                                id.disabled = false;
+                                ids.disabled = false;
+                                document.getElementById('TableDetailsName').innerText = 'Table name: ' + data.tblstats.tableName;
+                                document.getElementById('TableDetailsRows').innerText = 'Rows count: ' + data.tblstats.totalRows;
+                                document.getElementById('TableDetailsColumns').innerText = 'Columns count: ' + data.tblstats.columnNames.length;
+                                document.getElementById('TableDetails').classList.remove('d-none');
+                                ids.innerHTML = '<option value="" disabled selected>- Select an item -</option>';
+                                data.items.forEach(item => {
+                                    if (select.value === 'Donation_Request' || select.value === 'Fundraising' || select.value === 'Campaign' || select.value === 'Notification') {
+                                        ids.innerHTML += `<option value="${item.ID}">${item.ID} - ${item.Title}</option>`;
+                                    }
+                                    else if (select.value === 'Warehouse' || select.value === 'Vehicle' || select.value === 'Association') {
+                                        ids.innerHTML += `<option value="${item.ID}">${item.ID} - ${item.Name}</option>`;
+                                    }
+                                    else if (select.value === 'User' || select.value === 'Staff') {
+                                        ids.innerHTML += `<option value="${item.ID}">${item.ID} - ${item.FirstName} - ${item.LastName}</option>`;
+                                    }
+                                    else if (select.value === 'User' || select.value === 'Staff') {
+                                        ids.innerHTML += `<option value="${item.ID}">${item.ID} - ${item.FirstName} - ${item.LastName}</option>`;
+                                    }
+                                })
+                            });
+                    }
+
+                    document.getElementById('databaseForm').addEventListener('submit', function (e) {
+                        e.preventDefault();
+                        window.location.href = '/admin/edit/' + tableSelect.value + '/' + (id.value ? id.value : ids.value);
+                    });
+                    insertDb.addEventListener("click", () => {
+                        window.location.href = '/admin/edit/' + tableSelect.value;
+                    })
+
+                    id.addEventListener("input", () => {
+                        ids.disabled = !!id.value;
+                        submitDb.disabled = !(id.value || ids.value) || tableSelect.value === '';
+                    });
+                    ids.addEventListener("change", () => {
+                        submitDb.disabled = !(id.value || ids.value) || tableSelect.value === '';
+                    });
+                </script>
+                <script>
+                    const select = document.getElementById('monthlySelect');
+                    const now = new Date();
+                    const currentYear = now.getFullYear();
+                    const currentMonth = now.getMonth() + 1; // 1-12
+
+                    // Loop over the last 3 years
+                    for (let year = currentYear; year >= currentYear - 2; year--) {
+                        // Determine starting and ending month for this year
+                        let startMonth = (year === currentYear) ? currentMonth : 12;
+                        let endMonth = (year === currentYear - 2) ? 1 : 1;
+
+                        for (let month = startMonth; month >= endMonth; month--) {
+                            const monthPadded = String(month).padStart(2, '0');
+                            const option = document.createElement('option');
+                            option.value = `${year}-${monthPadded}`;
+                            option.textContent = `${year}-${monthPadded}`;
+                            select.appendChild(option);
+                        }
+                    }
+                    function addStats() {
+                        let year = select.value.split('-')[0];
+                        let month = select.value.split('-')[1];
+                        fetch('/admin/stats/' + year + '/' + month)
+                            .then(res => res.json())
+                            .then(data => {
+                                document.getElementById('MonthlyDonationReqCount').innerText = 'Monthly donation requests: ' + data.MonthlyDonationReqCount;
+                                document.getElementById('MonthlyDonationCount').innerText = 'Monthly donations: ' + data.MonthlyDonationCount;
+                                document.getElementById('MonthlyFundraiseCount').innerText = 'Monthly fundraises: ' + data.MonthlyFundraiseCount;
+                                document.getElementById('MonthlyFundraiseUSD').innerText = 'Monthly fundraises revenue: ' + data.MonthlyFundraiseUSD + ' USD';
+                            });
+                    }
+                    addStats(now.getFullYear(), now.getMonth())
+                </script>
+            </form>
+        </section>
+
+    </div>
+
+    <form class="modal fade" id="reqValidationModal" tabindex="-1" method="post" action="/admin/request/validate/id/deny">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reqValidationTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-2">
+                        <label for="reqValidationMessage" class="form-label">Response Message</label>
+                        <textarea id="reqValidationMessage" name="message" class="form-control"></textarea>
+                    </div>
+                    <div class="d-flex">
+                        <button class="ms-auto btn btn-success" type="submit">Confirm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <script>
+        const reqTitle = document.getElementById("reqValidationTitle")
+        function showRequestValidationPopup(button, accept) {
+            const modal = new bootstrap.Modal(document.getElementById("reqValidationModal"));
+            if (accept) {
+                reqTitle.innerText = "Accept donation request";
+                document.getElementById("reqValidationModal").action = "/admin/request/validate/" + button.getAttribute("req-id") + "/accept";
+            } else {
+                reqTitle.innerText = "Deny donation request";
+                document.getElementById("reqValidationModal").action = "/admin/request/validate/" + button.getAttribute("req-id") + "/deny";
+            }
+            modal.show();
+        }
+    </script>
+</main>
+
+<!-- Scripts -->
+<script src="assets/js/app.js"></script>
+<script src="assets/js/pagecarousel.js"></script>
+
+
+
+<?php
+require 'fragments/bottom-nav-admin.html'; // adds header
+?>
+
+</body>
+</html>
