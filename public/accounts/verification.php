@@ -1,0 +1,50 @@
+<?php
+global $pdo;
+require_once __DIR__ . "/../../private/config/database.php";
+require_once __DIR__ . "/../../private/config/mailer.php";
+
+require_once __DIR__ . '/../../private/obj/User.php';
+require_once __DIR__ . '/../../private/obj/Email_Verification.php';
+use assets\obj\User;
+use assets\obj\Email_Verification;
+?>
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Account Verification</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light d-flex align-items-center" style="height: 100vh;">
+<div class="container text-center">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow p-4">
+                <?php
+                if (isset($_GET["token"])) {
+                    $emailVerif = Email_Verification::getByToken($_GET["token"]);
+                    if ($emailVerif === null) {
+                        echo "<h3 class='mb-3'>There is no verification here.</h3>";
+                        return;
+                    }
+                    else if ($emailVerif->isExpired()) {
+                        echo "<h3 class='mb-3'>This verification code has expired. Try again.</h3>";
+                        echo "<a href='signup.php' class='btn btn-secondary mt-3'>Try Again</a>";
+                        $emailVerif->Delete();
+                        return;
+                    }
+                    $user = User::getByID($emailVerif->UserID);
+                    $user->Verified = true;
+                    $user->Enabled = true;
+                    $user->Update();
+                    $emailVerif->Delete();
+                    echo "<h3 class='mb-3'>Success !</h3>";
+                    echo "<a href='login.php?successVerif' class='btn btn-success mt-3'>Go to Login</a>";
+                }
+                ?>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
