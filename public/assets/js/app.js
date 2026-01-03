@@ -15,14 +15,11 @@ document.addEventListener('keydown', e => {
     if (e.key === 'Escape') closeSidebar();
 });
 
-
-/* App Ready Log */
 console.log("app.js loaded successfully");
 
 (() => {
     'use strict';
 
-    // PWA requires secure context (localhost is OK)
     if (!('serviceWorker' in navigator)) {
         console.info('[PWA] Service workers not supported');
         return;
@@ -30,7 +27,6 @@ console.log("app.js loaded successfully");
 
     window.addEventListener('load', async () => {
         try {
-            // Avoid double registration
             const existing = await navigator.serviceWorker.getRegistration('/');
             if (existing) {
                 console.log('[PWA] Service Worker already registered:', existing.scope);

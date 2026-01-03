@@ -6,7 +6,6 @@ use assets\obj\User;
 
 ?>
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head id="master-head">
