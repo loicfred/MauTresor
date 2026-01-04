@@ -1,10 +1,11 @@
 <?php
-require_once  __DIR__ . '/obj/RememberMe.php';
-require_once  __DIR__ . '/obj/User.php';
+session_start();
+require_once __DIR__ . '/../assets/obj/RememberMe.php';
+require_once __DIR__ . '/../assets/obj/User.php';
+
 use assets\obj\RememberMe;
 use assets\obj\User;
 
-session_start();
 
 if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_me'])) {
     $rememberMe = RememberMe::getByToken($_COOKIE['remember_me']);
@@ -21,13 +22,13 @@ if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_me'])) {
 
 function checksForLogin() {
     if (!isLoggedIn()) {
-        header('Location: login.php');
+        header('Location: https://mautresor.mu/accounts/login');
         exit;
     }
 }
 function checksForAdmin() {
     if (!isAdmin()) {
-        header('Location: index.php');
+        header('Location: https://mautresor.mu');
         exit;
     }
 }
@@ -40,6 +41,6 @@ function isLoggedIn() {
 function isAdmin() {
     if (isLoggedIn()) {
         $user = User::getByID($_SESSION['user_id']);
-        if ($user && $user->Role == 'ADMIN') return trait_exists();
+        if ($user && $user->Role == 'ADMIN') return true;
     } return false;
 }

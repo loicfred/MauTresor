@@ -1,12 +1,14 @@
 <?php
-global $pdo;
-require_once __DIR__ . "/../../private/config/database.php";
-require_once __DIR__ . "/../../private/config/mailer.php";
+include __DIR__ . '/../config/auth.php';
 
-require_once __DIR__ . '/../../private/obj/User.php';
-require_once __DIR__ . '/../../private/obj/Email_Verification.php';
-use assets\obj\User;
+require_once __DIR__ . "/../config/mailer.php";
+
+require_once __DIR__ . '/../assets/obj/User.php';
+require_once __DIR__ . '/../assets/obj/Email_Verification.php';
+
 use assets\obj\Email_Verification;
+use assets\obj\User;
+
 ?>
 
 <!DOCTYPE html>
@@ -26,47 +28,43 @@ use assets\obj\Email_Verification;
 
                     if (User::getByEmail(trim($_POST["Email"]))) {
                         echo "<div class='alert alert-danger'>Email already registered.</div>";
-                        return;
                     }
-
-                    if (validatePassword($_POST["Password"]) !== true) {
+                    else if (validatePassword($_POST["Password"]) !== true) {
                         echo "<div class='alert alert-danger'>Password should be of minimum 8 of length and contain at least 1 digit, symbol, uppercase & lowercase character.</div>";
-                        return;
                     }
+                    else {
+                        $user = new User();
+                        $user->Email = trim($_POST["Email"]);
+                        $user->Password = password_hash($_POST["Password"], PASSWORD_DEFAULT);
+                        $user->FirstName = trim($_POST["FirstName"]);
+                        $user->LastName = trim($_POST["LastName"]);
+                        $user->Gender = trim($_POST["Gender"]);
+                        $user->Role = 'USER';
+                        $user->DateOfBirth = trim($_POST["DateOfBirth"]);
+                        $user->CreatedAt = date("Y-m-d H:i:s");
+                        $user->UpdatedAt = date("Y-m-d H:i:s");
 
-                    $user = new User();
-                    $user->Email = trim($_POST["Email"]);
-                    $user->Password = password_hash($_POST["Password"], PASSWORD_DEFAULT);
-                    $user->FirstName = trim($_POST["FirstName"]);
-                    $user->LastName = trim($_POST["LastName"]);
-                    $user->Gender = trim($_POST["Gender"]);
-                    $user->Role = 'USER';
-                    $user->DateOfBirth = trim($_POST["DateOfBirth"]);
-                    $user->CreatedAt = date("Y-m-d H:i:s");
-                    $user->UpdatedAt = date("Y-m-d H:i:s");
+                        // Insert user
+                        if ($user->Write()->ID === 0) {
+                            echo "<div class='alert alert-danger'>An error occurred.</div>";
+                        } else {
+                            $email_verification = new Email_Verification();
+                            $email_verification->UserID = $user->ID;
+                            $email_verification->Token = bin2hex(random_bytes(32));
+                            $email_verification->Type = 'REGISTRATION';
+                            $email_verification->ExpiryDate = date('Y-m-d H:i:s', strtotime('+10 minutes'));
 
-                    // Insert user
-                    if ($user->Write()->ID === 0) {
-                        echo "<div class='alert alert-danger'>An error occurred.</div>";
-                        return;
+                            if ($email_verification->Write()->ID !== 0) {
+                                $verifyLink = "http://localhost:63342/LocalGuideTreasureHunt/accounts/verification?token=$email_verification->Token";
+                                sendVerificationEmail($user->Email, $verifyLink);
+                                header("Location: login?checkEmail");
+                            }
+                        }
                     }
-
-                    $email_verification = new Email_Verification();
-                    $email_verification->UserID = $user->ID;
-                    $email_verification->Token = bin2hex(random_bytes(32));
-                    $email_verification->Type = 'REGISTRATION';
-                    $email_verification->ExpiryDate = date('Y-m-d H:i:s', strtotime('+10 minutes'));
-
-                    if ($email_verification->Write()->ID !== 0) {
-                        $verifyLink = "http://localhost:63342/LocalGuideTreasureHunt/accounts/verficiation.php?token=$email_verification->Token";
-                        sendVerificationEmail($email, $verifyLink);
-                        header("Location: login.php?checkEmail");
-                    }
-                    exit();
                 }
                 ?>
 
-                <form method="post" action="signup.php">
+                <form method="post" action="signup">
                     <div class="mb-3">
                         <input type="email" name="Email" maxlength="64" class="form-control" placeholder="Email" required>
                     </div>
@@ -98,7 +96,7 @@ use assets\obj\Email_Verification;
 
                     <button type="submit" class="btn btn-danger w-100">Sign Up</button>
                 </form>
-                <p class="mt-3">Already have an account? <a href="/accounts/login">Log in</a></p>
+                <p class="mt-3">Already have an account? <a href="/login">Log in</a></p>
             </div>
         </div>
     </div>

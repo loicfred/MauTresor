@@ -22,7 +22,10 @@ class User extends DBObject {
         return self::getWhere("Email = ?", $email);
     }
     public static function getByAuthentication(string $email, string $password) {
-        return self::getWhere("Email = ? AND Password = ?", $email, password_hash($password, PASSWORD_DEFAULT));
+        $user = self::getByEmail($email);
+        if($user == null) return null;
+        if (password_verify($password, $user->Password)) return $user;
+        return null;
     }
 
 

@@ -1,12 +1,12 @@
 <?php
-global $pdo;
-require_once __DIR__ . "/../../private/config/database.php";
-require_once __DIR__ . "/../../private/config/mailer.php";
+include __DIR__ . '/../config/auth.php';
 
-require_once __DIR__ . '/../../private/obj/User.php';
-require_once __DIR__ . '/../../private/obj/Email_Verification.php';
-use assets\obj\User;
+require_once __DIR__ . '/../assets/obj/User.php';
+require_once __DIR__ . '/../assets/obj/Email_Verification.php';
+
 use assets\obj\Email_Verification;
+use assets\obj\User;
+
 ?>
 
 <!DOCTYPE html>
@@ -23,23 +23,22 @@ use assets\obj\Email_Verification;
                 <?php
                 if (isset($_GET["token"])) {
                     $emailVerif = Email_Verification::getByToken($_GET["token"]);
-                    if ($emailVerif === null) {
+                    if ($emailVerif == null) {
                         echo "<h3 class='mb-3'>There is no verification here.</h3>";
-                        return;
                     }
                     else if ($emailVerif->isExpired()) {
                         echo "<h3 class='mb-3'>This verification code has expired. Try again.</h3>";
-                        echo "<a href='signup.php' class='btn btn-secondary mt-3'>Try Again</a>";
+                        echo "<a href='/signup' class='btn btn-secondary mt-3'>Try Again</a>";
                         $emailVerif->Delete();
-                        return;
+                    } else {
+                        $user = User::getByID($emailVerif->UserID);
+                        $user->Verified = true;
+                        $user->Enabled = true;
+                        $user->Update();
+                        $emailVerif->Delete();
+                        echo "<h3 class='mb-3'>Success !</h3>";
+                        echo "<a href='/login?successVerif' class='btn btn-success mt-3'>Go to Login</a>";
                     }
-                    $user = User::getByID($emailVerif->UserID);
-                    $user->Verified = true;
-                    $user->Enabled = true;
-                    $user->Update();
-                    $emailVerif->Delete();
-                    echo "<h3 class='mb-3'>Success !</h3>";
-                    echo "<a href='login.php?successVerif' class='btn btn-success mt-3'>Go to Login</a>";
                 }
                 ?>
             </div>

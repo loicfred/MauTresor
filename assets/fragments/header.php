@@ -1,6 +1,7 @@
 <?php
 
-require_once __DIR__ . "/../../private/obj/Notification.php";
+require_once __DIR__ . "/../../assets/obj/Notification.php";
+
 use assets\obj\Notification;
 
 ?>
@@ -8,7 +9,7 @@ use assets\obj\Notification;
     <div class="container d-flex align-items-center" style="justify-content: space-between;">
         <button class="hamburger-btn me-3" id="hamburgerBtn" aria-label="Open menu">☰</button>
         <a class="navbar-brand me-auto" href="/">
-            <img style="border-radius: 50%" src="/assets/img/logo.png" draggable="false" height="40" alt="BeatCam">
+            <img style="border-radius: 50%" src="https://assets.mautresor.mu/img/logo.png" draggable="false" height="40" alt="BeatCam">
         </a>
 
         <div class="sidebar" id="sidebar">
@@ -18,27 +19,27 @@ use assets\obj\Notification;
             <button onclick="goToCampaign()">Campaigns</button>
             <button onclick="goToAbout()">About</button>
             <hr>
-            <?= !isset($_SESSION['user_id']) ? "<a href='/accounts/login'>Log in</a>" : '' ?>
+            <?= !isset($_SESSION['user_id']) ? "<a href='https://accounts.mautresor.mu/login'>Log in</a>" : '' ?>
             <?= isset($_SESSION['user_id']) ? "<a href='/fundraise'>Fundraise</a>" : '' ?>
             <?= isset($_SESSION['user_id']) ? "<a href='/settings'>Settings</a>" : '' ?>
-            <?= isset($_SESSION['user_id']) ? "<a href='/accounts/logout'>Settings</a>" : '' ?>
+            <?= isset($_SESSION['user_id']) ? "<a href='/accounts/login?logout'>Log out</a>" : '' ?>
             <script>
                 const url = window.location.href;
                 function goToHome() {
                     if (url.includes("index")) goToPage(0);
-                    else window.location.href = "index.php?page=0";
+                    else window.location.href = "index?page=0";
                 }
                 function goToDonate() {
                     if (url.includes("home")) goToPage(1);
-                    else window.location.href = "index.php?page=1";
+                    else window.location.href = "index?page=1";
                 }
                 function goToCampaign() {
                     if (url.includes("home")) goToPage(2);
-                    else window.location.href = "index.php?page=2";
+                    else window.location.href = "index?page=2";
                 }
                 function goToAbout() {
                     if (url.includes("home")) goToPage(3);
-                    else window.location.href = "index.php?page=3";
+                    else window.location.href = "index?page=3";
                 }
             </script>
             <hr>
@@ -68,8 +69,7 @@ use assets\obj\Notification;
         </div>
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-        <?php
-        if (isLoggedIn()):
+        <?php if (isLoggedIn()):
             $notifs = Notification::getOfUser($_SESSION['user_id']);?>
             <div class="nav-item notification">
                 <svg viewBox="0 0 24 24" class="nav-icon" id="notificationBtn" style="position: relative;">
@@ -109,7 +109,7 @@ use assets\obj\Notification;
 
                     <?php if (count($notifs) >= 10): ?>
                         <div class="notification-footer">
-                            <a href="/profile.php">View all</a>
+                            <a href="/profile">View all</a>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -129,18 +129,19 @@ use assets\obj\Notification;
             </div>
         <?php endif; ?>
 
-        <div class="nav-item">
-            <svg viewBox="0 0 24 24" class="nav-icon" id="loginBtn">
-                <path fill="currentColor"
-                      d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-            </svg>
-            <script>
-                const loginBtn = document.getElementById("loginBtn");
-                loginBtn.addEventListener("click", (e) => {
-                    e.stopPropagation();
-                    document.location.href = "/accounts/login.php";
-                });
-            </script>
-        </div>
+        <?php if (!isLoggedIn()): ?>
+            <div class="nav-item">
+                <svg viewBox="0 0 24 24" class="nav-icon" id="loginBtn">
+                    <path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
+                <script>
+                    const loginBtn = document.getElementById("loginBtn");
+                    loginBtn.addEventListener("click", (e) => {
+                        e.stopPropagation();
+                        document.location.href = "https://accounts.mautresor.mu/login";
+                    });
+                </script>
+            </div>
+        <?php endif; ?>
     </div>
 </nav>

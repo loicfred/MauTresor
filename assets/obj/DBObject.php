@@ -6,7 +6,7 @@ use PDO;
 use ReflectionClass;
 use ReflectionProperty;
 
-require_once __DIR__ . "/../config/database.php";
+require_once __DIR__ . "/../../config/database.php";
 
 class DBObject
 {
@@ -23,6 +23,7 @@ class DBObject
         global $pdo;
         $table = (new \ReflectionClass(static::class))->getShortName();
         $stmt = $pdo->prepare('SELECT * FROM ' . $table);
+        $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_CLASS, static::class);
     }
 
@@ -82,8 +83,7 @@ class DBObject
 
         foreach ($properties as $prop) {
             if ($prop->getName() === 'ID') continue;
-            $updateFieldNames[] = $prop->getName() . ' = VALUES(?)';
-            $fieldValues[] = $prop->getValue($this);
+            $updateFieldNames[] = $prop->getName() . ' = VALUES(' . $prop->getName() . ')';
         }
 
         $stmt = $pdo->prepare("INSERT INTO " . $table . " (" . implode(', ', $insertFieldNames) . ") VALUES (" . implode(', ', $insertFieldNamesQ) . ")
@@ -120,7 +120,7 @@ class DBObject
     public function Delete() {
         global $pdo;
         $table = (new \ReflectionClass($this))->getShortName();
-        $stmt = $pdo->prepare('DELETE ' . $table . ' WHERE ID = ?');
+        $stmt = $pdo->prepare('DELETE FROM ' . $table . ' WHERE ID = ?');
         $stmt->execute([$this->ID]);
         return $stmt->rowCount();
     }

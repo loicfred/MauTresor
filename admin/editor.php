@@ -1,12 +1,13 @@
 <?php
-include __DIR__ . '/../../private/auth.php';
+include __DIR__ . '/../config/auth.php';
+checksForAdmin();
 
 $id = $_GET['id'];
 $class = $_GET['class'];
 $fullClass = "assets\\obj\\$class";
 
-require_once __DIR__ . "/../../private/obj/$class.php";
-require_once __DIR__ . "/../../private/obj/DBObject.php";
+require_once __DIR__ . "/../assets/obj/$class.php";
+require_once __DIR__ . "/../assets/obj/DBObject.php";
 
 
 $edited_object = $fullClass::getByID($id);
@@ -28,7 +29,7 @@ $edited_object = $fullClass::getByID($id);
     <link rel="icon" href="/assets/img/logo.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="https://assets.mautresor.mu/css/main.css">
     <style>
         main {
             padding: 1rem;
@@ -52,7 +53,7 @@ $edited_object = $fullClass::getByID($id);
 <body>
 
 <?php
-require_once '../fragments/header.php';
+require_once '../assets.fragments/header.php';
 ?>
 
 <main>
@@ -71,7 +72,7 @@ require_once '../fragments/header.php';
 
         ?>
 
-        <form action="editor.php?item=<?= $class ?>&id=<?= $id ?>" method="post" class="d-flex flex-column">
+        <form action="editor?item=<?= $class ?>&id=<?= $id ?>" method="post" class="d-flex flex-column">
             <?php foreach ($properties as $prop): ?>
 
                 <?php
@@ -131,7 +132,7 @@ require_once '../fragments/header.php';
     </div>
 </main>
 
-<script src="/assets/js/app.js"></script>
+<script src="https://assets.mautresor.mu/js/app.js"></script>
 
 </body>
 </html>

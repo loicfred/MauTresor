@@ -1,12 +1,12 @@
 <?php
-global $pdo;
-require_once __DIR__ . "/../../private/config/database.php";
-require_once __DIR__ . "/../../private/config/mailer.php";
+include __DIR__ . '/../config/auth.php';
 
-require_once __DIR__ . '/../../private/obj/User.php';
-require_once __DIR__ . '/../../private/obj/RememberMe.php';
-use assets\obj\User;
+require_once __DIR__ . '/../assets/obj/User.php';
+require_once __DIR__ . '/../assets/obj/RememberMe.php';
+
 use assets\obj\RememberMe;
+use assets\obj\User;
+
 ?>
 
 <!DOCTYPE html>
@@ -26,7 +26,10 @@ use assets\obj\RememberMe;
                 if (isset($_GET["successVerif"])) {
                     echo "<div class='alert alert-success'>Your account has been verified! You can now log in.</div>";
                 }
-                if (isset($_GET["successLogout"])) {
+                if (isLoggedIn() && isset($_GET["logout"])) {
+                    RememberMe::getByID($_SESSION["user_id"])->Delete();
+                    session_destroy();
+                    setcookie('remember_me', '', time() - 3600);
                     echo "<div class='alert alert-success'>You have been logged out successfully.</div>";
                 }
                 if (isset($_GET["checkEmail"])) {
@@ -40,26 +43,25 @@ use assets\obj\RememberMe;
                     $user = User::getByAuthentication($_POST["Email"], $_POST["Password"]);
                     if (!$user) {
                         echo "<div class='alert alert-danger'>Invalid email or password</div>";
-                        return;
                     }
                     else if ($user->Verified === false) {
                         echo "<div class='alert alert-danger'>Verify your email first.</div>";
-                        return;
-                    }
-                    $_SESSION["user_id"] = $user->ID;
-                    if (isset($_POST["remember-me"])) {
-                        $rememberMe = new RememberMe();
-                        $rememberMe->UserID = $user->ID;
-                        $rememberMe->Token = bin2hex(random_bytes(32));
-                        $rememberMe->ExpiryDate = date('Y-m-d H:i:s', strtotime('+30 days'));
-                        if ($rememberMe->Upsert()->ID === $user->ID) {
-                            setcookie('remember_me', $rememberMe->Token, time() + 60*60*24*30, "/", "", true, true);
+                    } else {
+                        $_SESSION["user_id"] = $user->ID;
+                        if (isset($_POST["remember-me"])) {
+                            $rememberMe = new RememberMe();
+                            $rememberMe->ID = $user->ID;
+                            $rememberMe->Token = bin2hex(random_bytes(32));
+                            $rememberMe->ExpiryDate = date('Y-m-d H:i:s', strtotime('+30 days'));
+                            if ($rememberMe->Upsert()->ID === $user->ID) {
+                                setcookie('remember_me', $rememberMe->Token, time() + 60*60*24*30, "/", "", true, true);
+                            }
                         }
+                        header("Location: https://mautresor.mu");
                     }
-                    header("Location: /index.php");
                 }
                 ?>
-                <form action="login.php" method="post">
+                <form action="/login" method="post">
                     <div class="mb-3">
                         <input type="text" name="Email" class="form-control" placeholder="Email" required>
                     </div>
@@ -72,7 +74,7 @@ use assets\obj\RememberMe;
                     </div>
                     <button type="submit" class="btn btn-danger w-100">Log In</button>
                 </form>
-                <p class="mt-3">Don’t have an account? <a href="signup.php">Sign up</a></p>
+                <p class="mt-3">Don’t have an account? <a href="/signup">Sign up</a></p>
                 <a href="/oauth2/authorization/google">
                     Sign in with Google
                 </a>
