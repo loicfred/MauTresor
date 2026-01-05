@@ -12,13 +12,14 @@ use assets\obj\Notification;
             <img src="https://assets.mautresor.mu/img/logo_transparent.png" draggable="false" height="40" alt="logo.png">
         </a>
 
-        <div class="sidebar" id="sidebar">
-            <h5 class="mb-3">Menu</h5>
+        <div class="sidebar d-flex flex-column" id="sidebar">
+            <h4 class="mb-2">Menu</h4>
             <button onclick="goTo1()">Home</button>
-            <button onclick="goTo2()">Local</button>
-            <button onclick="goTo3()">Global</button>
+            <button onclick="goTo2()">Local Sites</button>
+            <button onclick="goTo3()">World Sites</button>
             <button onclick="goTo4()">Events</button>
             <hr>
+            <a href="https://mautresor.mu/about">About Us</a>
             <?= !isset($_SESSION['user_id']) ? "<a href='https://accounts.mautresor.mu/login'>Log in</a>" : '' ?>
             <?= isset($_SESSION['user_id']) ? "<a href='/settings'>Settings</a>" : '' ?>
             <?= isset($_SESSION['user_id']) ? "<a href='/accounts/login?logout'>Log out</a>" : '' ?>
@@ -42,10 +43,11 @@ use assets\obj\Notification;
                 }
             </script>
             <hr>
-            <?= isAdmin() ? "<button class='mt-auto' onclick='goToAdmin1()'>Admin - Review Donations</button>" : '' ?>
-            <?= isAdmin() ? "<button class='mt-auto' onclick='goToAdmin2()'>Admin - Review Requests</button>" : '' ?>
-             <?= isAdmin() ? "<button class='mt-auto' onclick='goToAdmin3()'>Admin - Database</button>" : '' ?>
-
+            <?= isAdmin() ? "<button onclick='goToAdmin1()'>Admin - Review Donations</button>" : '' ?>
+            <?= isAdmin() ? "<button onclick='goToAdmin2()'>Admin - Review Requests</button>" : '' ?>
+            <?= isAdmin() ? "<button onclick='goToAdmin3()'>Admin - Database</button>" : '' ?>
+            <hr>
+            <a href="https://api.mautresor.mu/v1/docs/">API Documentation</a>
             <script>
                 function goToAdmin1() {
                     if (url === 'https://admin.mautresor.mu/') goToPage(0);
