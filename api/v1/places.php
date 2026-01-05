@@ -1,7 +1,7 @@
 <?php
 header("Content-Type: application/json");
 
-require_once __DIR__ . "/../../private/obj/Place.php";
+require_once __DIR__ . "/../../assets/obj/Place.php";
 
 use assets\obj\Place;
 

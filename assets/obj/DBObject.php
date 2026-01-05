@@ -19,6 +19,11 @@ class DBObject
         $stmt->execute([$id]);
         return $stmt->fetchObject(static::class);
     }
+
+
+
+
+
     public static function getAll() {
         global $pdo;
         $table = (new \ReflectionClass(static::class))->getShortName();
@@ -26,13 +31,56 @@ class DBObject
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_CLASS, static::class);
     }
+    public static function getAllLimitExcept(int $limit = 0, string ...$except) {
+        global $pdo;
+        $reflection = new ReflectionClass(static::class);
+        $properties = $reflection->getProperties(ReflectionProperty::IS_PUBLIC);
+        $table = $reflection->getShortName();
 
+        $selectSql = implode(', ', array_map(function ($prop) {
+            return $prop->getName();
+        }, array_filter($properties, function ($prop) use ($except) {
+            foreach ($except as $ex): if (str_contains($prop->getName(), $ex)) return false;
+            endforeach;
+            return true;
+        })));
+        $stmt = $pdo->prepare('SELECT ' . $selectSql . ' FROM ' . $table . ' LIMIT ' . $limit);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_CLASS, static::class);
+    }
+    public static function getAllLimit(int $limit = 0) {
+        global $pdo;
+        $table = (new \ReflectionClass(static::class))->getShortName();
+        $stmt = $pdo->prepare('SELECT * FROM ' . $table . ' LIMIT ' . $limit);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_CLASS, static::class);
+    }
+
+
+
+
+    public static function selectWhere(string $select = null, string $where = null, ...$object) {
+        global $pdo;
+        $table = (new \ReflectionClass(static::class))->getShortName();
+        $stmt = $pdo->prepare('SELECT ' . ($select != null ? $select : '*') .' FROM ' . $table . ($where != null ? ' WHERE ' . $where : '') . ' LIMIT 1');
+        $stmt->execute($object);
+        return $stmt->fetchObject(static::class);
+    }
     public static function getWhere(string $where = null, ...$object) {
         global $pdo;
         $table = (new \ReflectionClass(static::class))->getShortName();
         $stmt = $pdo->prepare('SELECT * FROM ' . $table . ($where != null ? ' WHERE ' . $where : '') . ' LIMIT 1');
         $stmt->execute($object);
         return $stmt->fetchObject(static::class);
+    }
+
+
+    public static function selectAllWhere(string $select = null, string $where = null, ...$object) {
+        global $pdo;
+        $table = (new \ReflectionClass(static::class))->getShortName();
+        $stmt = $pdo->prepare('SELECT ' . ($select != null ? $select : '*') .' FROM ' . $table . ($where != null ? ' WHERE ' . $where : ''));
+        $stmt->execute($object);
+        return $stmt->fetchAll(PDO::FETCH_CLASS, static::class);
     }
     public static function getAllWhere(string $where = null, ...$object) {
         global $pdo;
@@ -41,6 +89,11 @@ class DBObject
         $stmt->execute($object);
         return $stmt->fetchAll(PDO::FETCH_CLASS, static::class);
     }
+
+
+
+
+
 
     public function Write() {
         global $pdo;
@@ -54,7 +107,7 @@ class DBObject
         foreach ($properties as $prop) {
             $fieldNames[]  = $prop->getName();
             $fieldNamesQ[]  = '?';
-            $fieldValues[] = $prop->getValue($this);
+            $fieldValues[] = $prop->getValue($this) == '' ? null : $prop->getValue($this);
         }
 
         $stmt = $pdo->prepare("INSERT INTO " . $table . " (" . implode(', ', $fieldNames) . ") VALUES (" . implode(', ', $fieldNamesQ) . ")");
@@ -78,14 +131,13 @@ class DBObject
         foreach ($properties as $prop) {
             $insertFieldNames[]  = $prop->getName();
             $insertFieldNamesQ[]  = '?';
-            $fieldValues[] = $prop->getValue($this);
+            $fieldValues[] = $prop->getValue($this) == '' ? null : $prop->getValue($this);
         }
 
         foreach ($properties as $prop) {
             if ($prop->getName() === 'ID') continue;
             $updateFieldNames[] = $prop->getName() . ' = VALUES(' . $prop->getName() . ')';
         }
-
         $stmt = $pdo->prepare("INSERT INTO " . $table . " (" . implode(', ', $insertFieldNames) . ") VALUES (" . implode(', ', $insertFieldNamesQ) . ")
         ON DUPLICATE KEY UPDATE " . implode(', ', $updateFieldNames) . ";");
         $stmt->execute($fieldValues);
@@ -99,8 +151,12 @@ class DBObject
         $properties = $reflection->getProperties(ReflectionProperty::IS_PUBLIC);
 
         $fieldActualValues = array_map(function ($prop) {
-            return $prop->getValue($this);
-        }, array_filter($properties, function ($prop) {
+            if (str_contains($prop->getType(),"bool")) {
+                return ($prop->getValue($this) == 1 ? 1 : 0);
+            } else {
+                return $prop->getValue($this) === '' ? null : $prop->getValue($this);
+            }
+         }, array_filter($properties, function ($prop) {
             return $prop->getName() !== 'ID';
         }));
         $fieldActualValues[] = $this->ID;
@@ -124,4 +180,66 @@ class DBObject
         $stmt->execute([$this->ID]);
         return $stmt->rowCount();
     }
+
+
+
+
+
+    public static function getDatabaseDetails(): array {
+        global $pdo;
+        $dbName = 'treasurehunt';
+        $sql = "
+        SELECT table_type, COUNT(*) AS total, SUM(TABLE_ROWS) as table_rows
+        FROM information_schema.tables
+        WHERE table_schema = :db
+        GROUP BY table_type
+        ";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute(['db' => $dbName]);
+        $result = $stmt->fetchAll();
+
+        $details = ['tables' => 0, 'views' => 0, 'rows' => 0];
+        foreach ($result as $row) {
+            if ($row['table_type'] === 'BASE TABLE') {
+                $details['tables'] = (int)$row['total'];
+                $details['rows'] = (int)$row['table_rows'];
+            } elseif ($row['table_type'] === 'VIEW') {
+                $details['views'] = (int)$row['total'];
+            }
+        }
+        return $details;
+    }
+
+    public static function getTableDetails(string $tableName): array {
+        global $pdo;
+        $dbName = 'treasurehunt';
+
+        $sqlColumns = "
+        SELECT COLUMN_NAME, DATA_TYPE, COLUMN_KEY
+        FROM information_schema.columns
+        WHERE table_schema = :db AND table_name = :table
+        ORDER BY ORDINAL_POSITION
+        ";
+        $stmt = $pdo->prepare($sqlColumns);
+        $stmt->execute(['db' => $dbName, 'table' => $tableName]);
+        $columns = $stmt->fetchAll();
+
+        $columnCount = count($columns);
+        $sqlRows = "
+        SELECT table_rows
+        FROM information_schema.tables
+        WHERE table_schema = :db AND table_name = :table
+        ";
+        $stmt = $pdo->prepare($sqlRows);
+        $stmt->execute(['db' => $dbName, 'table' => $tableName]);
+        $row = $stmt->fetch();
+        $rowCount = $row ? (int)$row['table_rows'] : 0;
+        return [
+            'table' => $tableName,
+            'columns' => $columnCount,
+            'rows' => $rowCount,
+            'column_details' => $columns
+        ];
+    }
+
 }

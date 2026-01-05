@@ -2,7 +2,7 @@
 include __DIR__ . '/../config/auth.php';
 checksForAdmin();
 
-$id = $_GET['id'];
+$id = $_GET['id'] ?? 0;
 $class = $_GET['class'];
 $fullClass = "assets\\obj\\$class";
 
@@ -10,7 +10,7 @@ require_once __DIR__ . "/../assets/obj/$class.php";
 require_once __DIR__ . "/../assets/obj/DBObject.php";
 
 
-$edited_object = $fullClass::getByID($id);
+$edited_object = $id == 0 ? new $fullClass() : $fullClass::getByID($id);
 
 ?>
 
@@ -21,12 +21,12 @@ $edited_object = $fullClass::getByID($id);
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="https://assets.mautresor.mu/manifest.json">
     <meta name="theme-color" content="#822BD9">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="icon" href="/assets/img/logo.png">
+    <link rel="icon" href="https://assets.mautresor.mu/img/logo_transparent.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://assets.mautresor.mu/css/main.css">
@@ -53,7 +53,7 @@ $edited_object = $fullClass::getByID($id);
 <body>
 
 <?php
-require_once '../assets.fragments/header.php';
+require_once __DIR__ . '/../assets/fragments/header.php';
 ?>
 
 <main>
@@ -66,19 +66,47 @@ require_once '../assets.fragments/header.php';
         $properties = $reflection->getProperties(ReflectionProperty::IS_PUBLIC);
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (isset($_GET['success'])) echo '<div class="alert alert-success">Successfully updated this entry !</div>';
-            if (isset($_GET['error'])) echo '<div class="alert alert-success">An error occurred. Try again alter.</div>';
-        }
+            try {
+                foreach ($properties as $prop):
+                    $type = $prop->getType()?->getName() ?? 'string';
+                    if (isset($_FILES[$prop->getName()]) && strlen($_FILES[$prop->getName()]['name']) > 0) {
+                        if (!isset($_FILES['Image']) || $_FILES['Image']['error'] !== UPLOAD_ERR_OK) {
+                            echo "<div class='alert alert-danger'>Upload failed. File size might be too big.</div>";
+                        }
+                        $finfo = new finfo(FILEINFO_MIME_TYPE);
+                        $mime = $finfo->file($_FILES['Image']['tmp_name']);
+                        $allowed = ['image/jpeg', 'image/png', 'image/webp'];
+                        if (!in_array($mime, $allowed, true)) {
+                            throw new RuntimeException('Invalid image type');
+                        }
+                        $edited_object->Image = base64_encode(file_get_contents($_FILES['Image']['tmp_name']));
+                        $edited_object->MimeType = $mime;
+                    } else {
+                        if (!isset($_POST[$prop->getName()]) && $type !== 'bool') continue;
+                        $newVal = match($type) {
+                            'bool' => (isset($_POST[$prop->getName()]) && $_POST[$prop->getName()] == 'true' ? 1 : 0),
+                            default => $_POST[$prop->getName()]
+                        };
+                        $prop->setAccessible(true);
+                        $prop->setValue($edited_object, $newVal);
+                    }
+                endforeach;
+                $edited_object->Upsert();
+                echo "<div class='alert alert-success'>Successfully updated this entry !</div>";
+            } catch (PDOException $e) {
+                echo "<div class='alert alert-danger'>" . $e->getMessage() . "</div>";
 
+            }
+        }
         ?>
 
-        <form action="editor?item=<?= $class ?>&id=<?= $id ?>" method="post" class="d-flex flex-column">
-            <?php foreach ($properties as $prop): ?>
-
-                <?php
+        <form action="/editor?class=<?= $class ?><?= (isset($_GET['id']) ? '&id=' . $id : '') ?>" enctype="multipart/form-data" method="POST" class="d-flex flex-column">
+            <?php foreach ($properties as $prop):
+                if ($prop->getName() === 'ID') continue;
+                if ($prop->getName() === 'MimeType') continue;
                 $prop->setAccessible(true);
                 $name = $prop->getName();
-                $value = $prop->getValue($edited_object);
+                $value = isset($_GET['id']) ? $prop->getValue($edited_object) : null;
                 $type = $prop->getType()?->getName() ?? 'string';
                 $inputType = match($type) {
                     'int', 'float', 'double' => 'number',
@@ -97,6 +125,9 @@ require_once '../assets.fragments/header.php';
                     <?php elseif ($name === "Message"): ?>
                         <label class="form-label" for="<?= $name ?>"><?= $name ?></label>
                         <textarea class="form-control" id="<?= $name ?>" name="<?= $name ?>" maxlength="512" rows="3"><?= $value ?></textarea>
+                    <?php elseif ($name === "Description"): ?>
+                        <label class="form-label" for="<?= $name ?>"><?= $name ?></label>
+                        <textarea class="form-control" id="<?= $name ?>" name="<?= $name ?>" maxlength="1024" rows="3"><?= $value ?></textarea>
                     <?php elseif ($name === "Gender"): ?>
                         <label class="form-label" for="<?= $name ?>"><?= $name ?></label>
                         <select class="form-select" id="<?= $name ?>" name="<?= $name ?>">
@@ -110,12 +141,23 @@ require_once '../assets.fragments/header.php';
                         <input class="form-control" type="number" id="<?= $name ?>" name="<?= $name ?>" value="<?= $value ?>" disabled>
                     <?php elseif ($name === "Image"): ?>
                         <label class="form-label" for="<?= $name ?>"><?= $name ?></label>
-                        <input class="form-control" type="file" id="<?= $name ?>" name="<?= $name ?>" value="<?= $value ?>">
+                        <input class="form-control" type="file" accept="image/*" id="<?= $name ?>" name="<?= $name ?>">
+                        <script>
+                            const MAX_SIZE = 2 * 1024 * 1024;
+                            document.getElementById("<?= $name ?>").addEventListener('change', function () {
+                                const file = this.files[0];
+                                if (!file) return;
+                                if (file.size > MAX_SIZE) {
+                                    alert('File too large (max 2MB)');
+                                    this.value = '';
+                                }
+                            });
+                        </script>
                     <?php elseif ($inputType === "number"): ?>
                         <label class="form-label" for="<?= $name ?>"><?= $name ?></label>
                         <input class="form-control" type="number" id="<?= $name ?>" name="<?= $name ?>" value="<?= $value ?>">
                     <?php elseif ($inputType === "checkbox"): ?>
-                        <input class="form-check-input" type="checkbox" id="<?= $name ?>" name="<?= $name ?>" value="<?= $value ?>">
+                        <input class="form-check-input" type="checkbox" id="<?= $name ?>" name="<?= $name ?>" value="true"<?= !empty($value) ? 'checked' : '' ?>>
                         <label class="form-label" for="<?= $name ?>"><?= $name ?></label>
                     <?php elseif ($inputType === "text"): ?>
                         <label class="form-label" for="<?= $name ?>"><?= $name ?></label>
@@ -126,13 +168,14 @@ require_once '../assets.fragments/header.php';
 
             <button type="submit" class="btn btn-success">Save Entry</button>
         </form>
-        <form action="/admin/delete/{item}/{id}(item=${item}, id=${id}" class="d-flex flex-column mt-4" method="post" onsubmit="return confirm('Are you sure you want to delete this entry?');">
-            <button type="submit" class="btn btn-danger flex-grow-1">Delete Entry</button>
-        </form>
+        <?php if (isset($_GET['id'])): ?>
+            <form action="/admin?class=<?= $class ?>$id=<?= $id ?>&delete" class="d-flex flex-column mt-4" method="post" onsubmit="return confirm('Are you sure you want to delete this entry?');">
+                <button type="submit" class="btn btn-danger flex-grow-1">Delete Entry</button>
+            </form>
+        <?php endif; ?>
     </div>
 </main>
 
 <script src="https://assets.mautresor.mu/js/app.js"></script>
-
 </body>
 </html>

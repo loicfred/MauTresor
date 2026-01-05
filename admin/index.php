@@ -1,5 +1,10 @@
 <?php
+
+require_once __DIR__ . "/../assets/obj/DBObject.php";
+use assets\obj\DBObject;
+
 include __DIR__ . '/../config/auth.php';
+include __DIR__ . '/../config/database.php';
 //checksForAdmin();
 
 require_once __DIR__ . "/../assets/obj/User.php";
@@ -17,7 +22,7 @@ require_once __DIR__ . "/../assets/obj/User.php";
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="icon"  href="../assets/img/logo.png">
+    <link rel="icon" href="https://assets.mautresor.mu/img/logo_transparent.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://assets.mautresor.mu/css/main.css">
@@ -53,7 +58,6 @@ require_once __DIR__ . '/../assets/fragments/header.php';
 
         <!-- PAGE 1 -->
         <section class="page">
-
         </section>
 
         <!-- PAGE 2 -->
@@ -63,31 +67,24 @@ require_once __DIR__ . '/../assets/fragments/header.php';
 
         <!-- PAGE 3 -->
         <section class="page">
-
-        </section>
-
-        <!-- PAGE 4 -->
-        <section class="page">
             <h2 class="settings-header">Database Accessor</h2>
 
             <form id="databaseForm">
                 <div class="mb-3 d-flex align-items-center">
                     <label for="tableSelect" class="form-label mb-0 w-25 me-1">Table</label>
                     <select id="tableSelect" onchange="addSelect(this)" class="form-select">
-                        <option value="" disabled selected>- Public -</option>
+                        <option value="" disabled selected>- Select a table -</option>
                         <option value="User">User Accounts</option>
-                        <option value="Donation_Request">Donation request</option>
-                        <option value="Donation">Donations</option>
-                        <option value="Fundraising">Fundraising</option>
-                        <option value="Association">Association</option>
-                        <option value="Campaign">Campaigns</option>
-                        <option value="" disabled>- Private -</option>
-                        <option value="Staff">Staffs</option>
-                        <option value="Vehicle">Vehicles</option>
-                        <option value="Warehouse">Warehouses</option>
-                        <option value="Trip">Trips</option>
+                        <option value="Place">Place</option>
+                        <option value="Place_Image">Place Images</option>
+                        <option value="Event">Event</option>
+                        <option value="Event_Image">Event Images</option>
+                        <option value="Event_Participant">Event Participants</option>
+                        <option value="Hint">Hint</option>
+                        <option value="Hint_Image">Hint Image</option>
                         <option value="" disabled>- Other -</option>
                         <option value="Email_Verification">Email verifications</option>
+                        <option value="Notification">Notifications</option>
                     </select>
                 </div>
 
@@ -99,9 +96,12 @@ require_once __DIR__ . '/../assets/fragments/header.php';
 
                 <div class="mb-3">
                     <h5 class="form-label">Database information:</h5>
-<!--                    <p class="mb-0" th:text="${'Table count: ' + dbstat.totalTables}"></p>-->
-<!--                    <p class="mb-0" th:text="${'Views count: ' + dbstat.totalViews}"></p>-->
-<!--                    <p class="mb-0" th:text="${'Total rows: ' + dbstat.totalRows}"></p>-->
+                    <?php
+                    $databaseStats =  DBObject::getDatabaseDetails();
+                    echo "<p class='mb-0'>Table count: " . $databaseStats['tables'] . "</p>";
+                    echo "<p class='mb-0'>Views count: " . $databaseStats['views'] . "</p>";
+                    echo "<p class='mb-0'>Total rows: " . $databaseStats['rows'] . "</p>";
+                    ?>
                 </div>
                 <div class="mb-3 d-none" id="TableDetails">
                     <h5 class="form-label">Table information:</h5>
@@ -110,29 +110,10 @@ require_once __DIR__ . '/../assets/fragments/header.php';
                     <p class="mb-0" id="TableDetailsColumns"></p>
                 </div>
 
-<!--                <div th:if="${param.errorDb}" class="alert alert-danger">Please input a valid and existing entry.</div>-->
 
                 <div class="d-flex mb-3">
                     <button type="submit" id="submitDb" class="btn btn-primary w-50 me-1" disabled>Go to entry</button>
                     <button type="button" id="insertDb" class="btn btn-primary w-50 ms-1" disabled>Add new entry</button>
-                </div>
-
-                <div class="mb-3 pt-2" style="border-top: 1px solid gray;">
-                    <h5 class="form-label">Statistics:</h5>
-<!--                    <p class="mb-0" th:text="${'Total USD Raised: ' + tstats.get('TotalFundraiseUSD')}"></p>-->
-<!--                    <p class="mb-0" th:text="${'Total Donations: ' + tstats.get('TotalDonations')}"></p>-->
-<!--                    <p class="mb-0" th:text="${'Total Items Donated: ' + tstats.get('TotalItemsDonated')}"></p>-->
-<!--                    <p class="mb-0" th:text="${'Total Donation Requests: ' + tstats.get('TotalRequests')}"></p>-->
-                </div>
-                <div class="mb-3" >
-                    <div class="mb-1 d-flex align-items-center">
-                        <h5 class="form-label mb-0 me-3 w-50">Monthly statistics:</h5>
-                        <select id="monthlySelect" onchange="addStats()" class="form-select w-50"></select>
-                    </div>
-                    <p class="mb-0" ID="MonthlyDonationReqCount"></p>
-                    <p class="mb-0" ID="MonthlyDonationCount"></p>
-                    <p class="mb-0" ID="MonthlyFundraiseCount"></p>
-                    <p class="mb-0" ID="MonthlyFundraiseUSD"></p>
                 </div>
 
                 <script>
@@ -144,40 +125,43 @@ require_once __DIR__ . '/../assets/fragments/header.php';
                     const ids = document.getElementById('IDs');
 
                     function addSelect(select) {
-                        fetch('/admin/list/' + select.value)
+                        fetch('https://api.mautresor.mu/v1/admin/table/' + select.value, {
+                            credentials: 'include',
+                        })
                             .then(res => res.json())
                             .then(data => {
                                 insertDb.disabled = false;
                                 id.disabled = false;
                                 ids.disabled = false;
-                                document.getElementById('TableDetailsName').innerText = 'Table name: ' + data.tblstats.tableName;
-                                document.getElementById('TableDetailsRows').innerText = 'Rows count: ' + data.tblstats.totalRows;
-                                document.getElementById('TableDetailsColumns').innerText = 'Columns count: ' + data.tblstats.columnNames.length;
+                                document.getElementById('TableDetailsName').innerText = 'Table name: ' + data[0].table;
+                                document.getElementById('TableDetailsRows').innerText = 'Rows count: ' + data[0].rows;
+                                document.getElementById('TableDetailsColumns').innerText = 'Columns count: ' + data[0].columns;
                                 document.getElementById('TableDetails').classList.remove('d-none');
                                 ids.innerHTML = '<option value="" disabled selected>- Select an item -</option>';
-                                data.items.forEach(item => {
-                                    if (select.value === 'Donation_Request' || select.value === 'Fundraising' || select.value === 'Campaign' || select.value === 'Notification') {
-                                        ids.innerHTML += `<option value="${item.ID}">${item.ID} - ${item.Title}</option>`;
-                                    }
-                                    else if (select.value === 'Warehouse' || select.value === 'Vehicle' || select.value === 'Association') {
+                                data[1].forEach(item => {
+                                    if (select.value === 'Event' || select.value === 'Hint' || select.value === 'Place') {
                                         ids.innerHTML += `<option value="${item.ID}">${item.ID} - ${item.Name}</option>`;
                                     }
                                     else if (select.value === 'User' || select.value === 'Staff') {
                                         ids.innerHTML += `<option value="${item.ID}">${item.ID} - ${item.FirstName} - ${item.LastName}</option>`;
                                     }
-                                    else if (select.value === 'User' || select.value === 'Staff') {
-                                        ids.innerHTML += `<option value="${item.ID}">${item.ID} - ${item.FirstName} - ${item.LastName}</option>`;
+                                    else if (select.value.includes('Image')) {
+                                        ids.innerHTML += `<option value="${item.ID}">${item.ID} - ${item.Name}</option>`;
+                                    }
+                                    else {
+                                        ids.innerHTML += `<option value="${item.ID}">${item.ID}</option>`;
                                     }
                                 })
-                            });
+                            })
+                            .catch(err => console.error(err));
                     }
 
                     document.getElementById('databaseForm').addEventListener('submit', function (e) {
                         e.preventDefault();
-                        window.location.href = '/admin/edit/' + tableSelect.value + '/' + (id.value ? id.value : ids.value);
+                        window.location.href = '/editor?class=' + tableSelect.value + '&id=' + (id.value ? id.value : ids.value);
                     });
                     insertDb.addEventListener("click", () => {
-                        window.location.href = '/admin/edit/' + tableSelect.value;
+                        window.location.href = '/editor?class=' + tableSelect.value;
                     })
 
                     id.addEventListener("input", () => {
@@ -187,40 +171,6 @@ require_once __DIR__ . '/../assets/fragments/header.php';
                     ids.addEventListener("change", () => {
                         submitDb.disabled = !(id.value || ids.value) || tableSelect.value === '';
                     });
-                </script>
-                <script>
-                    const select = document.getElementById('monthlySelect');
-                    const now = new Date();
-                    const currentYear = now.getFullYear();
-                    const currentMonth = now.getMonth() + 1; // 1-12
-
-                    // Loop over the last 3 years
-                    for (let year = currentYear; year >= currentYear - 2; year--) {
-                        // Determine starting and ending month for this year
-                        let startMonth = (year === currentYear) ? currentMonth : 12;
-                        let endMonth = (year === currentYear - 2) ? 1 : 1;
-
-                        for (let month = startMonth; month >= endMonth; month--) {
-                            const monthPadded = String(month).padStart(2, '0');
-                            const option = document.createElement('option');
-                            option.value = `${year}-${monthPadded}`;
-                            option.textContent = `${year}-${monthPadded}`;
-                            select.appendChild(option);
-                        }
-                    }
-                    function addStats() {
-                        let year = select.value.split('-')[0];
-                        let month = select.value.split('-')[1];
-                        fetch('/admin/stats/' + year + '/' + month)
-                            .then(res => res.json())
-                            .then(data => {
-                                document.getElementById('MonthlyDonationReqCount').innerText = 'Monthly donation requests: ' + data.MonthlyDonationReqCount;
-                                document.getElementById('MonthlyDonationCount').innerText = 'Monthly donations: ' + data.MonthlyDonationCount;
-                                document.getElementById('MonthlyFundraiseCount').innerText = 'Monthly fundraises: ' + data.MonthlyFundraiseCount;
-                                document.getElementById('MonthlyFundraiseUSD').innerText = 'Monthly fundraises revenue: ' + data.MonthlyFundraiseUSD + ' USD';
-                            });
-                    }
-                    addStats(now.getFullYear(), now.getMonth())
                 </script>
             </form>
         </section>

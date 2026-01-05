@@ -1,10 +1,10 @@
 <?php
-$host = "localhost";
-$dbname = "treasurehunt";
-$user = "root";
-$pass = ""; // Wamp default = empty password
 
 try {
+    $host = "localhost";
+    $dbname = "treasurehunt";
+    $user = "root";
+    $pass = "";
     $pdo = new PDO(
         "mysql:host=$host;port=3307;dbname=$dbname;charset=utf8mb4",
         $user,

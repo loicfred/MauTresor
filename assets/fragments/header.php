@@ -9,61 +9,55 @@ use assets\obj\Notification;
     <div class="container d-flex align-items-center" style="justify-content: space-between;">
         <button class="hamburger-btn me-3" id="hamburgerBtn" aria-label="Open menu">☰</button>
         <a class="navbar-brand me-auto" href="/">
-            <img style="border-radius: 50%" src="https://assets.mautresor.mu/img/logo.png" draggable="false" height="40" alt="BeatCam">
+            <img src="https://assets.mautresor.mu/img/logo_transparent.png" draggable="false" height="40" alt="logo.png">
         </a>
 
         <div class="sidebar" id="sidebar">
             <h5 class="mb-3">Menu</h5>
-            <button onclick="goToHome()">Home</button>
-            <button onclick="goToDonate()">Donate</button>
-            <button onclick="goToCampaign()">Campaigns</button>
-            <button onclick="goToAbout()">About</button>
+            <button onclick="goTo1()">Home</button>
+            <button onclick="goTo2()">Local</button>
+            <button onclick="goTo3()">Global</button>
+            <button onclick="goTo4()">Events</button>
             <hr>
             <?= !isset($_SESSION['user_id']) ? "<a href='https://accounts.mautresor.mu/login'>Log in</a>" : '' ?>
-            <?= isset($_SESSION['user_id']) ? "<a href='/fundraise'>Fundraise</a>" : '' ?>
             <?= isset($_SESSION['user_id']) ? "<a href='/settings'>Settings</a>" : '' ?>
             <?= isset($_SESSION['user_id']) ? "<a href='/accounts/login?logout'>Log out</a>" : '' ?>
             <script>
-                const url = window.location.href;
-                function goToHome() {
-                    if (url.includes("index")) goToPage(0);
-                    else window.location.href = "index?page=0";
+                const url = window.location.href.split('?')[0];
+                function goTo1() {
+                    if (url === 'https://mautresor.mu/') goToPage(0);
+                    else window.location.href = "https://mautresor.mu?page=0";
                 }
-                function goToDonate() {
-                    if (url.includes("home")) goToPage(1);
-                    else window.location.href = "index?page=1";
+                function goTo2() {
+                    if (url === 'https://mautresor.mu/') goToPage(1);
+                    else window.location.href = "https://mautresor.mu?page=1";
                 }
-                function goToCampaign() {
-                    if (url.includes("home")) goToPage(2);
-                    else window.location.href = "index?page=2";
+                function goTo3() {
+                    if (url === 'https://mautresor.mu/') goToPage(2);
+                    else window.location.href = "https://mautresor.mu?page=2";
                 }
-                function goToAbout() {
-                    if (url.includes("home")) goToPage(3);
-                    else window.location.href = "index?page=3";
+                function goTo4() {
+                    if (url === 'https://mautresor.mu/') goToPage(3);
+                    else window.location.href = "https://mautresor.mu/?page=3";
                 }
             </script>
             <hr>
-            <?= isAdmin() ? "<button class='mt-auto' onclick='goToAdminDonation()'>Admin - Review Donations</button>" : '' ?>
-            <?= isAdmin() ? "<button class='mt-auto' onclick='goToAdminRequest()'>Admin - Review Requests</button>" : '' ?>
-            <?= isAdmin() ? "<button class='mt-auto' onclick='goToAdminWarehouse()'>Admin - Warehouse</button>" : '' ?>
-            <?= isAdmin() ? "<button class='mt-auto' onclick='goToAdminDatabase()'>Admin - Database</button>" : '' ?>
+            <?= isAdmin() ? "<button class='mt-auto' onclick='goToAdmin1()'>Admin - Review Donations</button>" : '' ?>
+            <?= isAdmin() ? "<button class='mt-auto' onclick='goToAdmin2()'>Admin - Review Requests</button>" : '' ?>
+             <?= isAdmin() ? "<button class='mt-auto' onclick='goToAdmin3()'>Admin - Database</button>" : '' ?>
 
             <script>
-                function goToAdminDonation() {
-                    if (url.includes("/admin?")) goToPage(0);
-                    else window.location.href = "admin?page=0";
+                function goToAdmin1() {
+                    if (url === 'https://admin.mautresor.mu/') goToPage(0);
+                    else window.location.href = "https://admin.mautresor.mu/?page=0";
                 }
-                function goToAdminRequest() {
-                    if (url.includes("/admin?")) goToPage(1);
-                    else window.location.href = "admin?page=1";
+                function goToAdmin2() {
+                    if (url === 'https://admin.mautresor.mu/') goToPage(1);
+                    else window.location.href = "https://admin.mautresor.mu/?page=1";
                 }
-                function goToAdminWarehouse() {
-                    if (url.includes("/admin?")) goToPage(2);
-                    else window.location.href = "admin?page=2";
-                }
-                function goToAdminDatabase() {
-                    if (url.includes("/admin?")) goToPage(3);
-                    else window.location.href = "admin?page=3";
+                function goToAdmin3() {
+                    if (url === 'https://admin.mautresor.mu/') goToPage(2);
+                    else window.location.href = "https://admin.mautresor.mu/?page=2";
                 }
             </script>
         </div>

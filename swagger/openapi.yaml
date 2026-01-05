@@ -6,25 +6,25 @@ info:
 servers:
   - url: 'https'
 paths:
-#  /api/place:
-#    get:
-#      summary: Get all places
-#      responses:
-#        200:
-#          description: Place details
-#        404:
-#          description: Place not found
-#  /api/place?id={id}:
-#    get:
-#      summary: Get a place by ID
-#      parameters:
-#        - name: id
-#          in: query
-#          required: true
-#          schema:
-#            type: integer
-#      responses:
-#        200:
-#          description: Place details
-#        404:
-#          description: Place not found
+  /api/place:
+    get:
+      summary: Get all places
+      responses:
+        200:
+          description: Place details
+        404:
+          description: Place not found
+  /api/place?id={id}:
+    get:
+      summary: Get a place by ID
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Place details
+        404:
+          description: Place not found

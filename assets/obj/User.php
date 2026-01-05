@@ -14,9 +14,10 @@ class User extends DBObject {
     public string $DateOfBirth;
     public string $CreatedAt;
     public string $UpdatedAt;
-    public ?string $Image = null;
     public bool $Enabled = false;
     public bool $Verified = false;
+    public ?string $Image = null;
+    public ?string $MimeType;
 
     public static function getByEmail(string $email) {
         return self::getWhere("Email = ?", $email);

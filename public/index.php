@@ -1,7 +1,20 @@
 <?php
+
+use assets\obj\DBObject;
+
 include __DIR__ . '/../config/auth.php';
 
 require_once __DIR__ . "/../assets/obj/User.php";
+require_once __DIR__ . "/../assets/obj/Place.php";
+require_once __DIR__ . "/../assets/obj/Place_Image.php";
+require_once __DIR__ . "/../assets/obj/Event.php";
+require_once __DIR__ . "/../assets/obj/Event_Image.php";
+
+use assets\obj\User;
+use assets\obj\Place;
+use assets\obj\Place_Image;
+use assets\obj\Event;
+use assets\obj\Event_Image;
 
 ?>
 
@@ -17,16 +30,24 @@ require_once __DIR__ . "/../assets/obj/User.php";
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="icon"  href="../assets/img/logo.png">
+    <link rel="icon" href="https://assets.mautresor.mu/img/logo_transparent.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://assets.mautresor.mu/css/main.css">
 
     <style>
-        .request-card, .modal-content {
-            margin: 8px;
+        .request-card {
             border-radius: 10px;
             background-color: var(--primary-color-lighter);
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            height: 100px;
+            cursor: pointer;
+            border: #CCCCCC solid 3px;
+        }
+        .request-card:hover {
+            scale: 1.01;
         }
     </style>
 </head>
@@ -46,15 +67,15 @@ require_once __DIR__ . '/../assets/fragments/header.php';
                 <div class="row justify-content-center">
                     <div class="col-md-8 col-lg-6 text-center text-white">
 
-                        <img src="https://assets.mautresor.mu/img/logo_transparent.png" height="250" class="mb-4" draggable="false" alt="BeatCam Logo">
+                        <img src="https://assets.mautresor.mu/img/logo_transparent.png" height="250" class="mb-4" draggable="false" alt="Logo">
 
                         <p class="lead mb-4">
-                            Your kindness. In any way.
+                            Discover the island of Mauritius with a twist of fun!
                         </p>
 
-                        <a class="btn btn-lg btn-success px-5 mb-3" href="/fundraise" id="fundraiseNow">
-                            Donate Now
-                        </a>
+                        <button class="btn btn-lg btn-primary px-5 mb-3" onclick="goToPage(3)">
+                            Events
+                        </button>
 
                     </div>
                 </div>
@@ -63,22 +84,51 @@ require_once __DIR__ . '/../assets/fragments/header.php';
 
         <!-- PAGE 2 -->
         <section class="page">
-
+            <div class="container h-100 p-0">
+                <div class="row g-1">
+                    <?php $lplaces = Place::getLocalPlaces();
+                    if (count($lplaces) == 0) echo "<h4 class='col-md-12 p-3 text-center'>No local places yet.</h4>";
+                    else foreach ($lplaces as $lplace): ?>
+                        <a href="/site/<?= $lplace->ID ?>" class="col-md-6">
+                            <div class="request-card p-3" style="background-image: url('https://api.mautresor.mu/v1/img/place/<?= $lplace->ThumbnailID ?>')">
+                                <h5 style="text-shadow: 0 0 10px #000000"><?= $lplace->Name ?></h5>
+                            </div>
+                        </a>
+                    <?php endforeach ?>
+                </div>
+            </div>
         </section>
 
         <!-- PAGE 3 -->
         <section class="page">
-            <p style="justify-content: center; align-items: center; text-align: center; padding: 30px;">Coming soon.</p>
+            <div class="container h-100 p-0">
+                <div class="row g-1">
+                    <?php $wplaces = Place::getWorldPlaces();
+                    if (count($wplaces) == 0) echo "<h4 class='col-md-12 p-3 text-center'>No world places yet.</h4>";
+                    else foreach ($wplaces as $wplace): ?>
+                        <a href="/site/<?= $wplace->ID ?>" class="col-md-6">
+                            <div class="request-card p-3" style="background-image: url('https://api.mautresor.mu/v1/img/place/<?= $wplace->ThumbnailID ?>')">
+                                <h5 style="text-shadow: 0 0 10px #000000"><?= $wplace->Name ?></h5>
+                            </div>
+                        </a>
+                    <?php endforeach ?>
+                </div>
+            </div>
         </section>
 
         <!-- PAGE 4 -->
         <section class="page">
-            <div class="container h-100">
-                <div class="row justify-content-center">
-                    <div class="col-md-8 text-center text-white p-1">
-
-
-                    </div>
+            <div class="container h-100 p-0">
+                <div class="row g-1">
+                    <?php $events = Event::getAll();
+                    if (count($events) == 0) echo "<h4 class='col-md-12 p-3 text-center'>No upcoming events.</h4>";
+                    else foreach ($events as $event): ?>
+                        <a href="/event/<?= $event->ID ?>" class="col-md-6">
+                            <div class="request-card p-3" style="background-image: url('https://api.mautresor.mu/v1/img/event/<?= $event->ThumbnailID ?>')">
+                                <h5 style="text-shadow: 0 0 10px #000000"><?= $event->Name ?></h5>
+                            </div>
+                        </a>
+                    <?php endforeach ?>
                 </div>
             </div>
         </section>
@@ -90,7 +140,7 @@ require_once __DIR__ . '/../assets/fragments/header.php';
 <script src="https://assets.mautresor.mu/js/pagecarousel.js"></script>
 
 <?php
-require_once 'fragments/bottom-nav.html';
+require_once __DIR__ . '/../assets/fragments/bottom-nav.html';
 ?>
 
 </body>

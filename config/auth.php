@@ -1,11 +1,19 @@
 <?php
+session_set_cookie_params([
+    'lifetime' => 0,
+    'path' => '/',
+    'domain' => '.mautresor.mu',
+    'secure' => true,
+    'httponly' => true,
+    'samesite' => 'Lax'
+]);
+session_name("MAUTRESOR_MU");
 session_start();
 require_once __DIR__ . '/../assets/obj/RememberMe.php';
 require_once __DIR__ . '/../assets/obj/User.php';
 
 use assets\obj\RememberMe;
 use assets\obj\User;
-
 
 if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_me'])) {
     $rememberMe = RememberMe::getByToken($_COOKIE['remember_me']);
@@ -37,7 +45,6 @@ function isLoggedIn() {
     return isset($_SESSION['user_id']);
 
 }
-
 function isAdmin() {
     if (isLoggedIn()) {
         $user = User::getByID($_SESSION['user_id']);
