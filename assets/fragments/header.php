@@ -5,10 +5,10 @@ require_once __DIR__ . "/../../assets/obj/Notification.php";
 use assets\obj\Notification;
 
 ?>
-<nav class="navbar navbar-dark" style="padding: 3px">
+<nav class="top-nav navbar navbar-dark" style="padding: 3px">
     <div class="container d-flex align-items-center" style="justify-content: space-between;">
         <button class="hamburger-btn me-3" id="hamburgerBtn" aria-label="Open menu">☰</button>
-        <a class="navbar-brand me-auto" href="/">
+        <a class="navbar-brand me-auto" href="https://mautresor.mu/">
             <img src="https://assets.mautresor.mu/img/logo_transparent.png" draggable="false" height="40" alt="logo.png">
         </a>
 

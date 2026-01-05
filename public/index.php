@@ -21,7 +21,7 @@ use assets\obj\Event_Image;
 <!DOCTYPE html>
 <html lang="en">
 <head id="master-head">
-    <title>Home | MauDonate</title>
+    <title>Home | MauTresor</title>
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -45,6 +45,7 @@ use assets\obj\Event_Image;
             height: 100px;
             cursor: pointer;
             border: #CCCCCC solid 3px;
+            box-shadow: 0 0 5px #000000;
         }
         .request-card:hover {
             scale: 1.01;
@@ -69,7 +70,7 @@ require_once __DIR__ . '/../assets/fragments/header.php';
 
                         <img src="https://assets.mautresor.mu/img/logo_transparent.png" height="250" class="mb-4" draggable="false" alt="Logo">
 
-                        <p class="lead mb-4">
+                        <p class="lead mb-4" style="text-shadow: 0 0 5px #000000">
                             Discover the island of Mauritius with a twist of fun!
                         </p>
 

@@ -5,6 +5,7 @@ require_once __DIR__ . "/DBObject.php";
 
 class Hint extends DBObject
 {
+    public int $EventID;
     public string $Name;
     public string $Description;
     public string $QRCodeValue;

@@ -13,7 +13,7 @@ require_once __DIR__ . "/../assets/obj/User.php";
 <!DOCTYPE html>
 <html lang="en">
 <head id="master-head">
-    <title>Admin | MauDonate</title>
+    <title>Admin | MauTresor</title>
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,6 +28,9 @@ require_once __DIR__ . "/../assets/obj/User.php";
     <link rel="stylesheet" href="https://assets.mautresor.mu/css/main.css">
 
     <style>
+        main {
+            background-color: #00000099;
+        }
         .settings-header {
             text-align: center;
             margin-bottom: 1.5rem;

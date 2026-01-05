@@ -17,7 +17,7 @@ $edited_object = $id == 0 ? new $fullClass() : $fullClass::getByID($id);
 <!DOCTYPE html>
 <html lang="en">
 <head id="master-head">
-    <title>Database Editor | MauDonate</title>
+    <title>Database Editor | MauTresor</title>
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
