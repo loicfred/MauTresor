@@ -17,6 +17,7 @@ document.addEventListener('keydown', e => {
 
 console.log("app.js loaded successfully");
 
+
 (() => {
     'use strict';
 

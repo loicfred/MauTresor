@@ -1,13 +1,6 @@
 <?php
 include __DIR__ . '/../config/auth.php';
 
-
-require_once __DIR__ . "/../assets/obj/Place.php";
-require_once __DIR__ . "/../assets/obj/DBObject.php";
-use assets\obj\Place;
-
-$segments = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
-$place = Place::getByID($segments[1]);
 ?>
 
 <!DOCTYPE html>
@@ -99,62 +92,27 @@ require_once __DIR__ . '/../assets/fragments/header.php';
 ?>
 
 <main>
-    <div class="carousel-wrap" id="carouselWrap">
-        <div class="carousel" id="carousel">
-            <?php
-            foreach ($place->getImages() as $img):
-            ?>
-                <img draggable="false" class="slide" src="https://api.mautresor.mu/v1/img/place/<?= $img->ID ?>" alt="img.png">
-            <?php
-            endforeach;
-            ?>
-        </div>
-        <div class="dots" id="dots"></div>
-    </div>
-
     <div class="map-box">
         <div class="map-top">
-            <h2 class="align-self-center"><?= $place->Name ?></h2>
+            <h2 class="align-self-center">About Us</h2>
         </div>
         <div class="map-body">
-            <p><?= $place->Description ?></p>
+            <p></p>
+
+
+
+
+
+
+
         </div>
         <div class="map-bottom">
-            <p><?= $place->Name ?></p>
+            <p>Contact Us ~ mautresor@gmail.com</p>
         </div>
     </div>
 </main>
 
 <script src="https://assets.mautresor.mu/js/app.js"></script>
-<script>
-    const carousel = document.getElementById('carousel');
-    const carouselWrap = document.getElementById('carouselWrap');
-    const slides = carousel.querySelectorAll('.slide');
-    const dots = document.getElementById('dots');
-    let current = 0;
-    slides.forEach((s,i)=>{ const d=document.createElement('div'); d.className='dot' + (i===0?' active':''); d.dataset.i=i; d.addEventListener('click', ()=> goTo(i)); dots.appendChild(d); });
-    function updateCarousel(){ carousel.style.transform = `translateX(-${current*100}%)`; Array.from(dots.children).forEach((d,i)=>d.classList.toggle('active', i===current)); }
-    function goTo(i){ current = (i+slides.length)%slides.length; updateCarousel(); }
-    let startX=0, isDown=false;
-    carouselWrap.addEventListener('pointerdown', e=>{ isDown=true; startX=e.clientX; carouselWrap.setPointerCapture(e.pointerId); });
-    carouselWrap.addEventListener('pointermove', e=>{
-        if(!isDown) return;
-        const dx = e.clientX - startX;
-        // small drag translate (visual)
-        carousel.style.transition='none';
-        carousel.style.transform = `translateX(calc(-${current*100}% + ${dx}px))`;
-    });
-    carouselWrap.addEventListener('pointerup', e=>{
-        isDown=false; carousel.style.transition='';
-        const dx = e.clientX - startX;
-        if(Math.abs(dx) > 60){
-            if(dx < 0) current = Math.min(current+1, slides.length-1);
-            else current = Math.max(current-1, 0);
-        }
-        updateCarousel();
-    });
-    carouselWrap.addEventListener('pointerleave', ()=>{ if(isDown){ isDown=false; updateCarousel(); }});
-</script>
 
 </body>
 </html>

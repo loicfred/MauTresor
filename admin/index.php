@@ -17,7 +17,7 @@ require_once __DIR__ . "/../assets/obj/User.php";
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="manifest" href="https://assets.mautresor.mu/manifest.json">
+    <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#822BD9">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -35,18 +35,6 @@ require_once __DIR__ . "/../assets/obj/User.php";
             text-align: center;
             margin-bottom: 1.5rem;
         }
-
-
-        .request-card, .delivery-card, .modal-content {
-            margin: 2px;
-            border-radius: 10px;
-        }
-        .request-card {
-            background-color: var(--primary-color-lighter);
-        }
-        .modal-content {
-            background-color: var(--main-color-lighter);
-        }
     </style>
 </head>
 
@@ -60,15 +48,6 @@ require_once __DIR__ . '/../assets/fragments/header.php';
     <div class="page-carousel" id="pageCarousel">
 
         <!-- PAGE 1 -->
-        <section class="page">
-        </section>
-
-        <!-- PAGE 2 -->
-        <section class="page">
-
-        </section>
-
-        <!-- PAGE 3 -->
         <section class="page">
             <h2 class="settings-header">Database Accessor</h2>
 
@@ -198,7 +177,6 @@ require_once __DIR__ . '/../assets/fragments/header.php';
 <!-- Scripts -->
 <script src="https://assets.mautresor.mu/js/app.js"></script>
 <script src="https://assets.mautresor.mu/js/pagecarousel.js"></script>
-
 
 
 <?php

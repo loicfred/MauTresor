@@ -42,7 +42,8 @@ use assets\obj\Notification;
                     else window.location.href = "https://mautresor.mu/?page=3";
                 }
             </script>
-            <hr>
+
+            <?= isAdmin() ? "<hr>" : '' ?>
             <?= isAdmin() ? "<button onclick='goToAdmin1()'>Admin - Review Donations</button>" : '' ?>
             <?= isAdmin() ? "<button onclick='goToAdmin2()'>Admin - Review Requests</button>" : '' ?>
             <?= isAdmin() ? "<button onclick='goToAdmin3()'>Admin - Database</button>" : '' ?>

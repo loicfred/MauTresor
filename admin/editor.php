@@ -21,7 +21,7 @@ $edited_object = $id == 0 ? new $fullClass() : $fullClass::getByID($id);
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="manifest" href="https://assets.mautresor.mu/manifest.json">
+    <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#822BD9">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">

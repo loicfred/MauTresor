@@ -13,6 +13,7 @@ use assets\obj\User;
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Account Verification</title>
+    <link rel="manifest" href="manifest.json">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light d-flex align-items-center" style="height: 100vh;">

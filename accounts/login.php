@@ -13,6 +13,7 @@ use assets\obj\User;
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Login</title>
+    <link rel="manifest" href="manifest.json">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light d-flex align-items-center" style="height: 100vh;">
@@ -83,4 +84,33 @@ use assets\obj\User;
     </div>
 </div>
 </body>
+<script>
+    (() => {
+        'use strict';
+
+        if (!('serviceWorker' in navigator)) {
+            console.info('[PWA] Service workers not supported');
+            return;
+        }
+
+        window.addEventListener('load', async () => {
+            try {
+                const existing = await navigator.serviceWorker.getRegistration('/');
+                if (existing) {
+                    console.log('[PWA] Service Worker already registered:', existing.scope);
+                    return;
+                }
+
+                const registration = await navigator.serviceWorker.register(
+                    '/service-worker.js',
+                    { scope: '/' }
+                );
+
+                console.log('[PWA] Service Worker registered:', registration.scope);
+            } catch (err) {
+                console.error('[PWA] Service Worker registration failed:', err);
+            }
+        });
+    })();
+</script>
 </html>
