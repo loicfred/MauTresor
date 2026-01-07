@@ -4,12 +4,6 @@ require __DIR__ . "/../../assets/obj/Notification.php";
 
 use assets\obj\Notification;
 
-if (isLoggedIn() && str_ends_with($_SERVER['REQUEST_URI'], 'readnotif')) {
-    foreach (Notification::getOfUser($_SESSION['user_id']) as $notif):
-        $notif->isRead = true;
-        $notif->Update();
-    endforeach;
-}
 ?>
 <nav class="top-nav navbar navbar-dark" style="padding: 3px">
     <div class="container d-flex align-items-center" style="justify-content: space-between;">
@@ -124,7 +118,7 @@ if (isLoggedIn() && str_ends_with($_SERVER['REQUEST_URI'], 'readnotif')) {
                         e.stopPropagation();
                         notificationDropdown.classList.toggle("active");
                         notificationDot.classList.add("d-none");
-                        window.location.href = document.location.href + '?readnotif';
+                        fetch("/readnotif", {method: "POST"});
                     });
                     document.addEventListener("click", () => {
                         notificationDropdown.classList.remove("active");

@@ -25,21 +25,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $participant = Event_Participant::getByUserAndEvent($_SESSION['user_id'], $hint->EventID);
         if (!isset($participant)) {
-            echo json_encode(["message" => "You are not participating in this event.", "code" => "406", ]);
+            echo json_encode(["message" => "You are not participating in this event.", "code" => "406"]);
             return;
         }
 
         $event = Event::getByID($hint->EventID)->EndAt;
         if ($event->EndAt == null) {
-            echo json_encode(["message" => "This event hasn't started yet.", "code" => "406", ]);
+            echo json_encode(["message" => "This event hasn't started yet.", "code" => "406"]);
             return;
         }
         if (strtotime($event->EndAt) < time()) {
-            echo json_encode(["message" => "This event has already ended.", "code" => "406", ]);
+            echo json_encode(["message" => "This event has already ended.", "code" => "406"]);
             return;
         }
         if (!isset($_POST['latitude']) || !isset($_POST['longitude'])) {
-            echo json_encode(["message" => "No geolocation data sent.", "code" => "406", ]);
+            echo json_encode(["message" => "No geolocation data sent.", "code" => "406"]);
             return;
         }
 
@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo json_encode(["message" => "You are not in the right location!", "code" => "406"]);
         }
     } catch (Exception $e) {
-        echo json_encode(["message" => "An error occurred...", "code" => "400", ]);
+        echo json_encode(["message" => "An error occurred...", "code" => "400"]);
     }
 }
 
