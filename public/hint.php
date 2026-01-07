@@ -3,8 +3,14 @@ include __DIR__ . '/../config/auth.php';
 checksForLogin();
 
 require_once __DIR__ . "/../config/obj/Hint.php";
+require_once __DIR__ . "/../config/obj/Place.php";
+require_once __DIR__ . "/../config/obj/Event.php";
+require_once __DIR__ . "/../config/obj/Hint_Found.php";
 require_once __DIR__ . "/../config/obj/Event_Participant.php";
 use assets\obj\Hint;
+use assets\obj\Place;
+use assets\obj\Event;
+use assets\obj\Hint_Found;
 use assets\obj\Event_Participant;
 
 $segments = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
@@ -90,6 +96,69 @@ require_once __DIR__ . '/assets/fragments/header.php';
         </div>
         <div class="map-body">
             <p style="font-size: 16px;"><?= $hint->Description ?></p>
+
+            <?php
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                try {
+                    $participant = Event_Participant::getByUserAndEvent($_SESSION['user_id'], $hint->EventID);
+                    if (!isset($participant)) {
+                        echo "<div class='alert alert-danger'>You are not participating in this event.</div>";
+                        return;
+                    }
+
+                    $event = Event::getByID($hint->EventID)->EndAt;
+                    if ($event->EndAt == null) {
+                        echo "<div class='alert alert-danger'>This event hasn't started yet.</div>";
+                        return;
+                    }
+                    if (strtotime($event->EndAt) < time()) {
+                        echo "<div class='alert alert-danger'>This event has already ended.</div>";
+                        return;
+                    }
+
+
+                    if (!isset($_POST['latitude']) || !isset($_POST['longitude'])) {
+                        echo "<div class='alert alert-danger'>No geolocation data sent.</div>";
+                        return;
+                    }
+
+
+                    $place = Place::getByQRCode($_POST['qrcode']);
+                    if (!$place) {
+                        echo "<div class='alert alert-danger'>Place not found.</div>";
+                        return;
+                    }
+
+                    if ($place->ID !== $hint->PlaceID) {
+                        echo "<div class='alert alert-danger'>This hint is not for this place.</div>";
+                        return;
+                    }
+
+                    if (Hint_Found::getByParticipantAndHint($hint->ID, $participant->ID)) {
+                        echo "<div class='alert alert-success'>You have already found this hint.</div>";
+                        return;
+                    }
+
+                    $lat = $_POST['latitude'];
+                    $long = $_POST['longitude'];
+                    if (isClose($lat, $place->Latitude, 0.005) && isClose($long, $place->Longitude, 0.005)) {
+                        $hintFound = new Hint_Found();
+                        $hintFound->ParticipantID = $participant->ID;
+                        $hintFound->HintID = $hint->ID;
+                        $hintFound->Write();
+                        echo "<div class='alert alert-success'>Successfully found the hint!</div>";
+                    } else {
+                        echo "<div class='alert alert-danger'>You are not in the right location!</div>";
+                    }
+                } catch (Exception $e) {
+                    echo "<div class='alert alert-danger'>An error occurred...</div>";
+                }
+            }
+
+            function isClose($number, $target = 5, $radius = 2) {
+                return abs($number - $target) <= $radius;
+            }
+            ?>
         </div>
         <div class="map-bottom align-items-center">
             <button class="btn btn-primary" style="color: white; width: 100px;" onclick="openScanner()">Scan</button>
@@ -119,8 +188,27 @@ require_once __DIR__ . '/assets/fragments/header.php';
     }
 
     function onScanSuccess(decodedText, decodedResult) {
-        document.getElementById("result").innerText = decodedText;
-        html5QrcodeScanner.clear();
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                html5QrcodeScanner.clear();
+                fetch('/api/v1/hint/' + <?= $hint->ID ?>, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        qrcode: decodedText,
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude
+                    })
+                });
+            },
+            function() {
+                alert("Location access denied");
+            },
+            { enableHighAccuracy: true }
+        );
     }
 
     const html5QrcodeScanner = new Html5QrcodeScanner(
@@ -131,15 +219,7 @@ require_once __DIR__ . '/assets/fragments/header.php';
 </script>
 <script>
     function getLocation() {
-        navigator.geolocation.getCurrentPosition(
-            function(position) {
-                return [position.coords.latitude, position.coords.longitude]
-            },
-            function() {
-                alert("Location access denied");
-            },
-            { enableHighAccuracy: true }
-        );
+
     }
 </script>
 </body>

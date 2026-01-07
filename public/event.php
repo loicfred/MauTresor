@@ -111,6 +111,7 @@ $participant = Event_Participant::getByUserAndEvent($_SESSION['user_id'] ?? 0, $
             z-index: 2;
             display: flex;
             flex-direction: column;
+            align-items: center;
             background: url("/assets/img/scroll_body.png");
             background-repeat: repeat-y;
             background-position: center top;
@@ -131,6 +132,7 @@ $participant = Event_Participant::getByUserAndEvent($_SESSION['user_id'] ?? 0, $
 
         .register {
             width: 200px;
+            margin-bottom: 20px;
         }
 
         .map-box * {

@@ -9,7 +9,6 @@ class Hint extends DBObject
     public int $PlaceID;
     public string $Name;
     public string $Description;
-    public string $QRCodeValue;
     public ?string $Thumbnail;
 
     public function getParticipantsWhoFound() {
@@ -19,8 +18,8 @@ class Hint extends DBObject
         return $participants;
     }
 
-    public static function getByQRCode(string $code) {
-        return Hint::getWhere("QRCodeValue = ?", $code);
+    public static function getByPlace(string $placeId) {
+        return Hint::getWhere("PlaceID = ?", $placeId);
     }
 
 }

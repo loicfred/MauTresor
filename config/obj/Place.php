@@ -23,4 +23,8 @@ class Place extends DBObject
     public static function getWorldPlaces()  {
         return Place::getAllWhere("Category = ?", "World");
     }
+
+    public static function getByQRCode(string $code) {
+        return Place::getWhere("QRCode = ?", $code);
+    }
 }

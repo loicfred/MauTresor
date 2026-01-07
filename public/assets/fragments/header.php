@@ -26,19 +26,19 @@ use assets\obj\Notification;
             <script>
                 const url = window.location.href.split('?')[0];
                 function goTo1() {
-                    if (url === '/') goToPage(0);
+                    if (url.endsWith('mu/')) goToPage(0);
                     else window.location.href = "/?page=0";
                 }
                 function goTo2() {
-                    if (url === '/') goToPage(1);
+                    if (url.endsWith('mu/')) goToPage(1);
                     else window.location.href = "/?page=1";
                 }
                 function goTo3() {
-                    if (url === '/') goToPage(2);
+                    if (url.endsWith('mu/')) goToPage(2);
                     else window.location.href = "/?page=2";
                 }
                 function goTo4() {
-                    if (url === '/') goToPage(3);
+                    if (url.endsWith('mu/')) goToPage(3);
                     else window.location.href = "/?page=3";
                 }
             </script>
@@ -51,16 +51,16 @@ use assets\obj\Notification;
             <a href="/api/v1/docs/">API Documentation</a>
             <script>
                 function goToAdmin1() {
-                    if (url === '/admin/') goToPage(0);
-                    else window.location.href = "/admin/?page=0";
+                    if (url.endsWith('/admin')) goToPage(0);
+                    else window.location.href = "/admin?page=0";
                 }
                 function goToAdmin2() {
-                    if (url === '/admin/') goToPage(1);
-                    else window.location.href = "/admin/?page=1";
+                    if (url.endsWith('/admin')) goToPage(1);
+                    else window.location.href = "/admin?page=1";
                 }
                 function goToAdmin3() {
-                    if (url === '/admin/') goToPage(2);
-                    else window.location.href = "/admin/?page=2";
+                    if (url.endsWith('/admin')) goToPage(2);
+                    else window.location.href = "/admin?page=2";
                 }
             </script>
         </div>

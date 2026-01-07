@@ -116,8 +116,7 @@ require_once __DIR__ . '/../assets/fragments/header.php';
                     function addSelect(select) {
                         fetch('/api/v1/admin/table/' + select.value, {
                             credentials: 'include',
-                        })
-                            .then(res => res.json())
+                        }).then(res => res.json())
                             .then(data => {
                                 insertDb.disabled = false;
                                 id.disabled = false;
