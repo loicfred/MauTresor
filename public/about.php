@@ -32,6 +32,7 @@ include __DIR__ . '/../config/auth.php';
         }
 
         .map-top {
+            margin-top: 20px;
             display: flex;
             flex-direction: column;
             background: url("/assets/img/scroll_top.png");
@@ -78,15 +79,12 @@ require_once __DIR__ . '/assets/fragments/header.php';
             <p>
                 MauTresor is a digital platform dedicated to discovering, preserving, and sharing the hidden cultural, historical, and natural treasures of Mauritius. Our mission is to connect people with the island’s rich heritage through engaging locations, stories, and interactive experiences.
             </p>
-
             <p>
                 From well-known landmarks to forgotten paths and local secrets, MauTresor encourages exploration beyond the usual destinations. Each place tells a story — of history, tradition, and identity — waiting to be uncovered.
             </p>
-
             <p>
                 Designed for locals, tourists, and explorers alike, MauTresor blends technology with culture to create meaningful journeys. Whether you are searching for adventure, knowledge, or nostalgia, MauTresor helps you see Mauritius through a new lens.
             </p>
-
         </div>
         <div class="map-bottom">
             <p>Contact Us ~ mautresor@gmail.com</p>
