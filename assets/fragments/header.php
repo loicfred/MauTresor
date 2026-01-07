@@ -1,9 +1,15 @@
 <?php
 
-require_once __DIR__ . "/../../assets/obj/Notification.php";
+require __DIR__ . "/../../assets/obj/Notification.php";
 
 use assets\obj\Notification;
 
+if (isLoggedIn() && str_ends_with($_SERVER['REQUEST_URI'], 'readnotif')) {
+    foreach (Notification::getOfUser($_SESSION['user_id']) as $notif):
+        $notif->isRead = true;
+        $notif->Update();
+    endforeach;
+}
 ?>
 <nav class="top-nav navbar navbar-dark" style="padding: 3px">
     <div class="container d-flex align-items-center" style="justify-content: space-between;">
@@ -118,10 +124,7 @@ use assets\obj\Notification;
                         e.stopPropagation();
                         notificationDropdown.classList.toggle("active");
                         notificationDot.classList.add("d-none");
-                        fetch("https://api.mautresor.mu/v1/notification/readAll", {
-                            method: "POST",
-                            credential: "include"
-                        });
+                        window.location.href = document.location.href + '?readnotif';
                     });
                     document.addEventListener("click", () => {
                         notificationDropdown.classList.remove("active");
@@ -129,7 +132,6 @@ use assets\obj\Notification;
                 </script>
             </div>
         <?php endif; ?>
-
         <?php if (!isLoggedIn()): ?>
             <div class="nav-item">
                 <svg viewBox="0 0 24 24" class="nav-icon" id="loginBtn">
