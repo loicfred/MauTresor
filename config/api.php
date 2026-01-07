@@ -6,8 +6,8 @@ function isUnauthorized() {
     exit;
 }
 
-function isValid($id) {
-    if (!isset($id[2]) || !is_numeric($id[2])) {
+function isIDNum($id) {
+    if (!isset($id) || !is_numeric($id)) {
         http_response_code(400);
         echo json_encode(["error" => "Invalid ID", "code" => "400", ]);
         exit;
@@ -15,7 +15,7 @@ function isValid($id) {
 }
 
 function isFound($object) {
-    if (!$object) {
+    if (!isset($object) || !$object) {
         http_response_code(404);
         echo json_encode(["error" => "Not found", "code" => "404"]);
         exit;

@@ -1,10 +1,12 @@
 <?php
 include __DIR__ . '/../config/auth.php';
 
-require_once __DIR__ . '/../assets/obj/User.php';
 require_once __DIR__ . '/../assets/obj/Email_Verification.php';
+require_once __DIR__ . '/../assets/obj/Notification.php';
+require_once __DIR__ . '/../assets/obj/User.php';
 
 use assets\obj\Email_Verification;
+use assets\obj\Notification;
 use assets\obj\User;
 
 ?>
@@ -39,6 +41,12 @@ use assets\obj\User;
                         $emailVerif->Delete();
                         echo "<h3 class='mb-3'>Success !</h3>";
                         echo "<a href='/login?successVerif' class='btn btn-success mt-3'>Go to Login</a>";
+                        $notif = new Notification();
+                        $notif->UserID = $user->ID;
+                        $notif->CreatedAt = date('Y-m-d H:i:s');
+                        $notif->Title = "Account Verification";
+                        $notif->Message = "Your account has been verified successfully.";
+                        $notif->Write();
                     }
                 }
                 ?>

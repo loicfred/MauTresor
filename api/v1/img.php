@@ -2,9 +2,8 @@
 global $segments;
 
 require_once __DIR__ . "/../../config/api.php";
-require_once __DIR__ . "/../../assets/obj/Place_Image.php";
 
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+if ($_SERVER["REQUEST_METHOD"] === 'GET') {
     $segments = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
     $type = $segments[2];
     $id = $segments[3];

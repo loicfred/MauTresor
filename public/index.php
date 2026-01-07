@@ -1,20 +1,12 @@
 <?php
 
-use assets\obj\DBObject;
-
 include __DIR__ . '/../config/auth.php';
 
-require_once __DIR__ . "/../assets/obj/User.php";
 require_once __DIR__ . "/../assets/obj/Place.php";
-require_once __DIR__ . "/../assets/obj/Place_Image.php";
 require_once __DIR__ . "/../assets/obj/Event.php";
-require_once __DIR__ . "/../assets/obj/Event_Image.php";
 
-use assets\obj\User;
 use assets\obj\Place;
-use assets\obj\Place_Image;
 use assets\obj\Event;
-use assets\obj\Event_Image;
 
 ?>
 
@@ -25,7 +17,7 @@ use assets\obj\Event_Image;
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="manifest" href="https://mautresor.mumanifest.json">
+    <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#822BD9">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">

@@ -2,6 +2,13 @@
 namespace assets\obj;
 
 require_once __DIR__ . "/DBObject.php";
+require_once __DIR__ . "/Hint.php";
+require_once __DIR__ . "/Event_Image.php";
+require_once __DIR__ . "/Event_Participant.php";
+
+use assets\obj\Hint;
+use assets\obj\Event_Image;
+use assets\obj\Event_Participant;
 
 class Event extends DBObject
 {
@@ -17,11 +24,11 @@ class Event extends DBObject
     }
 
     public function getParticipants() {
-        return Event_Participant::getWhere("EventID = ?", $this->ID);
+        return Event_Participant::getAllWhere("EventID = ?", $this->ID);
     }
 
     public function getHints() {
-        return Hint::getWhere("EventID = ?", $this->ID);
+        return Hint::getAllWhere("EventID = ?", $this->ID);
     }
 
 }

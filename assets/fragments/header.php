@@ -95,7 +95,7 @@ use assets\obj\Notification;
                         foreach ($notifs as $notif): ?>
                             <div class="notification-item">
                                 <h1 class="m-0">🔔</h1>
-                                <div class="d-flex align-items-center" style="flex-direction: column;">
+                                <div class="d-block align-items-center">
                                     <h6 class="mb-0 me-auto"><?= strlen($notif->Title) > 40 ? substr($notif->Title, 0, 40) : $notif->Title ?></h6>
                                     <p class="mb-0"><?= strlen($notif->Message) > 80 ? substr($notif->Message, 0, 80) : $notif->Message ?></p>
                                     <small class="ms-auto"><?= $notif->CreatedAt?></small>
@@ -118,6 +118,10 @@ use assets\obj\Notification;
                         e.stopPropagation();
                         notificationDropdown.classList.toggle("active");
                         notificationDot.classList.add("d-none");
+                        fetch("https://api.mautresor.mu/v1/notification/readAll", {
+                            method: "POST",
+                            credential: "include"
+                        });
                     });
                     document.addEventListener("click", () => {
                         notificationDropdown.classList.remove("active");

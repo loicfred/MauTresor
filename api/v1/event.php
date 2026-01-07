@@ -1,19 +1,28 @@
 <?php
+require_once __DIR__ . "/../../config/auth.php";
 global $segments;
 header("Content-Type: application/json");
+header("Access-Control-Allow-Origin : *");
 
 require_once __DIR__ . "/../../config/api.php";
 
 require_once __DIR__ . "/../../assets/obj/Event.php";
 
 use assets\obj\Event;
+use assets\obj\Event_Participant;
 
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $segments = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
+$segments = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
+$id = $segments[2] ?? null;
 
-    isValid($segments);
-    $object = Event::getByID($segments[2]);
-    isFound($object);
 
-    echo json_encode($object);
+function getEventById($id) {
+    if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+        isFound($id);
+        isIDNum($id);
+        $object = Event::getByID($id);
+        isFound($object);
+        echo json_encode($object);
+    }
 }
+
+getEventById($id);

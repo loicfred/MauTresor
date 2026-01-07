@@ -1,23 +1,22 @@
 <?php
 include __DIR__ . '/../config/auth.php';
 
-
 require_once __DIR__ . "/../assets/obj/Place.php";
-require_once __DIR__ . "/../assets/obj/DBObject.php";
 use assets\obj\Place;
 
 $segments = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
 $place = Place::getByID($segments[1]);
+if (!$place) header("Location: /");
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head id="master-head">
-    <title>Site | MauTresor</title>
+    <title><?= $place->Name ?>  | MauTresor</title>
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="manifest" href="https://mautresor.mumanifest.json">
+    <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#822BD9">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -55,7 +54,7 @@ $place = Place::getByID($segments[1]);
 
 
         .map-box {
-            margin: -30px;
+            margin: -25px;
             display: flex;
             flex-direction: column;
         }
@@ -64,7 +63,7 @@ $place = Place::getByID($segments[1]);
             display: flex;
             flex-direction: column;
             background: url("https://assets.mautresor.mu/img/scroll_top.png");
-            background-repeat: repeat-y;
+            background-repeat: no-repeat;
             background-position: center top;
             background-size: 100% auto;
             padding: 16% 20% 0;
@@ -75,14 +74,14 @@ $place = Place::getByID($segments[1]);
             background: url("https://assets.mautresor.mu/img/scroll_body.png");
             background-repeat: repeat-y;
             background-position: center top;
-            background-size: contain;
+            background-size: 100% auto;
             padding: 7.5% 20% 0;
         }
         .map-bottom {
             display: flex;
             flex-direction: column;
             background: url("https://assets.mautresor.mu/img/scroll_bottom.png");
-            background-repeat: repeat-y;
+            background-repeat: no-repeat;
             background-position: center top;
             background-size: 100% 100%;
             padding: 10% 20% 10%;
@@ -114,7 +113,7 @@ require_once __DIR__ . '/../assets/fragments/header.php';
 
     <div class="map-box">
         <div class="map-top">
-            <h2 class="align-self-center"><?= $place->Name ?></h2>
+            <h2 class="align-self-center text-center"><?= $place->Name ?></h2>
         </div>
         <div class="map-body">
             <p><?= $place->Description ?></p>
@@ -140,7 +139,6 @@ require_once __DIR__ . '/../assets/fragments/header.php';
     carouselWrap.addEventListener('pointermove', e=>{
         if(!isDown) return;
         const dx = e.clientX - startX;
-        // small drag translate (visual)
         carousel.style.transition='none';
         carousel.style.transform = `translateX(calc(-${current*100}% + ${dx}px))`;
     });
@@ -155,6 +153,10 @@ require_once __DIR__ . '/../assets/fragments/header.php';
     });
     carouselWrap.addEventListener('pointerleave', ()=>{ if(isDown){ isDown=false; updateCarousel(); }});
 </script>
-
+<script
+        src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"
+        async
+        defer>
+</script>
 </body>
 </html>

@@ -10,7 +10,7 @@ include __DIR__ . '/../config/auth.php';
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="manifest" href="https://mautresor.mumanifest.json">
+    <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#822BD9">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -22,28 +22,6 @@ include __DIR__ . '/../config/auth.php';
     <style>
         html, body {
             overflow-x: hidden;
-        }
-
-        .carousel-wrap {
-            position:relative;overflow:hidden;border-radius:12px;
-            background:linear-gradient(180deg,#07172a,#041226);height:220px;
-            border: 2px solid black;
-            margin: 5px 5px 30px;
-        }
-        .carousel {
-            display:flex;transition:transform .28s ease;height:100%
-        }
-        .slide {
-            min-width:100%;box-sizing:border-box;display:flex;align-items:center;justify-content:center;flex-direction:column
-        }
-        .dots {
-            position:absolute;left:50%;transform:translateX(-50%);bottom:10px;display:flex;gap:6px
-        }
-        .dot {
-            width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.12)
-        }
-        .dot.active {
-            background: #3da8cf;box-shadow:0 0 6px rgba(6,182,212,0.14)
         }
 
 

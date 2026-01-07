@@ -1,14 +1,17 @@
 <?php
 include __DIR__ . '/../config/auth.php';
-checksForAdmin();
-
+checksForLogin();
 
 require_once __DIR__ . "/../assets/obj/Hint.php";
-require_once __DIR__ . "/../assets/obj/DBObject.php";
+require_once __DIR__ . "/../assets/obj/Event_Participant.php";
 use assets\obj\Hint;
+use assets\obj\Event_Participant;
 
 $segments = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
 $hint = Hint::getByID($segments[1]);
+
+$participant = Event_Participant::getByUserAndEvent($_SESSION['user_id'] ?? 0, $hint->EventID);
+if (!$participant) header("Location: /");
 ?>
 
 <!DOCTYPE html>
@@ -18,7 +21,7 @@ $hint = Hint::getByID($segments[1]);
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="manifest" href="https://mautresor.mumanifest.json">
+    <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#822BD9">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -32,29 +35,6 @@ $hint = Hint::getByID($segments[1]);
         html, body {
             overflow-x: hidden;
         }
-
-        .carousel-wrap {
-            position:relative;overflow:hidden;border-radius:12px;
-            background:linear-gradient(180deg,#07172a,#041226);height:220px;
-            border: 2px solid black;
-            margin: 5px 5px 30px;
-        }
-        .carousel {
-            display:flex;transition:transform .28s ease;height:100%
-        }
-        .slide {
-            min-width:100%;box-sizing:border-box;display:flex;align-items:center;justify-content:center;flex-direction:column
-        }
-        .dots {
-            position:absolute;left:50%;transform:translateX(-50%);bottom:10px;display:flex;gap:6px
-        }
-        .dot {
-            width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.12)
-        }
-        .dot.active {
-            background: #3da8cf;box-shadow:0 0 6px rgba(6,182,212,0.14)
-        }
-
 
         .map-box {
             margin: 10px -20px 0;
@@ -80,7 +60,6 @@ $hint = Hint::getByID($segments[1]);
         .map-bottom {
             display: flex;
             flex-direction: column;
-            background-size: 100% 100%;
             padding: 10% 20% 10%;
         }
         .map-box * {
@@ -93,7 +72,7 @@ $hint = Hint::getByID($segments[1]);
         }
         .exitBtn:hover {
             cursor: pointer;
-            scale: 1.01;
+            scale: 1.1;
         }
     </style>
 </head>
@@ -104,7 +83,7 @@ require_once __DIR__ . '/../assets/fragments/header.php';
 ?>
 
 <main style="position: relative">
-    <button class="exitBtn"></button>
+    <a href="/event/<?= $hint->EventID ?>" class="exitBtn"></a>
     <div class="map-box">
         <div class="map-top">
             <h5 class="align-self-center" style="text-align: center;"><?= $hint->Name ?></h5>
@@ -149,6 +128,19 @@ require_once __DIR__ . '/../assets/fragments/header.php';
         { fps: 10, qrbox: 250 }
     );
     html5QrcodeScanner.render(onScanSuccess);
+</script>
+<script>
+    function getLocation() {
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                return [position.coords.latitude, position.coords.longitude]
+            },
+            function() {
+                alert("Location access denied");
+            },
+            { enableHighAccuracy: true }
+        );
+    }
 </script>
 </body>
 </html>

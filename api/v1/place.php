@@ -1,6 +1,7 @@
 <?php
 global $segments;
 header("Content-Type: application/json");
+header("Access-Control-Allow-Origin : *");
 
 require_once __DIR__ . "/../../config/api.php";
 
@@ -8,12 +9,18 @@ require_once __DIR__ . "/../../assets/obj/Place.php";
 
 use assets\obj\Place;
 
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $segments = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
+$segments = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
+$id = $segments[2] ?? null;
 
-    isValid($segments);
-    $object = Place::getByID($segments[2]);
-    isFound($object);
-
-    echo json_encode($object);
+function getPlaceById($id) {
+    if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+        isFound($id);
+        isIDNum($id);
+        $object = Place::getByID($id);
+        isFound($object);
+        echo json_encode($object);
+    }
 }
+
+
+getPlaceById($id);
