@@ -1,8 +1,8 @@
 <?php
-require __DIR__ . "/../config/auth.php";
+require __DIR__ . "/../../config/auth.php";
 header("Content-Type: application/json");
 
-require __DIR__ . "/../assets/obj/Notification.php";
+require __DIR__ . "/../../config/obj/Notification.php";
 
 use assets\obj\Notification;
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isLoggedIn()) {

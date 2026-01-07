@@ -1,9 +1,9 @@
 <?php
 include __DIR__ . '/../config/auth.php';
 
-require_once __DIR__ . "/../assets/obj/Event.php";
-require_once __DIR__ . "/../assets/obj/Event_Participant.php";
-require_once __DIR__ . "/../assets/obj/Hint_Found.php";
+require_once __DIR__ . "/../config/obj/Event.php";
+require_once __DIR__ . "/../config/obj/Event_Participant.php";
+require_once __DIR__ . "/../config/obj/Hint_Found.php";
 use assets\obj\Event;
 use assets\obj\Event_Participant;
 use assets\obj\Hint_Found;
@@ -22,15 +22,15 @@ $participant = Event_Participant::getByUserAndEvent($_SESSION['user_id'] ?? 0, $
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#822BD9">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="icon" href="https://assets.mautresor.mu/img/logo_transparent.png">
+    <link rel="icon" href="/assets/img/logo_transparent.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="https://assets.mautresor.mu/css/main.css">
+    <link rel="stylesheet" href="/assets/css/main.css">
     <style>
         html, body {
             overflow-x: hidden;
@@ -43,7 +43,7 @@ $participant = Event_Participant::getByUserAndEvent($_SESSION['user_id'] ?? 0, $
         }
 
         .carousel-wrap {
-            background: url("https://assets.mautresor.mu/img/pancarte.png");
+            background: url("/assets/img/pancarte.png");
             background-repeat: no-repeat;
             background-position: center top;
             background-size: cover;
@@ -91,7 +91,7 @@ $participant = Event_Participant::getByUserAndEvent($_SESSION['user_id'] ?? 0, $
             z-index: 2;
             display: flex;
             flex-direction: column;
-            background: url("https://assets.mautresor.mu/img/scroll_top.png");
+            background: url("/assets/img/scroll_top.png");
             background-repeat: no-repeat;
             background-position: center top;
             background-size: 100% auto;
@@ -101,7 +101,7 @@ $participant = Event_Participant::getByUserAndEvent($_SESSION['user_id'] ?? 0, $
             z-index: 2;
             display: flex;
             flex-direction: column;
-            background: url("https://assets.mautresor.mu/img/scroll_body.png");
+            background: url("/assets/img/scroll_body.png");
             background-repeat: repeat-y;
             background-position: center top;
             background-size: 100% auto;
@@ -111,7 +111,7 @@ $participant = Event_Participant::getByUserAndEvent($_SESSION['user_id'] ?? 0, $
             z-index: 2;
             display: flex;
             flex-direction: column;
-            background: url("https://assets.mautresor.mu/img/scroll_body.png");
+            background: url("/assets/img/scroll_body.png");
             background-repeat: repeat-y;
             background-position: center top;
             background-size: 100% auto;
@@ -122,7 +122,7 @@ $participant = Event_Participant::getByUserAndEvent($_SESSION['user_id'] ?? 0, $
             display: flex;
             flex-direction: column;
             align-items: center;
-            background: url("https://assets.mautresor.mu/img/scroll_bottom.png");
+            background: url("/assets/img/scroll_bottom.png");
             background-repeat: no-repeat;
             background-position: center top;
             background-size: 100% 100%;
@@ -142,7 +142,7 @@ $participant = Event_Participant::getByUserAndEvent($_SESSION['user_id'] ?? 0, $
 <body>
 
 <?php
-require_once __DIR__ . '/../assets/fragments/header.php';
+require_once __DIR__ . '/assets/fragments/header.php';
 ?>
 
 <main>
@@ -151,7 +151,7 @@ require_once __DIR__ . '/../assets/fragments/header.php';
             <?php
             foreach ($event->getImages() as $img):
                 ?>
-                <div draggable="false" class="slide" style="background-image: url('https://api.mautresor.mu/v1/img/event/<?= $img->ID ?>')"></div>
+                <div draggable="false" class="slide" style="background-image: url('/api/v1/img/event/<?= $img->ID ?>')"></div>
             <?php
             endforeach;
             ?>
@@ -240,7 +240,7 @@ require_once __DIR__ . '/../assets/fragments/header.php';
     </div>
 </main>
 
-<script src="https://assets.mautresor.mu/js/app.js"></script>
+<script src="/assets/js/app.js"></script>
 <script>
     const carousel = document.getElementById('carousel');
     const carouselWrap = document.getElementById('carouselWrap');

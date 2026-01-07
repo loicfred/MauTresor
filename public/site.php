@@ -1,7 +1,7 @@
 <?php
 include __DIR__ . '/../config/auth.php';
 
-require_once __DIR__ . "/../assets/obj/Place.php";
+require_once __DIR__ . "/../config/obj/Place.php";
 use assets\obj\Place;
 
 $segments = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
@@ -16,15 +16,15 @@ if (!$place) header("Location: /");
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#822BD9">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="icon" href="https://assets.mautresor.mu/img/logo_transparent.png">
+    <link rel="icon" href="/assets/img/logo_transparent.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="https://assets.mautresor.mu/css/main.css">
+    <link rel="stylesheet" href="/assets/css/main.css">
     <style>
         html, body {
             overflow-x: hidden;
@@ -32,7 +32,7 @@ if (!$place) header("Location: /");
 
         .carousel-wrap {
             position:relative;overflow:hidden;border-radius:12px;
-            background:linear-gradient(180deg,#07172a,#041226);height:220px;
+            background:linear-gradient(180deg,#07172a,#041226);height:250px;
             border: 2px solid black;
             margin: 5px 5px 30px;
         }
@@ -62,7 +62,7 @@ if (!$place) header("Location: /");
         .map-top {
             display: flex;
             flex-direction: column;
-            background: url("https://assets.mautresor.mu/img/scroll_top.png");
+            background: url("/assets/img/scroll_top.png");
             background-repeat: no-repeat;
             background-position: center top;
             background-size: 100% auto;
@@ -71,7 +71,7 @@ if (!$place) header("Location: /");
         .map-body {
             display: flex;
             flex-direction: column;
-            background: url("https://assets.mautresor.mu/img/scroll_body.png");
+            background: url("/assets/img/scroll_body.png");
             background-repeat: repeat-y;
             background-position: center top;
             background-size: 100% auto;
@@ -80,7 +80,7 @@ if (!$place) header("Location: /");
         .map-bottom {
             display: flex;
             flex-direction: column;
-            background: url("https://assets.mautresor.mu/img/scroll_bottom.png");
+            background: url("/assets/img/scroll_bottom.png");
             background-repeat: no-repeat;
             background-position: center top;
             background-size: 100% 100%;
@@ -94,7 +94,7 @@ if (!$place) header("Location: /");
 <body>
 
 <?php
-require_once __DIR__ . '/../assets/fragments/header.php';
+require_once __DIR__ . '/assets/fragments/header.php';
 ?>
 
 <main>
@@ -103,7 +103,7 @@ require_once __DIR__ . '/../assets/fragments/header.php';
             <?php
             foreach ($place->getImages() as $img):
             ?>
-                <img draggable="false" class="slide" src="https://api.mautresor.mu/v1/img/place/<?= $img->ID ?>" alt="img.png">
+                <div draggable="false" class="slide" style="background: url('/api/v1/img/place/<?= $img->ID ?>'); background-size: cover; background-repeat: no-repeat; background-position: center;"></div>
             <?php
             endforeach;
             ?>
@@ -124,7 +124,7 @@ require_once __DIR__ . '/../assets/fragments/header.php';
     </div>
 </main>
 
-<script src="https://assets.mautresor.mu/js/app.js"></script>
+<script src="/assets/js/app.js"></script>
 <script>
     const carousel = document.getElementById('carousel');
     const carouselWrap = document.getElementById('carouselWrap');

@@ -9,8 +9,8 @@ session_set_cookie_params([
 ]);
 session_name("MAUTRESOR_MU");
 session_start();
-require_once __DIR__ . '/../assets/obj/RememberMe.php';
-require_once __DIR__ . '/../assets/obj/User.php';
+require_once __DIR__ . '/obj/RememberMe.php';
+require_once __DIR__ . '/obj/User.php';
 
 use assets\obj\RememberMe;
 use assets\obj\User;
@@ -30,13 +30,13 @@ if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_me'])) {
 
 function checksForLogin() {
     if (!isLoggedIn()) {
-        header('Location: https://mautresor.mu/accounts/login');
+        header('Location: /accounts/login');
         exit;
     }
 }
 function checksForAdmin() {
     if (!isAdmin()) {
-        header('Location: https://mautresor.mu');
+        header('Location: /');
         exit;
     }
 }

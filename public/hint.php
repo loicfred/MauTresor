@@ -2,8 +2,8 @@
 include __DIR__ . '/../config/auth.php';
 checksForLogin();
 
-require_once __DIR__ . "/../assets/obj/Hint.php";
-require_once __DIR__ . "/../assets/obj/Event_Participant.php";
+require_once __DIR__ . "/../config/obj/Hint.php";
+require_once __DIR__ . "/../config/obj/Event_Participant.php";
 use assets\obj\Hint;
 use assets\obj\Event_Participant;
 
@@ -21,15 +21,15 @@ if (!$participant) header("Location: /");
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#822BD9">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="icon" href="https://assets.mautresor.mu/img/logo_transparent.png">
+    <link rel="icon" href="/assets/img/logo_transparent.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="https://assets.mautresor.mu/css/main.css">
+    <link rel="stylesheet" href="/assets/css/main.css">
     <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
         html, body {
@@ -41,7 +41,7 @@ if (!$participant) header("Location: /");
             height: 100vh;
             display: flex;
             flex-direction: column;
-            background: url("https://assets.mautresor.mu/img/scroll_treasure.png");
+            background: url("/assets/img/scroll_treasure.png");
             background-repeat: no-repeat;
             background-position: center top;
             background-size: 100% auto;
@@ -68,7 +68,7 @@ if (!$participant) header("Location: /");
 
 
         .exitBtn {
-            position: absolute; background-color: #00000000; border: none; right: 15px; top: 5px; width: 10%; height: 5%; background-image: url('https://assets.mautresor.mu/img/X.png'); background-position: center; background-size: contain; background-repeat: no-repeat;
+            position: absolute; background-color: #00000000; border: none; right: 15px; top: 5px; width: 10%; height: 5%; background-image: url('/assets/img/X.png'); background-position: center; background-size: contain; background-repeat: no-repeat;
         }
         .exitBtn:hover {
             cursor: pointer;
@@ -79,7 +79,7 @@ if (!$participant) header("Location: /");
 <body>
 
 <?php
-require_once __DIR__ . '/../assets/fragments/header.php';
+require_once __DIR__ . '/assets/fragments/header.php';
 ?>
 
 <main style="position: relative">
@@ -110,7 +110,7 @@ require_once __DIR__ . '/../assets/fragments/header.php';
     </div>
 </main>
 
-<script src="https://assets.mautresor.mu/js/app.js"></script>
+<script src="/assets/js/app.js"></script>
 <script>
     function openScanner() {
         const modal = new bootstrap.Modal(document.getElementById("scanModal"));

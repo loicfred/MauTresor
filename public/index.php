@@ -2,8 +2,8 @@
 
 include __DIR__ . '/../config/auth.php';
 
-require_once __DIR__ . "/../assets/obj/Place.php";
-require_once __DIR__ . "/../assets/obj/Event.php";
+require_once __DIR__ . "/../config/obj/Place.php";
+require_once __DIR__ . "/../config/obj/Event.php";
 
 use assets\obj\Place;
 use assets\obj\Event;
@@ -17,15 +17,15 @@ use assets\obj\Event;
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#822BD9">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="icon" href="https://assets.mautresor.mu/img/logo_transparent.png">
+    <link rel="icon" href="/assets/img/logo_transparent.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="https://assets.mautresor.mu/css/main.css">
+    <link rel="stylesheet" href="/assets/css/main.css">
 
     <style>
         .request-card {
@@ -48,7 +48,7 @@ use assets\obj\Event;
 <body>
 
 <?php
-require_once __DIR__ . '/../assets/fragments/header.php';
+require_once __DIR__ . '/assets/fragments/header.php';
 ?>
 
 <main class="page-wrap" id="pageWrap">
@@ -60,7 +60,7 @@ require_once __DIR__ . '/../assets/fragments/header.php';
                 <div class="row justify-content-center">
                     <div class="col-md-8 col-lg-6 text-center text-white">
 
-                        <img src="https://assets.mautresor.mu/img/logo_transparent.png" height="250" class="mb-4" draggable="false" alt="Logo">
+                        <img src="/assets/img/logo_transparent.png" height="250" class="mb-4" draggable="false" alt="Logo">
 
                         <p class="lead mb-4" style="text-shadow: 0 0 5px #000000">
                             Discover the island of Mauritius with a twist of fun!
@@ -83,7 +83,7 @@ require_once __DIR__ . '/../assets/fragments/header.php';
                     if (count($lplaces) == 0) echo "<h4 class='col-md-12 p-3 text-center'>No local places yet.</h4>";
                     else foreach ($lplaces as $lplace): ?>
                         <a href="/site/<?= $lplace->ID ?>" class="col-md-6">
-                            <div class="request-card p-3" style="background-image: url('https://api.mautresor.mu/v1/img/place/<?= $lplace->ThumbnailID ?>')">
+                            <div class="request-card p-3" style="background-image: url('/api/v1/img/place/<?= $lplace->ThumbnailID ?>')">
                                 <h5 style="text-shadow: 0 0 10px #000000"><?= $lplace->Name ?></h5>
                             </div>
                         </a>
@@ -100,7 +100,7 @@ require_once __DIR__ . '/../assets/fragments/header.php';
                     if (count($wplaces) == 0) echo "<h4 class='col-md-12 p-3 text-center'>No world places yet.</h4>";
                     else foreach ($wplaces as $wplace): ?>
                         <a href="/site/<?= $wplace->ID ?>" class="col-md-6">
-                            <div class="request-card p-3" style="background-image: url('https://api.mautresor.mu/v1/img/place/<?= $wplace->ThumbnailID ?>')">
+                            <div class="request-card p-3" style="background-image: url('/api/v1/img/place/<?= $wplace->ThumbnailID ?>')">
                                 <h5 style="text-shadow: 0 0 10px #000000"><?= $wplace->Name ?></h5>
                             </div>
                         </a>
@@ -117,7 +117,7 @@ require_once __DIR__ . '/../assets/fragments/header.php';
                     if (count($events) == 0) echo "<h4 class='col-md-12 p-3 text-center'>No upcoming events.</h4>";
                     else foreach ($events as $event): ?>
                         <a href="/event/<?= $event->ID ?>" class="col-md-6">
-                            <div class="request-card p-3" style="background-image: url('https://api.mautresor.mu/v1/img/event/<?= $event->ThumbnailID ?>')">
+                            <div class="request-card p-3" style="background-image: url('/api/v1/img/event/<?= $event->ThumbnailID ?>')">
                                 <h5 style="text-shadow: 0 0 10px #000000"><?= $event->Name ?></h5>
                             </div>
                         </a>
@@ -129,11 +129,11 @@ require_once __DIR__ . '/../assets/fragments/header.php';
 
 </main>
 
-<script src="https://assets.mautresor.mu/js/app.js"></script>
-<script src="https://assets.mautresor.mu/js/pagecarousel.js"></script>
+<script src="/assets/js/app.js"></script>
+<script src="/assets/js/pagecarousel.js"></script>
 
 <?php
-require_once __DIR__ . '/../assets/fragments/bottom-nav.html';
+require_once __DIR__ . '/assets/fragments/bottom-nav.html';
 ?>
 
 </body>
