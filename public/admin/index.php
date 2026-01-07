@@ -1,13 +1,10 @@
 <?php
-
-require_once __DIR__ . "/../../config/obj/DBObject.php";
-use assets\obj\DBObject;
-
 include __DIR__ . '/../../config/auth.php';
-include __DIR__ . '/../../config/database.php';
-checksForAdmin();
+//checksForAdmin();
 
 require_once __DIR__ . "/../../config/obj/User.php";
+require_once __DIR__ . "/../../config/obj/DBObject.php";
+use assets\obj\DBObject;
 ?>
 
 <!DOCTYPE html>
