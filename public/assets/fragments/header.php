@@ -44,8 +44,8 @@ use assets\obj\Notification;
             </script>
 
             <?= isAdmin() ? "<hr>" : '' ?>
-            <?= isAdmin() ? "<button onclick='goToAdmin1()'>Admin - Review Donations</button>" : '' ?>
-            <?= isAdmin() ? "<button onclick='goToAdmin2()'>Admin - Review Requests</button>" : '' ?>
+            <?= isAdmin() ? "<button onclick='goToAdmin1()'>Admin - Notifications</button>" : '' ?>
+            <?= isAdmin() ? "<button onclick='goToAdmin2()'>Admin - Events</button>" : '' ?>
             <?= isAdmin() ? "<button onclick='goToAdmin3()'>Admin - Database</button>" : '' ?>
             <hr>
             <a href="/api/v1/docs/">API Documentation</a>

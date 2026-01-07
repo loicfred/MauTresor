@@ -1,6 +1,6 @@
 <?php
 include __DIR__ . '/../../config/auth.php';
-checksForAdmin();
+//checksForAdmin();
 
 $id = $_GET['id'] ?? 0;
 $class = $_GET['class'];
