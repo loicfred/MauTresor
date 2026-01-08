@@ -14,14 +14,22 @@ use assets\obj\User;
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>Sign Up</title>
-    <link rel="manifest" href="manifest.json">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Sign Up</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#822BD9">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="icon"  href="/assets/img/logo_transparent.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body class="bg-light d-flex align-items-center" style="height: 100vh;">
 <div class="container text-center">
     <div class="row justify-content-center">
-        <div class="col-md-5">
+    <div class="col-md-5">
             <div class="card shadow p-4">
                 <h3 class="mb-3">Create an Account</h3>
                 <?php
@@ -56,16 +64,16 @@ use assets\obj\User;
                             $email_verification->ExpiryDate = date('Y-m-d H:i:s', strtotime('+10 minutes'));
 
                             if ($email_verification->Write()->ID !== 0) {
-                                $verifyLink = "/accounts/verification?token=$email_verification->Token";
+                                $verifyLink = "https://mautresor.mu/accounts/verification?token=$email_verification->Token";
                                 sendVerificationEmail($user->Email, $verifyLink);
-                                header("Location: login?checkEmail");
+                                header("Location: /accounts/login?checkEmail");
                             }
                         }
                     }
                 }
                 ?>
 
-                <form method="post" action="/signup">
+                <form method="post" action="/accounts/signup">
                     <div class="mb-3">
                         <input type="email" name="Email" maxlength="64" class="form-control" placeholder="Email" required>
                     </div>
@@ -97,7 +105,7 @@ use assets\obj\User;
 
                     <button type="submit" class="btn btn-danger w-100">Sign Up</button>
                 </form>
-                <p class="mt-3">Already have an account? <a href="/login">Log in</a></p>
+                <p class="mt-3">Already have an account? <a href="/accounts/login">Log in</a></p>
             </div>
         </div>
     </div>
