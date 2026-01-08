@@ -75,7 +75,7 @@ use assets\obj\User;
                     </div>
                     <button type="submit" class="btn btn-danger w-100">Log In</button>
                 </form>
-                <p class="mt-3">Don’t have an account? <a href="/signup">Sign up</a></p>
+                <p class="mt-3">Don’t have an account? <a href="/accounts/signup">Sign up</a></p>
                 <a href="/oauth2/authorization/google">
                     Sign in with Google
                 </a>
