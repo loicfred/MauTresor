@@ -17,7 +17,7 @@ class User extends DBObject {
     public bool $Enabled = false;
     public bool $Verified = false;
     public ?string $Image = null;
-    public ?string $MimeType;
+    public ?string $MimeType = null;
 
     public static function getByEmail(string $email) {
         return self::getWhere("Email = ?", $email);
