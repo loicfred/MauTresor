@@ -7,7 +7,6 @@ require_once __DIR__ . "/../config/obj/Event.php";
 
 use assets\obj\Place;
 use assets\obj\Event;
-
 ?>
 
 <!DOCTYPE html>

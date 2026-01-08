@@ -1,6 +1,6 @@
 <?php
 include __DIR__ . '/../../config/auth.php';
-//checksForAdmin();
+checksForAdmin();
 
 require_once __DIR__ . "/../../config/obj/User.php";
 require_once __DIR__ . "/../../config/obj/DBObject.php";

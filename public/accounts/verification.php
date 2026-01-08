@@ -40,7 +40,7 @@ use assets\obj\User;
                     }
                     else if ($emailVerif->isExpired()) {
                         echo "<h3 class='mb-3'>This verification code has expired. Try again.</h3>";
-                        echo "<a href='/signup' class='btn btn-secondary mt-3'>Try Again</a>";
+                        echo "<a href='/accounts/signup' class='btn btn-secondary mt-3'>Try Again</a>";
                         $emailVerif->Delete();
                     } else {
                         $user = User::getByID($emailVerif->UserID);
@@ -49,9 +49,10 @@ use assets\obj\User;
                         $user->Update();
                         $emailVerif->Delete();
                         echo "<h3 class='mb-3'>Success !</h3>";
-                        echo "<a href='/login?successVerif' class='btn btn-success mt-3'>Go to Login</a>";
+                        echo "<a href='/accounts/login?successVerif' class='btn btn-success mt-3'>Go to Login</a>";
                         $notif = new Notification();
                         $notif->UserID = $user->ID;
+                        $notif->isRead = false;
                         $notif->CreatedAt = date('Y-m-d H:i:s');
                         $notif->Title = "Account Verification";
                         $notif->Message = "Your account has been verified successfully.";
