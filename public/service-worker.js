@@ -1,38 +1,17 @@
-const CACHE_NAME = 'mautresor-v1';
-const LOCAL_ASSETS = [
-    '/',
-    'manifest.json'
-];
+const CACHE_NAME = 'mautresor-assets-v1';
 
 self.addEventListener('install', event => {
-    console.log('[SW] Installing...');
-    event.waitUntil(
-        (async () => {
-            const cache = await caches.open(CACHE_NAME);
-
-            // Cache local assets first
-            await Promise.all(
-                LOCAL_ASSETS.map(async url => {
-                    try {
-                        const res = await fetch(url);
-                        if (res.ok) await cache.put(url, res.clone());
-                        else console.error('[SW] Failed local fetch:', url, res.status);
-                    } catch (e) {
-                        console.error('[SW] Failed local fetch:', url, e);
-                    }
-                })
-            );
-        })()
-    );
+    console.log('[SW] Installing');
     self.skipWaiting();
 });
 
 self.addEventListener('activate', event => {
-    console.log('[SW] Activating...');
+    console.log('[SW] Activating');
     event.waitUntil(
         caches.keys().then(keys =>
             Promise.all(
-                keys.filter(key => key !== CACHE_NAME)
+                keys
+                    .filter(key => key !== CACHE_NAME)
                     .map(key => caches.delete(key))
             )
         )
@@ -40,16 +19,27 @@ self.addEventListener('activate', event => {
     self.clients.claim();
 });
 
-// Fetch handler example
 self.addEventListener('fetch', event => {
-    event.respondWith(
-        caches.match(event.request).then(cached => {
-            if (cached) return cached;
-            return fetch(event.request)
-                .catch(err => {
-                    console.error('[SW] Fetch failed:', event.request.url, err);
-                    return new Response('Offline', { status: 503 });
-                });
-        })
-    );
+    const req = event.request;
+
+    if (req.method !== 'GET') return;
+
+    const url = new URL(req.url);
+
+    if (url.origin === self.location.origin && url.pathname.startsWith('/assets/')) {
+        event.respondWith(
+            caches.open(CACHE_NAME).then(async cache => {
+                const cached = await cache.match(req);
+                if (cached) return cached;
+                const response = await fetch(req);
+                if (response.ok && response.type === 'basic') {
+                    cache.put(req, response.clone());
+                }
+                return response;
+            }).catch(err => {
+                console.error('[SW] Asset fetch failed:', url.pathname, err);
+                return new Response('', { status: 504 });
+            })
+        );
+    }
 });
