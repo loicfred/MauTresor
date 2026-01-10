@@ -15,7 +15,6 @@ if ($emailVerif == null) {
     header("Location: /accounts/resetpassword?expired");
 }
 ?>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -33,7 +32,7 @@ if ($emailVerif == null) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body class="bg-light d-flex align-items-center" style="height: 100vh;">
-<div class="container text-center">
+<main class="container text-center">
     <div class="row justify-content-center">
         <div class="col-md-4">
             <div class="card shadow p-4">
@@ -75,6 +74,8 @@ if ($emailVerif == null) {
             </div>
         </div>
     </div>
-</div>
+</main>
+<script src="/assets/js/app.js"></script>
+
 </body>
 </html>

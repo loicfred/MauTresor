@@ -217,10 +217,5 @@ require_once __DIR__ . '/assets/fragments/header.php';
     );
     html5QrcodeScanner.render(onScanSuccess);
 </script>
-<script>
-    function getLocation() {
-
-    }
-</script>
 </body>
 </html>

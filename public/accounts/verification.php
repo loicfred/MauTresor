@@ -10,7 +10,6 @@ use assets\obj\Notification;
 use assets\obj\User;
 
 ?>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -28,7 +27,7 @@ use assets\obj\User;
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body class="bg-light d-flex align-items-center" style="height: 100vh;">
-<div class="container text-center">
+<main class="container text-center">
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card shadow p-4">
@@ -63,6 +62,8 @@ use assets\obj\User;
             </div>
         </div>
     </div>
-</div>
+</main>
+<script src="/assets/js/app.js"></script>
+
 </body>
 </html>

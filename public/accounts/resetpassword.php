@@ -23,7 +23,7 @@ use assets\obj\Email_Verification;
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body class="bg-light d-flex align-items-center" style="height: 100vh;">
-<div class="container text-center">
+<main class="container text-center">
     <div class="row justify-content-center">
         <div class="col-md-4">
             <div class="card shadow p-4">
@@ -109,6 +109,8 @@ use assets\obj\Email_Verification;
             </div>
         </div>
     </div>
-</div>
+</main>
+<script src="/assets/js/app.js"></script>
+
 </body>
 </html>
