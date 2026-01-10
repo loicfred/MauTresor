@@ -11,7 +11,7 @@ class User extends DBObject {
     public string $Role;
     public string $Gender;
     public ?string $AccountProvider = null;
-    public string $DateOfBirth;
+    public ?string $DateOfBirth = null;
     public string $CreatedAt;
     public string $UpdatedAt;
     public bool $Enabled = false;
@@ -24,7 +24,7 @@ class User extends DBObject {
     }
     public static function getByAuthentication(string $email, string $password) {
         $user = self::getByEmail($email);
-        if($user == null) return null;
+        if (!$user) return null;
         if (password_verify($password, $user->Password)) return $user;
         return null;
     }

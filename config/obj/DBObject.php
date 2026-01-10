@@ -107,7 +107,11 @@ class DBObject
         foreach ($properties as $prop) {
             $fieldNames[]  = $prop->getName();
             $fieldNamesQ[]  = '?';
-            $fieldValues[] = $prop->getValue($this) == '' ? null : $prop->getValue($this);
+            if (str_contains($prop->getType(),"bool")) {
+                $fieldValues[] = ($prop->getValue($this) == 1 ? 1 : 0);
+            } else {
+                $fieldValues[] = $prop->getValue($this) == '' ? null : $prop->getValue($this);
+            }
         }
 
         $stmt = $pdo->prepare("INSERT INTO " . $table . " (" . implode(', ', $fieldNames) . ") VALUES (" . implode(', ', $fieldNamesQ) . ")");
@@ -131,7 +135,11 @@ class DBObject
         foreach ($properties as $prop) {
             $insertFieldNames[]  = $prop->getName();
             $insertFieldNamesQ[]  = '?';
-            $fieldValues[] = $prop->getValue($this) == '' ? null : $prop->getValue($this);
+            if (str_contains($prop->getType(),"bool")) {
+                $fieldValues[] = ($prop->getValue($this) == 1 ? 1 : 0);
+            } else {
+                $fieldValues[] = $prop->getValue($this) == '' ? null : $prop->getValue($this);
+            }
         }
 
         foreach ($properties as $prop) {

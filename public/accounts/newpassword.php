@@ -8,7 +8,7 @@ use assets\obj\Notification;
 use assets\obj\Email_Verification;
 
 $emailVerif = Email_Verification::getByToken($_GET["token"]);
-if ($emailVerif == null) {
+if (!$emailVerif || $emailVerif->Type === "PASSWORD_RESET") {
     header("Location: /accounts/resetpassword?expired");
 } else if ($emailVerif->isExpired()) {
     $emailVerif->Delete();
@@ -48,7 +48,7 @@ if ($emailVerif == null) {
                         echo "<div class='alert alert-danger'>Password should be of minimum 8 of length and contain at least 1 digit, symbol, uppercase & lowercase character.</div>";
                     } else {
                         $user = User::getByID($emailVerif->UserID);
-                        $user->Password = password_hash($_POST["Password"], PASSWORD_DEFAULT);;
+                        $user->Password = password_hash($_POST["Password1"], PASSWORD_DEFAULT);;
                         $user->Update();
                         $emailVerif->Delete();
                         $notif = new Notification();
@@ -62,7 +62,7 @@ if ($emailVerif == null) {
                     }
                 }
                 ?>
-                <form action="/accounts/newpassword?token=<?= $_GET('token') ?>" method="post">
+                <form action="/accounts/newpassword?token=<?= $_GET['token'] ?>" method="post">
                     <div class="mb-3">
                         <input type="password" name="Password1" class="form-control" placeholder="New Password" required>
                     </div>

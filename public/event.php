@@ -61,7 +61,7 @@ $participant = Event_Participant::getByUserAndEvent($_SESSION['user_id'] ?? 0, $
             display:flex;transition:transform .28s ease;
         }
         .slide {
-            height: 225px;
+            height: 350px;
             border-radius: 20px;
             border: 1px solid black;
             min-width:100%;box-sizing:border-box;display:flex;align-items:center;
@@ -123,9 +123,7 @@ $participant = Event_Participant::getByUserAndEvent($_SESSION['user_id'] ?? 0, $
             display: flex;
             flex-direction: column;
             align-items: center;
-            background: url("/assets/img/scroll_bottom.png");
-            background-repeat: no-repeat;
-            background-position: center top;
+            background: url("/assets/img/scroll_bottom.png") no-repeat center top;
             background-size: 100% 100%;
             padding: 0 20% 12%;
         }
@@ -139,6 +137,11 @@ $participant = Event_Participant::getByUserAndEvent($_SESSION['user_id'] ?? 0, $
             color: black;
         }
 
+        @media (max-width: 900px) {
+            .slide {
+                height: 225px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -147,7 +150,7 @@ $participant = Event_Participant::getByUserAndEvent($_SESSION['user_id'] ?? 0, $
 require_once __DIR__ . '/assets/fragments/header.php';
 ?>
 
-<main>
+<main class="page">
     <div class="carousel-wrap" id="carouselWrap">
         <div class="carousel" id="carousel">
             <?php

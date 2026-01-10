@@ -10,6 +10,27 @@ session_set_cookie_params([
 session_name("MAUTRESOR_MU");
 session_start();
 
+set_error_handler(function($errno, $errstr, $errfile, $errline) {
+    error_log("PHP ERROR [$errno] $errstr in $errfile:$errline");
+    header('Location: error.php?msg=' . urlencode($errstr));
+    exit;
+});
+
+set_exception_handler(function($exception) {
+    error_log("UNCAUGHT EXCEPTION: " . $exception->getMessage());
+    header('Location: error.php?msg=' . urlencode($exception->getMessage()));
+    exit;
+});
+
+register_shutdown_function(function() {
+    $error = error_get_last();
+    if ($error !== null && in_array($error['type'], [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE])) {
+        error_log("FATAL ERROR: {$error['message']} in {$error['file']}:{$error['line']}");
+        header('Location: error.php?msg=' . urlencode($error['message']));
+        exit;
+    }
+});
+
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $requestedFile = __DIR__ . '/../public' . $uri;
@@ -25,6 +46,9 @@ switch ($uri) {
         return true;
     case '/admin':
         include __DIR__ . '/../public/admin/index.php';
+        return true;
+    case '/api/v1/docs/':
+        include __DIR__ . '/../public/api/v1/docs/index.html';
         return true;
     default:
 

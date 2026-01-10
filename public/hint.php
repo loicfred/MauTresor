@@ -47,21 +47,19 @@ if (!$participant) header("Location: /");
             height: 100vh;
             display: flex;
             flex-direction: column;
-            background: url("/assets/img/scroll_treasure.png");
-            background-repeat: no-repeat;
-            background-position: center top;
+            background: url("/assets/img/scroll_treasure.png") no-repeat center top;
             background-size: 100% auto;
         }
 
         .map-top {
             display: flex;
             flex-direction: column;
-            padding: 15% 22% 0;
+            padding: 17.25% 22% 0;
         }
         .map-body {
             display: flex;
             flex-direction: column;
-            padding: 5% 22% 0;
+            padding: 8% 22% 0;
         }
         .map-bottom {
             display: flex;
@@ -72,6 +70,9 @@ if (!$participant) header("Location: /");
             color: black;
         }
 
+        .map-top h5 {
+            font-size: 24px;
+        }
 
         .exitBtn {
             position: absolute; background-color: #00000000; border: none; right: 15px; top: 5px; width: 10%; height: 5%; background-image: url('/assets/img/X.png'); background-position: center; background-size: contain; background-repeat: no-repeat;
@@ -79,6 +80,15 @@ if (!$participant) header("Location: /");
         .exitBtn:hover {
             cursor: pointer;
             scale: 1.1;
+        }
+
+        @media (max-width: 900px) {
+            .map-top h5 {
+                font-size: 20px;
+            }
+            .map-body {
+                padding: 5% 22% 0;
+            }
         }
     </style>
 </head>
@@ -88,7 +98,7 @@ if (!$participant) header("Location: /");
 require_once __DIR__ . '/assets/fragments/header.php';
 ?>
 
-<main style="position: relative">
+<main class="page position-relative">
     <a href="/event/<?= $hint->EventID ?>" class="exitBtn"></a>
     <div class="map-box">
         <div class="map-top">

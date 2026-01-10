@@ -52,7 +52,7 @@ use assets\obj\RememberMe;
                 }
 
                 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-                    $user = User::getByAuthentication($_POST["Email"], $_POST["Password"]);
+                    $user = User::getByAuthentication(trim($_POST["Email"]), trim($_POST["Password"]));
                     if (!$user) {
                         echo "<div class='alert alert-danger'>Invalid email or password.</div>";
                     }

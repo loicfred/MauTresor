@@ -28,7 +28,6 @@ use assets\obj\Email_Verification;
         <div class="col-md-4">
             <div class="card shadow p-4">
                 <h3 class="mb-3">Reset Password</h3>
-
                 <?php
                 try {
                     if (isset($_GET["expired"])) {

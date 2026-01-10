@@ -68,11 +68,11 @@ use assets\obj\Notification;
 
         <?php if (isLoggedIn()):
             $notifs = Notification::getOfUser($_SESSION['user_id']);?>
-            <div class="nav-item notification">
+            <div class="nav-item notification position-relative">
                 <svg viewBox="0 0 24 24" class="nav-icon" id="notificationBtn" style="position: relative;">
                     <path fill="currentColor" d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"/>
                     <?php if (in_array(false, array_column($notifs, 'isRead'), true)): ?>
-                        <div id="notification-dot" style="position: absolute; top: 10px; right: 10px; width: 16px; height: 16px; background: red; border-radius: 50%;">
+                        <div id="notification-dot" style="position: absolute; top: -5px; right: -5px; width: 16px; height: 16px; background: red; border-radius: 50%;">
                             <div style="position: absolute; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: bold;">
                                 !
                             </div>
@@ -118,7 +118,7 @@ use assets\obj\Notification;
                         e.stopPropagation();
                         notificationDropdown.classList.toggle("active");
                         notificationDot.classList.add("d-none");
-                        fetch("/api/v1/readnotif", {method: "POST"});
+                        fetch("/api/readnotif", {method: "POST"});
                     });
                     document.addEventListener("click", () => {
                         notificationDropdown.classList.remove("active");

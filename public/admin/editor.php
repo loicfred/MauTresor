@@ -1,6 +1,6 @@
 <?php
 include __DIR__ . '/../../config/auth.php';
-//checksForAdmin();
+checksForAdmin();
 
 $id = $_GET['id'] ?? 0;
 $class = $_GET['class'];
@@ -85,6 +85,7 @@ require_once __DIR__ . '/../assets/fragments/header.php';
                         if (!isset($_POST[$prop->getName()]) && $type !== 'bool') continue;
                         $newVal = match($type) {
                             'bool' => (isset($_POST[$prop->getName()]) && $_POST[$prop->getName()] == 'true' ? 1 : 0),
+                            'string' => trim($_POST[$prop->getName()]),
                             default => $_POST[$prop->getName()]
                         };
                         $prop->setAccessible(true);

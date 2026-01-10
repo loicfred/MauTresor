@@ -32,7 +32,7 @@ if (!$place) header("Location: /");
 
         .carousel-wrap {
             position:relative;overflow:hidden;border-radius:12px;
-            background:linear-gradient(180deg,#07172a,#041226);height:250px;
+            background:linear-gradient(180deg,#07172a,#041226);height:350px;
             border: 2px solid black;
             margin: 5px 5px 25px;
         }
@@ -89,6 +89,12 @@ if (!$place) header("Location: /");
         .map-box * {
             color: black;
         }
+
+        @media (max-width: 900px) {
+            .carousel-wrap {
+                height: 250px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -97,7 +103,7 @@ if (!$place) header("Location: /");
 require_once __DIR__ . '/assets/fragments/header.php';
 ?>
 
-<main>
+<main class="page">
     <div class="carousel-wrap" id="carouselWrap">
         <div class="carousel" id="carousel">
             <?php

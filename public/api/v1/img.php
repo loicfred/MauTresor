@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] === 'GET') {
     $fullClass = "assets\\obj\\" . ucfirst($type) . '_Image';
 
     $img = $fullClass::getByID($id);
-    if ($img == null) {
+    if (!$img) {
         header("Content-Type: application/json");
         isFound($img);
     }
