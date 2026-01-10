@@ -4,13 +4,13 @@ include __DIR__ . '/../../config/auth.php';
 require_once __DIR__ . '/../../config/obj/User.php';
 require_once __DIR__ . '/../../config/obj/RememberMe.php';
 
-use assets\obj\RememberMe;
 use assets\obj\User;
+use assets\obj\RememberMe;
 
 ?>
 
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
     <title>Login</title>
 
@@ -36,6 +36,9 @@ use assets\obj\User;
                 if (isset($_GET["successVerif"])) {
                     echo "<div class='alert alert-success'>Your account has been verified! You can now log in.</div>";
                 }
+                if (isset($_GET["newpassword"])) {
+                    echo "<div class='alert alert-success'>Your password has been reset successfully.</div>";
+                }
                 if (isLoggedIn() && isset($_GET["logout"])) {
                     RememberMe::getByID($_SESSION["user_id"])->Delete();
                     session_destroy();
@@ -52,7 +55,7 @@ use assets\obj\User;
                 if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     $user = User::getByAuthentication($_POST["Email"], $_POST["Password"]);
                     if (!$user) {
-                        echo "<div class='alert alert-danger'>Invalid email or password</div>";
+                        echo "<div class='alert alert-danger'>Invalid email or password.</div>";
                     }
                     else if ($user->Verified === false) {
                         echo "<div class='alert alert-danger'>Verify your email first.</div>";
@@ -82,9 +85,12 @@ use assets\obj\User;
                         <input type="checkbox" class="form-check-box" name="remember-me" id="remember-me">
                         <label for="remember-me">Remember Me</label>
                     </div>
-                    <button type="submit" class="btn btn-danger w-100">Log In</button>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success w-50">Log in</button>
+                        <a href="/accounts/signup" class="btn btn-primary w-50">Sign up</a>
+                    </div>
                 </form>
-                <p class="mt-3">Don’t have an account? <a href="/accounts/signup">Sign up</a></p>
+                <p class="mt-3">Forgot your password? <a href="/accounts/resetpassword">Reset</a></p>
                 <a href="/oauth2/authorization/google">
                     Sign in with Google
                 </a>

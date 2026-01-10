@@ -30,4 +30,8 @@ class User extends DBObject {
     }
 
 
+
+    public static function validatePassword($password): bool {
+        return !(strlen($password) < 8 || !preg_match('/[A-Z]/', $password) || !preg_match('/[a-z]/', $password) || !preg_match('/\d/', $password) || !preg_match('/[\W_]/', $password));
+    }
 }

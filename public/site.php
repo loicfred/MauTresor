@@ -34,7 +34,7 @@ if (!$place) header("Location: /");
             position:relative;overflow:hidden;border-radius:12px;
             background:linear-gradient(180deg,#07172a,#041226);height:250px;
             border: 2px solid black;
-            margin: 5px 5px 30px;
+            margin: 5px 5px 25px;
         }
         .carousel {
             display:flex;transition:transform .28s ease;height:100%

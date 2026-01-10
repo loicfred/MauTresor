@@ -12,7 +12,7 @@ use assets\obj\User;
 ?>
 
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
     <title>Account Verification</title>
 

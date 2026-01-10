@@ -12,7 +12,7 @@ use assets\obj\User;
 ?>
 
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
     <title>Sign Up</title>
     <meta charset="UTF-8">
@@ -33,43 +33,44 @@ use assets\obj\User;
             <div class="card shadow p-4">
                 <h3 class="mb-3">Create an Account</h3>
                 <?php
-                if ($_SERVER["REQUEST_METHOD"] === "POST") {
+                try {
+                    if ($_SERVER["REQUEST_METHOD"] === "POST") {
+                        if (User::getByEmail(trim($_POST["Email"]))) {
+                            echo "<div class='alert alert-danger'>Email already registered.</div>";
+                        }
+                        else if (User::validatePassword($_POST["Password"]) !== true) {
+                            echo "<div class='alert alert-danger'>Password should be of minimum 8 of length and contain at least 1 digit, symbol, uppercase & lowercase character.</div>";
+                        }
+                        else {
+                            $user = new User();
+                            $user->Email = trim($_POST["Email"]);
+                            $user->Password = password_hash($_POST["Password"], PASSWORD_DEFAULT);
+                            $user->FirstName = trim($_POST["FirstName"]);
+                            $user->LastName = trim($_POST["LastName"]);
+                            $user->Gender = trim($_POST["Gender"]);
+                            $user->Role = 'USER';
+                            $user->DateOfBirth = trim($_POST["DateOfBirth"]);
+                            $user->CreatedAt = date("Y-m-d H:i:s");
+                            $user->UpdatedAt = date("Y-m-d H:i:s");
 
-                    if (User::getByEmail(trim($_POST["Email"]))) {
-                        echo "<div class='alert alert-danger'>Email already registered.</div>";
-                    }
-                    else if (validatePassword($_POST["Password"]) !== true) {
-                        echo "<div class='alert alert-danger'>Password should be of minimum 8 of length and contain at least 1 digit, symbol, uppercase & lowercase character.</div>";
-                    }
-                    else {
-                        $user = new User();
-                        $user->Email = trim($_POST["Email"]);
-                        $user->Password = password_hash($_POST["Password"], PASSWORD_DEFAULT);
-                        $user->FirstName = trim($_POST["FirstName"]);
-                        $user->LastName = trim($_POST["LastName"]);
-                        $user->Gender = trim($_POST["Gender"]);
-                        $user->Role = 'USER';
-                        $user->DateOfBirth = trim($_POST["DateOfBirth"]);
-                        $user->CreatedAt = date("Y-m-d H:i:s");
-                        $user->UpdatedAt = date("Y-m-d H:i:s");
+                            if ($user->Write()->ID === 0) {
+                                echo "<div class='alert alert-danger'>An error occurred.</div>";
+                            } else {
+                                $email_verification = new Email_Verification();
+                                $email_verification->UserID = $user->ID;
+                                $email_verification->Token = bin2hex(random_bytes(32));
+                                $email_verification->Type = 'REGISTRATION';
+                                $email_verification->ExpiryDate = date('Y-m-d H:i:s', strtotime('+10 minutes'));
 
-                        // Insert user
-                        if ($user->Write()->ID === 0) {
-                            echo "<div class='alert alert-danger'>An error occurred.</div>";
-                        } else {
-                            $email_verification = new Email_Verification();
-                            $email_verification->UserID = $user->ID;
-                            $email_verification->Token = bin2hex(random_bytes(32));
-                            $email_verification->Type = 'REGISTRATION';
-                            $email_verification->ExpiryDate = date('Y-m-d H:i:s', strtotime('+10 minutes'));
-
-                            if ($email_verification->Write()->ID !== 0) {
-                                $verifyLink = "https://mautresor.mu/accounts/verification?token=$email_verification->Token";
-                                sendVerificationEmail($user->Email, $verifyLink);
-                                header("Location: /accounts/login?checkEmail");
+                                if ($email_verification->Write()->ID !== 0) {
+                                    sendVerificationEmail($user->Email, $email_verification->Token);
+                                    header("Location: /accounts/login?checkEmail");
+                                }
                             }
                         }
                     }
+                } catch (Exception $e) {
+                    echo "<div class='alert alert-danger'>An error occurred: " . $e->getMessage() . "</div>";
                 }
                 ?>
 
@@ -112,8 +113,3 @@ use assets\obj\User;
 </div>
 </body>
 </html>
-<?php
-function validatePassword($password): bool {
-    return !(strlen($password) < 8 || !preg_match('/[A-Z]/', $password) || !preg_match('/[a-z]/', $password) || !preg_match('/\d/', $password) || !preg_match('/[\W_]/', $password));
-}
-?>

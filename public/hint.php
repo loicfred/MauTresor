@@ -43,7 +43,7 @@ if (!$participant) header("Location: /");
         }
 
         .map-box {
-            margin: 10px -20px 0;
+            margin: 0 -15px 0;
             height: 100vh;
             display: flex;
             flex-direction: column;
@@ -56,12 +56,12 @@ if (!$participant) header("Location: /");
         .map-top {
             display: flex;
             flex-direction: column;
-            padding: 16% 20% 0;
+            padding: 15% 22% 0;
         }
         .map-body {
             display: flex;
             flex-direction: column;
-            padding: 7.5% 20% 0;
+            padding: 5% 22% 0;
         }
         .map-bottom {
             display: flex;
@@ -95,7 +95,7 @@ require_once __DIR__ . '/assets/fragments/header.php';
             <h5 class="align-self-center" style="text-align: center;"><?= $hint->Name ?></h5>
         </div>
         <div class="map-body">
-            <p style="font-size: 16px;"><?= $hint->Description ?></p>
+            <p style="font-size: 14px;"><?= $hint->Description ?></p>
 
             <?php
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
