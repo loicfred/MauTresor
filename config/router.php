@@ -12,13 +12,13 @@ session_start();
 
 set_error_handler(function($errno, $errstr, $errfile, $errline) {
     error_log("PHP ERROR [$errno] $errstr in $errfile:$errline");
-    header('Location: error.php?msg=' . urlencode($errstr));
+    header('Location: /error.php?msg=' . urlencode($errstr));
     exit;
 });
 
 set_exception_handler(function($exception) {
     error_log("UNCAUGHT EXCEPTION: " . $exception->getMessage());
-    header('Location: error.php?msg=' . urlencode($exception->getMessage()));
+    header('Location: /error.php?msg=' . urlencode($exception->getMessage()));
     exit;
 });
 
@@ -26,7 +26,7 @@ register_shutdown_function(function() {
     $error = error_get_last();
     if ($error !== null && in_array($error['type'], [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE])) {
         error_log("FATAL ERROR: {$error['message']} in {$error['file']}:{$error['line']}");
-        header('Location: error.php?msg=' . urlencode($error['message']));
+        header('Location: /error.php?msg=' . urlencode($error['message']));
         exit;
     }
 });
