@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $segments = explode('/', trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
 
     $data = [];
-    $data[] = DBObject::getTableDetails($segments[3]);
+    $data[] = DBObject::getTableDetails($segments[4]);
 
     require_once __DIR__ . "/../../../../config/obj/" . $segments[4] . ".php";
     $fullClass = "assets\\obj\\$segments[4]";

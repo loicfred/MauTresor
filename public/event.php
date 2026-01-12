@@ -156,7 +156,7 @@ require_once __DIR__ . '/assets/fragments/header.php';
             <?php
             foreach ($event->getImages() as $img):
                 ?>
-                <div draggable="false" class="slide" style="background-image: url('/api/v1/img/event/<?= $img->ID ?>')"></div>
+                <div draggable="false" class="slide" style="background-image: url('/api/v1/img/event/<?= $img->ID ?>'); background-position: center; background-size: cover"></div>
             <?php
             endforeach;
             ?>

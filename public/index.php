@@ -61,11 +61,11 @@ require_once __DIR__ . '/assets/fragments/header.php';
 
                         <img src="/assets/img/logo_transparent.png" height="250" class="mb-4" draggable="false" alt="Logo">
 
-                        <p class="lead mb-4" style="text-shadow: 0 0 5px #000000">
+                        <h4 class="lead mb-4" style="text-shadow: 0 0 10px #000000">
                             Discover the island of Mauritius with a twist of fun!
-                        </p>
+                        </h4>
 
-                        <button class="btn btn-lg btn-primary px-5 mb-3" onclick="goToPage(3)">
+                        <button class="btn btn-lg btn-primary px-5 mb-3 mt-4" onclick="goToPage(3)">
                             Events
                         </button>
 
@@ -82,8 +82,10 @@ require_once __DIR__ . '/assets/fragments/header.php';
                     if (count($lplaces) == 0) echo "<h4 class='col-md-12 p-3 text-center'>No local places yet.</h4>";
                     else foreach ($lplaces as $lplace): ?>
                         <a href="/site/<?= $lplace->ID ?>" class="col-md-6">
-                            <div class="request-card p-3" style="background-image: url('/api/v1/img/place/<?= $lplace->ThumbnailID ?>')">
-                                <h5 style="text-shadow: 0 0 10px #000000"><?= $lplace->Name ?></h5>
+                            <div class="request-card" style="background-image: url('/api/v1/img/place/<?= $lplace->ThumbnailID ?>')">
+                                <div class="p-3 h-100 w-100" style="background-color: #00000033;">
+                                    <h5 style="text-shadow: 0 0 10px #000000; max-width: 60%;"><?= $lplace->Name ?></h5>
+                                </div>
                             </div>
                         </a>
                     <?php endforeach ?>
@@ -99,8 +101,10 @@ require_once __DIR__ . '/assets/fragments/header.php';
                     if (count($wplaces) == 0) echo "<h4 class='col-md-12 p-3 text-center'>No world places yet.</h4>";
                     else foreach ($wplaces as $wplace): ?>
                         <a href="/site/<?= $wplace->ID ?>" class="col-md-6">
-                            <div class="request-card p-3" style="background-image: url('/api/v1/img/place/<?= $wplace->ThumbnailID ?>')">
-                                <h5 style="text-shadow: 0 0 10px #000000"><?= $wplace->Name ?></h5>
+                            <div class="request-card" style="background-image: url('/api/v1/img/place/<?= $wplace->ThumbnailID ?>')">
+                                <div class="p-3 h-100 w-100" style="background-color: #00000033;">
+                                    <h5 style="text-shadow: 0 0 10px #000000; max-width: 60%;"><?= $wplace->Name ?></h5>
+                                </div>
                             </div>
                         </a>
                     <?php endforeach ?>
@@ -116,8 +120,10 @@ require_once __DIR__ . '/assets/fragments/header.php';
                     if (count($events) == 0) echo "<h4 class='col-md-12 p-3 text-center'>No upcoming events.</h4>";
                     else foreach ($events as $event): ?>
                         <a href="/event/<?= $event->ID ?>" class="col-md-6">
-                            <div class="request-card p-3" style="background-image: url('/api/v1/img/event/<?= $event->ThumbnailID ?>')">
-                                <h5 style="text-shadow: 0 0 10px #000000"><?= $event->Name ?></h5>
+                            <div class="request-card" style="background-image: url('/api/v1/img/event/<?= $event->ThumbnailID ?>')">
+                                <div class="p-3 h-100 w-100" style="background-color: #00000033;">
+                                    <h5 style="text-shadow: 0 0 10px #000000; max-width: 60%;"><?= $event->Name ?></h5>
+                                </div>
                             </div>
                         </a>
                     <?php endforeach ?>

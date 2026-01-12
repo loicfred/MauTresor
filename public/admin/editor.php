@@ -11,6 +11,7 @@ require_once __DIR__ . "/../../config/obj/DBObject.php";
 
 
 $edited_object = $id == 0 ? new $fullClass() : $fullClass::getByID($id);
+if (!$edited_object) header("Location: /admin/editor?class=$class");
 
 ?>
 
@@ -93,7 +94,7 @@ require_once __DIR__ . '/../assets/fragments/header.php';
                     }
                 endforeach;
                 $edited_object->Upsert();
-                echo "<div class='alert alert-success'>Successfully updated this entry !</div>";
+                echo "<div class='alert alert-success'>Successfully saved this entry !</div>";
             } catch (PDOException $e) {
                 echo "<div class='alert alert-danger'>" . $e->getMessage() . "</div>";
 
@@ -170,9 +171,17 @@ require_once __DIR__ . '/../assets/fragments/header.php';
             <button type="submit" class="btn btn-success">Save Entry</button>
         </form>
         <?php if (isset($_GET['id'])): ?>
-            <form action="/admin?class=<?= $class ?>$id=<?= $id ?>&delete" class="d-flex flex-column mt-4" method="post" onsubmit="return confirm('Are you sure you want to delete this entry?');">
+            <form action="/admin/editor?class=<?= $class ?>&id=<?= $id ?>&delete" class="d-flex flex-column mt-3" method="post" onsubmit="return confirm('Are you sure you want to delete this entry?');">
                 <button type="submit" class="btn btn-danger flex-grow-1">Delete Entry</button>
             </form>
+            <div class="d-flex flex-row mt-3 gap-2">
+                <?php if ($fullClass::getByID($id-1)): ?>
+                    <a href="/admin/editor?class=<?= $class ?>&id=<?= $id-1 ?>" class="btn btn-primary flex-grow-1">Prev. Entry</a>
+                <?php endif; ?>
+                <?php if ($fullClass::getByID($id+1)): ?>
+                    <a href="/admin/editor?class=<?= $class ?>&id=<?= $id+1 ?>" class="btn btn-primary flex-grow-1">Next Entry</a>
+                <?php endif; ?>
+            </div>
         <?php endif; ?>
     </div>
 </main>

@@ -7,8 +7,8 @@ use assets\obj\Notification;
 ?>
 <div class="position-relative">
     <nav id="header" class="top-nav navbar navbar-dark" style="padding: 3px">
-        <div class="container d-flex align-items-center gap-2" style="justify-content: space-between; flex-wrap: nowrap;">
-            <button class="hamburger-btn me-3" id="hamburgerBtn" aria-label="Open menu">☰</button>
+        <div class="container d-flex align-items-center gap-2" style="flex-wrap: nowrap;">
+            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open menu">☰</button>
             <a class="navbar-brand me-auto" href="/">
                 <img src="/assets/img/logo_transparent.png" draggable="false" height="40" alt="logo.png">
             </a>
@@ -20,6 +20,7 @@ use assets\obj\Notification;
                 <button onclick="goTo3()">World Sites</button>
                 <button onclick="goTo4()">Events</button>
                 <hr>
+                <a href="/map">Map</a>
                 <a href="/about">About Us</a>
                 <?= !isset($_SESSION['user_id']) ? "<a href='/accounts/login'>Log in</a>" : '' ?>
                 <?= isset($_SESSION['user_id']) ? "<a href='/settings'>Settings</a>" : '' ?>
@@ -76,6 +77,12 @@ use assets\obj\Notification;
                     <path fill="currentColor" d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
                 </svg>
             </div>
+
+            <a class="nav-item" href="/map">
+                <svg viewBox="0 0 24 24" class="nav-icon">
+                    <path fill="currentColor" d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z"/>
+                </svg>
+            </a>
 
             <?php if (isLoggedIn()):
                 $notifs = Notification::getOfUser($_SESSION['user_id']);?>
