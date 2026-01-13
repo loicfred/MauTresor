@@ -134,12 +134,12 @@ require_once __DIR__ . '/assets/fragments/header.php';
 
 </main>
 
-<script src="/assets/js/app.js"></script>
-<script src="/assets/js/pagecarousel.js"></script>
-
 <?php
 require_once __DIR__ . '/assets/fragments/bottom-nav.html';
 ?>
+
+<script src="/assets/js/app.js"></script>
+<script src="/assets/js/pagecarousel.js"></script>
 
 </body>
 </html>

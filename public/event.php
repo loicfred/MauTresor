@@ -62,7 +62,6 @@ $participant = Event_Participant::getByUserAndEvent($_SESSION['user_id'] ?? 0, $
         }
         .slide {
             height: 350px;
-            border-radius: 20px;
             border: 1px solid black;
             min-width:100%;box-sizing:border-box;display:flex;align-items:center;
             justify-content:center;flex-direction:column;
@@ -152,14 +151,16 @@ require_once __DIR__ . '/assets/fragments/header.php';
 
 <main class="page">
     <div class="carousel-wrap" id="carouselWrap">
-        <div class="carousel" id="carousel">
-            <?php
-            foreach ($event->getImages() as $img):
+        <div style="overflow: hidden; border-radius: 20px;">
+            <div class="carousel" id="carousel">
+                <?php
+                foreach ($event->getImages() as $img):
+                    ?>
+                    <div draggable="false" class="slide" style="background-image: url('/api/v1/img/event/<?= $img->ID ?>'); background-position: center; background-size: cover"></div>
+                <?php
+                endforeach;
                 ?>
-                <div draggable="false" class="slide" style="background-image: url('/api/v1/img/event/<?= $img->ID ?>'); background-position: center; background-size: cover"></div>
-            <?php
-            endforeach;
-            ?>
+            </div>
         </div>
         <div class="dots" id="dots"></div>
     </div>

@@ -1,5 +1,5 @@
 <?php
-require 'vendor/autoload.php';
+require __DIR__ . '/../../../../vendor/autoload.php';
 
 use Google\Client;
 if ($_SERVER["REQUEST_METHOD"] === "GET") {

@@ -1,12 +1,12 @@
 <?php
-require 'vendor/autoload.php';
+require __DIR__ . '/../../../../vendor/autoload.php';
 
 require_once __DIR__ . '/../../../../config/obj/User.php';
 use assets\obj\User;
 
 $client = new Google\Client();
-$client->setClientId('YOUR_CLIENT_ID');
-$client->setClientSecret('YOUR_CLIENT_SECRET');
+$client->setClientId('181292867676-ie3qguqaf718hkbop5qkf44m79nq97i2.apps.googleusercontent.com');
+$client->setClientSecret('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');
 $client->setRedirectUri('http://mautresor.mu/accounts/oauth2/google/callback.php');
 
 $token = $client->fetchAccessTokenWithAuthCode($_GET['code']);
@@ -37,12 +37,10 @@ if (!$user) {
     $user->Write();
 }
 
-// save whatever you need
 $_SESSION['user'] = [
     'email' => $payload['email'],
     'name'  => $payload['name'],
 ];
 
-// 🔁 REDIRECT TO HOME PAGE
-header('Location: home.php');
+header('Location: /');
 exit;

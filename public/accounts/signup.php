@@ -1,4 +1,5 @@
 <?php
+if (isLoggedIn()) header("Location: /");
 include __DIR__ . '/../../config/auth.php';
 
 require_once __DIR__ . "/../../config/mailer.php";
@@ -8,7 +9,6 @@ require_once __DIR__ . '/../../config/obj/Email_Verification.php';
 
 use assets\obj\Email_Verification;
 use assets\obj\User;
-
 ?>
 <!DOCTYPE html>
 <html>

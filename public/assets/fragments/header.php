@@ -6,7 +6,7 @@ use assets\obj\Notification;
 
 ?>
 <div class="position-relative">
-    <nav id="header" class="top-nav navbar navbar-dark" style="padding: 3px">
+    <nav id="header" class="top-nav navbar navbar-dark">
         <div class="container d-flex align-items-center gap-2" style="flex-wrap: nowrap;">
             <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open menu">☰</button>
             <a class="navbar-brand me-auto" href="/">
