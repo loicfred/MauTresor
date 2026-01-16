@@ -6,8 +6,9 @@ use assets\obj\User;
 
 $client = new Google\Client();
 $client->setClientId('181292867676-ie3qguqaf718hkbop5qkf44m79nq97i2.apps.googleusercontent.com');
-$client->setClientSecret('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');
+$client->setClientSecret('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');
 $client->setRedirectUri('http://mautresor.mu/accounts/oauth2/google/callback.php');
+$client->setScopes(['email', 'profile']);
 
 $token = $client->fetchAccessTokenWithAuthCode($_GET['code']);
 $client->setAccessToken($token);
