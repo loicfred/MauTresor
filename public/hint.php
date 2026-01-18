@@ -116,7 +116,7 @@ require_once __DIR__ . '/assets/fragments/header.php';
                         return;
                     }
 
-                    $event = Event::getByID($hint->EventID)->EndAt;
+                    $event = Event::getByID($hint->EventID);
                     if ($event->EndAt == null) {
                         echo "<div class='alert alert-danger'>This event hasn't started yet.</div>";
                         return;
@@ -144,14 +144,14 @@ require_once __DIR__ . '/assets/fragments/header.php';
                         return;
                     }
 
-                    if (Hint_Found::getByParticipantAndHint($hint->ID, $participant->ID)) {
+                    if (Hint_Found::getByParticipantAndHint($participant->ID, $hint->ID)) {
                         echo "<div class='alert alert-success'>You have already found this hint.</div>";
                         return;
                     }
 
                     $lat = $_POST['latitude'];
                     $long = $_POST['longitude'];
-                    if (isClose($lat, $place->Latitude, 0.005) && isClose($long, $place->Longitude, 0.005)) {
+                    if (isClose($lat, $place->Latitude, 0.03) && isClose($long, $place->Longitude, 0.03)) {
                         $hintFound = new Hint_Found();
                         $hintFound->ParticipantID = $participant->ID;
                         $hintFound->HintID = $hint->ID;
@@ -177,16 +177,19 @@ require_once __DIR__ . '/assets/fragments/header.php';
 
 
 
-    <div class="modal fade" id="scanModal" tabindex="-1">
+    <form class="modal fade" id="scanModal" tabindex="-1" action="/hint/<?= $hint->ID ?>" method="post">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-body">
                     <div id="reader" style="width: 100%; height: 100%;"></div>
                     <p id="result"></p>
+                    <input type="text" id="qrcode" name="qrcode" class="hidden d-none">
+                    <input type="text" id="latitude" name="latitude" class="hidden d-none">
+                    <input type="text" id="longitude" name="longitude" class="hidden d-none">
                 </div>
             </div>
         </div>
-    </div>
+    </form>
 </main>
 
 <script src="/assets/js/app.js"></script>
@@ -201,18 +204,10 @@ require_once __DIR__ . '/assets/fragments/header.php';
         navigator.geolocation.getCurrentPosition(
             function(position) {
                 html5QrcodeScanner.clear();
-                fetch('/api/v1/hint/' + <?= $hint->ID ?>, {
-                    method: 'POST',
-                    credentials: 'include',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        qrcode: decodedText,
-                        latitude: position.coords.latitude,
-                        longitude: position.coords.longitude
-                    })
-                });
+                document.getElementById("qrcode").value = decodedText;
+                document.getElementById("latitude").value = position.coords.latitude;
+                document.getElementById("longitude").value = position.coords.longitude;
+                document.getElementById("scanModal").submit();
             },
             function() {
                 alert("Location access denied");

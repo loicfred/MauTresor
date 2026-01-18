@@ -31,7 +31,7 @@ $msg = isset($_GET['msg']) ? htmlspecialchars($_GET['msg']) : 'An unexpected err
         }
 
         .error-card {
-            max-width: 600px;
+            max-width: 90%;
             margin: auto;
             padding: 2rem 2rem;
             background: var(--primary-color-lighter);
@@ -57,6 +57,8 @@ $msg = isset($_GET['msg']) ? htmlspecialchars($_GET['msg']) : 'An unexpected err
         .error-message {
             font-size: 1.1rem;
             margin-bottom: 2rem;
+            text-wrap: wrap;
+            word-break: break-word;
         }
 
         .error-code {
