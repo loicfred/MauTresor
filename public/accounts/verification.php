@@ -34,7 +34,7 @@ use assets\obj\User;
                 <?php
                 if (isset($_GET["token"])) {
                     $emailVerif = Email_Verification::getByToken($_GET["token"]);
-                    if (!$emailVerif || $emailVerif->Type === "REGISTRATION") {
+                    if (!$emailVerif || $emailVerif->Type !== "REGISTRATION") {
                         echo "<h3 class='mb-3'>There is no verification here.</h3>";
                     }
                     else if ($emailVerif->isExpired()) {

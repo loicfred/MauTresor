@@ -12,7 +12,7 @@ class Place extends DBObject
     public float $Longitude = 0;
     public ?string $QRCode;
     public string $Category;
-    public int $ThumbnailID;
+    public ?int $ThumbnailID;
 
     public function getImages() {
         return Place_Image::selectAllWhere("ID", "PlaceID = ?", $this->ID);

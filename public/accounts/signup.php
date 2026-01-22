@@ -1,9 +1,8 @@
 <?php
-if (isLoggedIn()) header("Location: /");
 include __DIR__ . '/../../config/auth.php';
+if (isLoggedIn()) header("Location: /");
 
 require_once __DIR__ . "/../../config/mailer.php";
-
 require_once __DIR__ . '/../../config/obj/User.php';
 require_once __DIR__ . '/../../config/obj/Email_Verification.php';
 
