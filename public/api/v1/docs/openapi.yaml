@@ -12,28 +12,60 @@ components:
     Place:
       type: object
       properties:
-        id:
+        ID:
           type: integer
           example: 1
-        name:
+        Name:
           type: string
           example: Port Louis
-        description:
+        Description:
           type: string
           example: Capital of Mauritius
+        Latitude:
+          type: number
+          example: -20.2184542
+        Longitude:
+          type: number
+          example: 16.5011538
+        Category:
+          type: string
+          example: Local
+    Culture:
+      type: object
+      properties:
+        ID:
+          type: integer
+          example: 1
+        Name:
+          type: string
+          example: Diwali
+        Description:
+          type: string
+          example: A very popular festival in Mauritius.
     Event:
       type: object
       properties:
-        id:
+        ID:
           type: integer
           example: 10
-        title:
+        $Name:
           type: string
-          example: Music Festival
-        date:
+          example: Treasure Hunt Summer 2025
+        $Description:
+          type: string
+          example: Join the festival !
+        CreatedAt:
           type: string
           format: date
           example: '2026-01-01'
+        StartAt:
+          type: string
+          format: date
+          example: '2026-01-01'
+        EndAt:
+          type: string
+          format: date
+          example: '2026-02-01'
     Error:
       type: object
       properties:
@@ -95,6 +127,56 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /cultures:
+    get:
+      operationId: getCultures
+      summary: Get all cultures
+      responses:
+        '200':
+          description: List of cultures
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Culture'
+        '404':
+          description: No cultures found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /culture/{id}:
+    get:
+      operationId: getCultureById
+      summary: Get a culture by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Culture details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Culture'
+        '400':
+          description: Invalid ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Culture not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /events:
     get:
       operationId: getEvents
@@ -145,16 +227,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /img/{event}/{id}:
+  /img/event/{id}:
     get:
       operationId: getEventImageById
       summary: Get an image for a specific event
       parameters:
-        - name: event
-          in: path
-          required: true
-          schema:
-            type: string
         - name: id
           in: path
           required: true
@@ -178,16 +255,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /img/{place}/{id}:
+  /img/place/{id}:
     get:
       operationId: getPlaceImageById
       summary: Get an image for a specific place
       parameters:
-        - name: place
-          in: path
-          required: true
-          schema:
-            type: string
         - name: id
           in: path
           required: true
@@ -196,6 +268,34 @@ paths:
       responses:
         '200':
           description: Place image
+          content:
+            image/png: {}
+        '400':
+          description: Invalid ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Image not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /img/culture/{id}:
+    get:
+      operationId: getCultureImageById
+      summary: Get an image for a specific culture
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Culture illustration
           content:
             image/png: {}
         '400':

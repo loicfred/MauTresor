@@ -18,6 +18,8 @@ function getPlaceById($id) {
         isIDNum($id);
         $object = Place::getByID($id);
         isFound($object);
+        $object->QRCode = null;
+        $object->ThumbnailID = null;
         echo json_encode($object);
     }
 }

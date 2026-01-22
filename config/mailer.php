@@ -1,6 +1,5 @@
 <?php
 use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
 
 require_once __DIR__ . "/../vendor/autoload.php";
 
@@ -18,7 +17,7 @@ function getMailer() {
     return $mail;
 }
 function sendVerificationEmail($to, $link) {
-    $link = "https://mautresor.mu/accounts/verification?token=$link";
+    $link = getOrigin() . "/accounts/verification?token=$link";
     $mail = getMailer();
     $mail->addAddress($to);
     $mail->Subject = "Verify your MauTresor account";
@@ -30,7 +29,7 @@ function sendVerificationEmail($to, $link) {
 }
 
 function sendNewPassword($to, $link) {
-    $link = "https://mautresor.mu/accounts/newpassword?token=$link";
+    $link = getOrigin() . "/accounts/newpassword?token=$link";
     $mail = getMailer();
     $mail->addAddress($to);
     $mail->Subject = "Reset your MauTresor password";
@@ -40,4 +39,11 @@ function sendNewPassword($to, $link) {
             If you didn't request to edit your password, please ignore this email.
         ";
     $mail->send();
+}
+
+
+function getOrigin() {
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'];
+    echo $scheme . '://' . $host;
 }

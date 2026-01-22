@@ -2,9 +2,11 @@
 
 include __DIR__ . '/../config/auth.php';
 
+require_once __DIR__ . "/../config/obj/Culture.php";
 require_once __DIR__ . "/../config/obj/Place.php";
 require_once __DIR__ . "/../config/obj/Event.php";
 
+use assets\obj\Culture;
 use assets\obj\Place;
 use assets\obj\Event;
 ?>
@@ -78,13 +80,13 @@ require_once __DIR__ . '/assets/fragments/header.php';
         <section class="page">
             <div class="container h-100 p-0">
                 <div class="row g-1">
-                    <?php $lplaces = Place::getLocalPlaces();
-                    if (count($lplaces) == 0) echo "<h4 class='col-md-12 p-3 text-center'>No local places yet.</h4>";
-                    else foreach ($lplaces as $lplace): ?>
-                        <a href="/site/<?= $lplace->ID ?>" class="col-md-6">
-                            <div class="request-card" style="background-image: url('/api/v1/img/place/<?= $lplace->ThumbnailID ?>')">
+                    <?php $places = Place::getAll();
+                    if (count($places) == 0) echo "<h4 class='col-md-12 p-3 text-center'>No places yet.</h4>";
+                    else foreach ($places as $place): ?>
+                        <a href="/site/<?= $place->ID ?>" class="col-md-6">
+                            <div class="request-card" style="background-image: url('/api/v1/img/place/<?= $place->ThumbnailID ?>')">
                                 <div class="p-3 h-100 w-100" style="background-color: #00000033;">
-                                    <h5 style="text-shadow: 0 0 10px #000000; max-width: 60%;"><?= $lplace->Name ?></h5>
+                                    <h5 style="text-shadow: 0 0 10px #000000; max-width: 60%;"><?= $place->Name ?></h5>
                                 </div>
                             </div>
                         </a>
@@ -97,13 +99,13 @@ require_once __DIR__ . '/assets/fragments/header.php';
         <section class="page">
             <div class="container h-100 p-0">
                 <div class="row g-1">
-                    <?php $wplaces = Place::getWorldPlaces();
-                    if (count($wplaces) == 0) echo "<h4 class='col-md-12 p-3 text-center'>No world places yet.</h4>";
-                    else foreach ($wplaces as $wplace): ?>
-                        <a href="/site/<?= $wplace->ID ?>" class="col-md-6">
-                            <div class="request-card" style="background-image: url('/api/v1/img/place/<?= $wplace->ThumbnailID ?>')">
+                    <?php $cultures = Culture::getAll();
+                    if (count($cultures) == 0) echo "<h4 class='col-md-12 p-3 text-center'>No cultures yet.</h4>";
+                    else foreach ($cultures as $culture): ?>
+                        <a href="/culture/<?= $culture->ID ?>" class="col-md-6">
+                            <div class="request-card" style="background-image: url('/api/v1/img/place/<?= $culture->ThumbnailID ?>')">
                                 <div class="p-3 h-100 w-100" style="background-color: #00000033;">
-                                    <h5 style="text-shadow: 0 0 10px #000000; max-width: 60%;"><?= $wplace->Name ?></h5>
+                                    <h5 style="text-shadow: 0 0 10px #000000; max-width: 60%;"><?= $culture->Name ?></h5>
                                 </div>
                             </div>
                         </a>

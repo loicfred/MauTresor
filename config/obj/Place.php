@@ -10,7 +10,7 @@ class Place extends DBObject
     public string $Description;
     public float $Latitude = 0;
     public float $Longitude = 0;
-    public string $QRCode;
+    public ?string $QRCode;
     public string $Category;
     public int $ThumbnailID;
 
