@@ -79,7 +79,6 @@ if (!$place) header("Location: /");
         }
         .map-bottom {
             display: flex;
-            flex-direction: column;
             background: url("/assets/img/scroll_bottom.png");
             background-repeat: no-repeat;
             background-position: center top;
@@ -124,8 +123,14 @@ require_once __DIR__ . '/assets/fragments/header.php';
         <div class="map-body">
             <p><?= $place->Description ?></p>
         </div>
-        <div class="map-bottom">
-            <p><?= $place->Name ?></p>
+        <div class="map-bottom align-items-center">
+            <p id="km" class="text-center"></p>
+            <a href="/map" class="ms-auto btn btn-secondary d-flex align-items-center justify-content-center mb-3" style="color: white;">
+                <svg viewBox="0 0 20 20" style="height: 20px; width: 20px; margin-right: 0.3em;">
+                    <path fill="white" d="M10 1.67C6.78 1.67 4.17 4.28 4.17 7.5c0 4.38 5.83 10.83 5.83 10.83s5.83-6.46 5.83-10.83c0-3.22-2.61-5.83-5.83-5.83zm0 7.92c-1.15 0-2.08-.93-2.08-2.09s.93-2.08 2.08-2.08 2.08.93 2.08 2.08-.93 2.09-2.08 2.09z"/>
+                </svg>
+                Locate
+            </a>
         </div>
     </div>
 </main>
@@ -163,6 +168,52 @@ require_once __DIR__ . '/assets/fragments/header.php';
         src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"
         async
         defer>
+</script>
+<script>
+    function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+        const R = 6371;
+        const dLat = deg2rad(lat2 - lat1);
+        const dLon = deg2rad(lon2 - lon1);
+        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    }
+    function deg2rad(deg) {
+        return deg * (Math.PI / 180);
+    }
+    const kms = document.getElementById('km');
+
+    let userLat = null;
+    let userLon = null;
+    if (navigator.geolocation) {
+        navigator.geolocation.watchPosition(
+            (position) => {
+                userLat = position.coords.latitude;
+                userLon = position.coords.longitude;
+                updateDistance();
+            },
+            (error) => {
+                kms.textContent = 'Location unavailable';
+                console.error('Geolocation error:', error);
+            },
+            {
+                enableHighAccuracy: true,
+                maximumAge: Infinity,
+                timeout: Infinity
+            }
+        );
+    } else {
+        kms.textContent = 'Geolocation not supported';
+    }
+
+    function updateDistance() {
+        if (userLat !== null && userLon !== null) {
+            const distance = getDistanceFromLatLonInKm(userLat, userLon, <?= $place->Latitude ?>, <?= $place->Longitude ?>);
+            kms.textContent = distance.toFixed(2) + ' km away from you';
+        }
+    }
 </script>
 </body>
 </html>

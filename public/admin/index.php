@@ -32,6 +32,38 @@ use assets\obj\DBObject;
             text-align: center;
             margin-bottom: 1.5rem;
         }
+
+
+        #bottomTable {
+            padding: 0 50px;
+        }
+        #entriesTable th, #entriesTable td {
+            font-size: 12px;
+            max-width: 80px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        #databaseForm {
+            padding: 10px 300px;
+        }
+
+        @media (max-width: 900px) {
+            #bottomTable {
+                padding: 0;
+            }
+            #entriesTable th, #entriesTable td {
+                font-size: 10px;
+                max-width: 60px;
+            }
+            .disableOnPhone {
+                display: none;
+            }
+            #databaseForm {
+                padding: 10px 10px;
+            }
+        }
     </style>
 </head>
 
@@ -55,7 +87,7 @@ require_once __DIR__ . '/../assets/fragments/header.php';
         </section>
 
         <!-- PAGE 3 -->
-        <section class="page">
+        <section class="page" style="padding: 5px 5px;">
             <h2 class="settings-header">Database Accessor</h2>
 
             <form id="databaseForm">
@@ -105,6 +137,7 @@ require_once __DIR__ . '/../assets/fragments/header.php';
                     <button type="button" id="insertDb" class="btn btn-primary w-50 ms-1" disabled>Add new entry</button>
                 </div>
 
+
                 <script>
                     const submitDb = document.getElementById('submitDb');
                     const insertDb = document.getElementById('insertDb');
@@ -126,20 +159,51 @@ require_once __DIR__ . '/../assets/fragments/header.php';
                                 document.getElementById('TableDetailsColumns').innerText = 'Columns count: ' + data[0].columns;
                                 document.getElementById('TableDetails').classList.remove('d-none');
                                 ids.innerHTML = '<option value="" disabled selected>- Select an item -</option>';
-                                data[1].forEach(item => {
-                                    if (select.value === 'Event' || select.value === 'Hint' || select.value === 'Place') {
-                                        ids.innerHTML += `<option value="${item.ID}">${item.ID} - ${item.Name}</option>`;
-                                    }
-                                    else if (select.value === 'User' || select.value === 'Staff') {
-                                        ids.innerHTML += `<option value="${item.ID}">${item.ID} - ${item.FirstName} - ${item.LastName}</option>`;
-                                    }
-                                    else if (select.value.includes('Image')) {
-                                        ids.innerHTML += `<option value="${item.ID}">${item.ID} - ${item.Name}</option>`;
-                                    }
-                                    else {
-                                        ids.innerHTML += `<option value="${item.ID}">${item.ID}</option>`;
-                                    }
-                                })
+
+                                const tableHead = document.getElementById('entriesTableHead');
+                                const tableBody = document.getElementById('entriesTableBody');
+                                tableHead.innerHTML = '';
+                                tableBody.innerHTML = '';
+
+                                if (data[1].length > 0) {
+                                    const blackList = ["Image", "MimeType", "Password"];
+                                    const disableOnPhone = ["Verified", "Enabled", "Gender", "DateOfBirth", "CreatedAt", "QRCode", "Category", "ThumbnailID", "UpdatedAt", "AccountProvider"];
+                                    const headerRow = document.createElement('tr');
+                                    Object.keys(data[1][0]).forEach(key => {
+                                        if (blackList.includes(key)) return;
+                                        const th = document.createElement('th');
+                                        if (disableOnPhone.includes(key)) th.classList.add('disableOnPhone');
+                                        th.innerText = key;
+                                        if (key === "ID") headerRow.prepend(th);
+                                        else headerRow.appendChild(th);
+                                    });
+                                    tableHead.appendChild(headerRow);
+                                    headerRow.insertAdjacentHTML('beforeend', "<th></th>")
+
+                                    data[1].forEach(item => {
+                                        const row = document.createElement('tr');
+                                        Object.entries(item).forEach(([key, value]) => {
+                                            if (blackList.includes(key)) return;
+                                            const td = document.createElement('td');
+                                            if (disableOnPhone.includes(key)) td.classList.add('disableOnPhone');
+                                            td.innerHTML = value !== null ? (value + '').replaceAll('<br>', '') : '-';
+                                            if (key === "ID") row.prepend(td);
+                                            else row.appendChild(td);
+                                        });
+                                        tableBody.appendChild(row);
+                                        row.insertAdjacentHTML('beforeend', `<td class="p-0" style="width: 80px;"><a class="btn btn-secondary h-100 w-100" style="font-size: 12px" href='/admin/editor?class=${tableSelect.value}&id=${item.ID}'>View</a></td>`)
+
+                                        if (select.value === 'Event' || select.value === 'Hint' || select.value === 'Place') {
+                                            ids.innerHTML += `<option value="${item.ID}">${item.ID} - ${item.Name}</option>`;
+                                        } else if (select.value === 'User' || select.value === 'Staff') {
+                                            ids.innerHTML += `<option value="${item.ID}">${item.ID} - ${item.FirstName} - ${item.LastName}</option>`;
+                                        } else if (select.value.includes('Image')) {
+                                            ids.innerHTML += `<option value="${item.ID}">${item.ID} - ${item.Name}</option>`;
+                                        } else {
+                                            ids.innerHTML += `<option value="${item.ID}">${item.ID}</option>`;
+                                        }
+                                    });
+                                }
                             })
                             .catch(err => console.error(err));
                     }
@@ -161,6 +225,13 @@ require_once __DIR__ . '/../assets/fragments/header.php';
                     });
                 </script>
             </form>
+
+            <div id="bottomTable">
+                <table id="entriesTable" class="table table-striped table-bordered">
+                    <thead id="entriesTableHead"></thead>
+                    <tbody id="entriesTableBody"></tbody>
+                </table>
+            </div>
         </section>
     </div>
 

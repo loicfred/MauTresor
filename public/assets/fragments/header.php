@@ -16,8 +16,8 @@ use assets\obj\Notification;
             <div class="sidebar d-flex flex-column" id="sidebar">
                 <h4 class="mb-2">Menu</h4>
                 <button onclick="goTo1()">Home</button>
-                <button onclick="goTo2()">Local Sites</button>
-                <button onclick="goTo3()">World Sites</button>
+                <button onclick="goTo2()">Heritage Sites</button>
+                <button onclick="goTo3()">Cultures</button>
                 <button onclick="goTo4()">Events</button>
                 <hr>
                 <a href="/map">Map</a>

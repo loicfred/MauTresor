@@ -31,6 +31,10 @@ if (!$edited_object) header("Location: /admin/editor?class=$class");
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="/assets/css/main.css">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     <style>
         main {
             padding: 1rem;
@@ -126,10 +130,10 @@ require_once __DIR__ . '/../assets/fragments/header.php';
                         <input class="form-control" type="text" id="<?= $name ?>" name="<?= $name ?>" maxlength="128" value="<?= $value ?>">
                     <?php elseif ($name === "Message"): ?>
                         <label class="form-label" for="<?= $name ?>"><?= $name ?></label>
-                        <textarea class="form-control" id="<?= $name ?>" name="<?= $name ?>" maxlength="512" rows="3"><?= $value ?></textarea>
+                        <textarea class="form-control" id="<?= $name ?>" name="<?= $name ?>" maxlength="512" rows="4"><?= $value ?></textarea>
                     <?php elseif ($name === "Description"): ?>
                         <label class="form-label" for="<?= $name ?>"><?= $name ?></label>
-                        <textarea class="form-control" id="<?= $name ?>" name="<?= $name ?>" maxlength="1024" rows="3"><?= $value ?></textarea>
+                        <textarea class="form-control" id="<?= $name ?>" name="<?= $name ?>" maxlength="1024" rows="8"><?= $value ?></textarea>
                     <?php elseif ($name === "Gender"): ?>
                         <label class="form-label" for="<?= $name ?>"><?= $name ?></label>
                         <select class="form-select" id="<?= $name ?>" name="<?= $name ?>">
@@ -155,6 +159,24 @@ require_once __DIR__ . '/../assets/fragments/header.php';
                                 }
                             });
                         </script>
+                    <?php elseif ($name === "Longitude"): ?>
+                    <script>
+                        document.getElementById("Longitude").value = <?= $value ?>;
+                    </script>
+                    <?php elseif ($name === "Latitude"): ?>
+                        <div style="border: 1px solid #ced4da; border-radius: 5px; padding: 5px">
+                            <div class="d-flex gap-1">
+                                <div class="mb-3 w-50">
+                                    <label class="form-label" for="Latitude">Latitude</label>
+                                    <input class="form-control" type="number" step="any" min="-90" max="90" id="Latitude" value="<?= $value ?>" name="Latitude">
+                                </div>
+                                <div class="mb-3 w-50">
+                                    <label class="form-label" for="Longitude">Longitude</label>
+                                    <input class="form-control" type="number" step="any" min="-90" max="90" id="Longitude" name="Longitude">
+                                </div>
+                            </div>
+                            <div id="map" style="height:200px"></div>
+                        </div>
                     <?php elseif ($inputType === "number"): ?>
                         <label class="form-label" for="<?= $name ?>"><?= $name ?></label>
                         <input class="form-control" type="number" id="<?= $name ?>" name="<?= $name ?>" value="<?= $value ?>">
@@ -163,7 +185,7 @@ require_once __DIR__ . '/../assets/fragments/header.php';
                         <label class="form-label" for="<?= $name ?>"><?= $name ?></label>
                     <?php elseif ($inputType === "text"): ?>
                         <label class="form-label" for="<?= $name ?>"><?= $name ?></label>
-                        <input class="form-control" type="text" id="<?= $name ?>" name="<?= $name ?>" maxlength="64" value="<?= $value ?>">
+                    <input class="form-control" type="text" id="<?= $name ?>" name="<?= $name ?>" maxlength="64" value="<?= $value ?>">
                     <?php endif; ?>
                 </div>
             <?php endforeach; ?>
@@ -187,5 +209,28 @@ require_once __DIR__ . '/../assets/fragments/header.php';
 </main>
 
 <script src="/assets/js/app.js"></script>
+
+<script>
+    const map = L.map('map').setView([0, 0], 2);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    let marker;
+
+    map.on('click', function (e) {
+        const { lat, lng } = e.latlng;
+
+        if (marker) {
+            marker.setLatLng(e.latlng);
+        } else {
+            marker = L.marker(e.latlng).addTo(map);
+        }
+
+        document.getElementById('Latitude').value = lat.toFixed(6);
+        document.getElementById('Longitude').value = lng.toFixed(6);
+    });
+</script>
 </body>
 </html>
