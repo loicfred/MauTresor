@@ -1,17 +1,4 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_set_cookie_params([
-        'lifetime' => 0,
-        'path' => '/',
-        'domain' => '.mautresor.mu',
-        'secure' => true,
-        'httponly' => true,
-        'samesite' => 'Lax'
-    ]);
-    session_name("MAUTRESOR_MU");
-    session_start();
-}
-
 require_once __DIR__ . '/../../../config/obj/User.php';
 use assets\obj\User;
 
@@ -36,9 +23,9 @@ if (!isset($_GET['code'])) {
 $code = $_GET['code'];
 
 // 3) OAuth credentials
-$client_id = '982439855257-ve31uufongid8ajda5io96r9o5fev27a.apps.googleusercontent.com';
-$client_secret = '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';
-$redirect_uri = 'https://mautresor.mu/accounts/oauth2_google/callback.php';
+$client_id = '181292867676-ie3qguqaf718hkbop5qkf44m79nq97i2.apps.googleusercontent.com';
+$client_secret = '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';
+$redirect_uri = 'http://localhost:8080/accounts/oauth2_google/callback';
 
 // 4) Exchange code for token
 $token_url = 'https://oauth2.googleapis.com/token';

@@ -129,7 +129,7 @@ if (isLoggedIn() && !isset($_GET["logout"])) header("Location: /");
                     </div>
                 </form>
                 <p class="mt-3">Forgot your password? <a href="/accounts/resetpassword">Reset</a></p>
-                <a class="google-btn" href="/accounts/oauth2_google/google.php">
+                <a class="google-btn" href="/accounts/oauth2_google/google">
                 <img class="google-icon" src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo"/>
                     <div>Sign in with Google</div>
                 </a>
