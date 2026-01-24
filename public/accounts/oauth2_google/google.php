@@ -1,7 +1,7 @@
 <?php
 
 $client_id = "181292867676-ie3qguqaf718hkbop5qkf44m79nq97i2.apps.googleusercontent.com";
-$redirect_uri = "http://localhost:8080/accounts/oauth2_google/callback";
+$redirect_uri = getOrigin() . "/accounts/oauth2_google/callback";
 
 $state = bin2hex(random_bytes(16));
 $_SESSION["google_oauth_state"] = $state;
@@ -17,3 +17,9 @@ $params = [
 
 header("Location: https://accounts.google.com/o/oauth2/v2/auth?" . http_build_query($params));
 exit;
+
+function getOrigin(): string {
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'];
+    return $scheme . '://' . $host;
+}

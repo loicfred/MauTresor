@@ -25,7 +25,7 @@ $code = $_GET['code'];
 // 3) OAuth credentials
 $client_id = '181292867676-ie3qguqaf718hkbop5qkf44m79nq97i2.apps.googleusercontent.com';
 $client_secret = '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';
-$redirect_uri = 'http://localhost:8080/accounts/oauth2_google/callback';
+$redirect_uri = getOrigin() . '/accounts/oauth2_google/callback';
 
 // 4) Exchange code for token
 $token_url = 'https://oauth2.googleapis.com/token';
@@ -148,3 +148,9 @@ $_SESSION['user_id'] = $user->ID;
 // 7) Redirect home
 header('Location: /');
 exit;
+
+function getOrigin(): string {
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'];
+    return $scheme . '://' . $host;
+}
