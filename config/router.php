@@ -2,8 +2,8 @@
 session_set_cookie_params([
     'lifetime' => 0,
     'path' => '/',
-    'domain' => '.mautresor.mu',
-    'secure' => true,
+    'domain' => '',
+    'secure' => false,
     'httponly' => true,
     'samesite' => 'Lax'
 ]);

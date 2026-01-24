@@ -77,6 +77,7 @@ if (isLoggedIn() && !isset($_GET["logout"])) header("Location: /");
                 }
                 if (isLoggedIn() && isset($_GET["logout"])) {
                     session_destroy();
+                    setcookie(session_name(), '', time() - 3600, '/');
                     setcookie('remember_me', '', time() - 3600);
                     $rememberMe = RememberMe::getByID($_SESSION["user_id"]);
                     if ($rememberMe) $rememberMe->Delete();

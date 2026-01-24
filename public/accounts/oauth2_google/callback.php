@@ -1,5 +1,16 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_set_cookie_params([
+        'lifetime' => 0,
+        'path' => '/',
+        'domain' => '.mautresor.mu',
+        'secure' => true,
+        'httponly' => true,
+        'samesite' => 'Lax'
+    ]);
+    session_name("MAUTRESOR_MU");
+    session_start();
+}
 
 require_once __DIR__ . '/../../../config/obj/User.php';
 use assets\obj\User;
@@ -10,6 +21,8 @@ if (
     !isset($_SESSION['google_oauth_state']) ||
     !hash_equals($_SESSION['google_oauth_state'], $_GET['state'])
 ) {
+    echo $_GET['state'];
+    echo $_SESSION['google_oauth_state'];
     header('Location: /accounts/login?error=invalid_state');
     exit;
 }
