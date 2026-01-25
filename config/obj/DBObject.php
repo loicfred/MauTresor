@@ -8,8 +8,7 @@ use ReflectionProperty;
 
 require_once __DIR__ . "/../../config/database.php";
 
-class DBObject
-{
+class DBObject {
     public int $ID = 0;
 
     public static function getByID(int $id = 0) {
@@ -20,31 +19,10 @@ class DBObject
         return $stmt->fetchObject(static::class);
     }
 
-
-
-
-
     public static function getAll() {
         global $pdo;
         $table = (new \ReflectionClass(static::class))->getShortName();
         $stmt = $pdo->prepare('SELECT * FROM ' . $table);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_CLASS, static::class);
-    }
-    public static function getAllLimitExcept(int $limit = 0, ?string ...$except) {
-        global $pdo;
-        $reflection = new ReflectionClass(static::class);
-        $properties = $reflection->getProperties(ReflectionProperty::IS_PUBLIC);
-        $table = $reflection->getShortName();
-
-        $selectSql = implode(', ', array_map(function ($prop) {
-            return $prop->getName();
-        }, array_filter($properties, function ($prop) use ($except) {
-            foreach ($except as $ex): if (str_contains($prop->getName(), $ex)) return false;
-            endforeach;
-            return true;
-        })));
-        $stmt = $pdo->prepare('SELECT ' . $selectSql . ' FROM ' . $table . ' LIMIT ' . $limit);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_CLASS, static::class);
     }
@@ -55,9 +33,6 @@ class DBObject
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_CLASS, static::class);
     }
-
-
-
 
     public static function selectWhere(?string $select = null, ?string $where = null, ...$object) {
         global $pdo;
@@ -74,7 +49,6 @@ class DBObject
         return $stmt->fetchObject(static::class);
     }
 
-
     public static function selectAllWhere(?string $select = null, ?string $where = null, ...$object) {
         global $pdo;
         $table = (new \ReflectionClass(static::class))->getShortName();
@@ -89,11 +63,6 @@ class DBObject
         $stmt->execute($object);
         return $stmt->fetchAll(PDO::FETCH_CLASS, static::class);
     }
-
-
-
-
-
 
     public function Write() {
         global $pdo;
@@ -121,7 +90,6 @@ class DBObject
         $this->ID = $pdo->lastInsertId();
         return $this;
     }
-
     public function Upsert() {
         global $pdo;
         $reflection = new ReflectionClass($this);
@@ -154,7 +122,6 @@ class DBObject
         $this->ID = $pdo->lastInsertId();
         return $this;
     }
-
     public function Update() {
         global $pdo;
         $reflection = new ReflectionClass($this);
@@ -182,7 +149,6 @@ class DBObject
         $stmt->execute($fieldActualValues);
         return $stmt->rowCount();
     }
-
     public function Delete() {
         global $pdo;
         $table = (new \ReflectionClass($this))->getShortName();
