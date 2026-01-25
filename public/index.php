@@ -148,15 +148,5 @@ require_once __DIR__ . '/assets/fragments/bottom-nav.html';
 <script src="/assets/js/app.js"></script>
 <script src="/assets/js/pagecarousel.js"></script>
 <script src="/assets/js/push.js"></script>
-<script>
-    document.getElementById("btnEnablePush").addEventListener("click", async () => {
-        try {
-            await enablePushNotifications();
-        } catch (e) {
-            alert("Push error: " + e.message);
-            console.error(e);
-        }
-    });
-</script>
 </body>
 </html>

@@ -36,9 +36,9 @@ $subscription = Subscription::create([
 
 $webPush = new WebPush([
     'VAPID' => [
-        'subject' => $pushConfig['vapid']['subject'],
-        'publicKey' => $pushConfig['vapid']['publicKey'],
-        'privateKey' => $pushConfig['vapid']['privateKey'],
+        'subject' => 'mailto:admin@mautresor.mu',
+        'publicKey'  => 'BNZVm5Ld0Qfv9EIjHC-bFQznMh15pxqEumH5UHYM1ckx5xaqIDWMg3yh_--iIeOwkmO4pT3H7cVx8iLzBvLeLJ0',
+        'privateKey' => 'lSogz8iPujYidQMj6B8wezN_CNBjipjYPh560CNIH_s',
     ],
 ]);
 
