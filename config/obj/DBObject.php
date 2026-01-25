@@ -31,7 +31,7 @@ class DBObject
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_CLASS, static::class);
     }
-    public static function getAllLimitExcept(int $limit = 0, string ...$except) {
+    public static function getAllLimitExcept(int $limit = 0, ?string ...$except) {
         global $pdo;
         $reflection = new ReflectionClass(static::class);
         $properties = $reflection->getProperties(ReflectionProperty::IS_PUBLIC);
@@ -59,14 +59,14 @@ class DBObject
 
 
 
-    public static function selectWhere(string $select = null, string $where = null, ...$object) {
+    public static function selectWhere(?string $select = null, ?string $where = null, ...$object) {
         global $pdo;
         $table = (new \ReflectionClass(static::class))->getShortName();
         $stmt = $pdo->prepare('SELECT ' . ($select != null ? $select : '*') .' FROM ' . $table . ($where != null ? ' WHERE ' . $where : '') . ' LIMIT 1');
         $stmt->execute($object);
         return $stmt->fetchObject(static::class);
     }
-    public static function getWhere(string $where = null, ...$object) {
+    public static function getWhere(?string $where = null, ...$object) {
         global $pdo;
         $table = (new \ReflectionClass(static::class))->getShortName();
         $stmt = $pdo->prepare('SELECT * FROM ' . $table . ($where != null ? ' WHERE ' . $where : '') . ' LIMIT 1');
@@ -75,14 +75,14 @@ class DBObject
     }
 
 
-    public static function selectAllWhere(string $select = null, string $where = null, ...$object) {
+    public static function selectAllWhere(?string $select = null, ?string $where = null, ...$object) {
         global $pdo;
         $table = (new \ReflectionClass(static::class))->getShortName();
         $stmt = $pdo->prepare('SELECT ' . ($select != null ? $select : '*') .' FROM ' . $table . ($where != null ? ' WHERE ' . $where : ''));
         $stmt->execute($object);
         return $stmt->fetchAll(PDO::FETCH_CLASS, static::class);
     }
-    public static function getAllWhere(string $where = null, ...$object) {
+    public static function getAllWhere(?string $where = null, ...$object) {
         global $pdo;
         $table = (new \ReflectionClass(static::class))->getShortName();
         $stmt = $pdo->prepare('SELECT * FROM ' . $table . ($where != null ? ' WHERE ' . $where : ''));
