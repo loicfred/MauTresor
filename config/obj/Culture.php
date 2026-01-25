@@ -8,7 +8,7 @@ class Culture extends DBObject
 {
     public string $Name;
     public string $Description;
-    public ?int $ThumbnailID;
+    public ?int $ThumbnailID = null;
 
     public function getImages() {
         return Culture_Image::selectAllWhere("ID", "CultureID = ?", $this->ID);

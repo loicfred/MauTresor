@@ -102,7 +102,7 @@ require_once __DIR__ . '/assets/fragments/header.php';
                     if (count($cultures) == 0) echo "<h4 class='col-md-12 p-3 text-center'>No cultures yet.</h4>";
                     else foreach ($cultures as $culture): ?>
                         <a href="/culture/<?= $culture->ID ?>" class="col-md-6">
-                            <div class="request-card" style="background-image: url('/api/v1/img/place/<?= $culture->ThumbnailID ?>')">
+                            <div class="request-card" style="background-image: url('/api/v1/img/culture/<?= $culture->ThumbnailID ?>')">
                                 <div class="p-3 h-100 w-100" style="background-color: #00000033;">
                                     <h5 style="text-shadow: 0 0 10px #000000; max-width: 60%;"><?= $culture->Name ?></h5>
                                 </div>

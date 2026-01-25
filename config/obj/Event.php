@@ -15,9 +15,9 @@ class Event extends DBObject
     public string $Name;
     public string $Description;
     public string $CreatedAt;
-    public ?string $StartAt;
-    public ?string $EndAt;
-    public ?int $ThumbnailID;
+    public ?string $StartAt = null;
+    public ?string $EndAt = null;
+    public ?int $ThumbnailID = null;
 
     public function getImages() {
         return Event_Image::selectAllWhere("ID", "EventID = ?", $this->ID);

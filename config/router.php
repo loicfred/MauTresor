@@ -75,6 +75,9 @@ switch ($uri) {
         else if (str_contains($uri, '/site/')) {
             include __DIR__ . '/../public/site.php';
         }
+        else if (str_contains($uri, '/culture/')) {
+            include __DIR__ . '/../public/culture.php';
+        }
         else if (str_contains($uri, '/hint/')) {
             include __DIR__ . '/../public/hint.php';
         }

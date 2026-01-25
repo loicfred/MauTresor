@@ -107,7 +107,9 @@ class DBObject
         foreach ($properties as $prop) {
             $fieldNames[]  = $prop->getName();
             $fieldNamesQ[]  = '?';
-            if (str_contains($prop->getType(),"bool")) {
+            if (str_contains($prop->getType(),"int")) {
+                $fieldValues[] = $prop->getValue($this);
+            } else if (str_contains($prop->getType(),"bool")) {
                 $fieldValues[] = ($prop->getValue($this) == 1 ? 1 : 0);
             } else {
                 $fieldValues[] = $prop->getValue($this) == '' ? null : $prop->getValue($this);

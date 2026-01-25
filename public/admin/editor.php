@@ -11,7 +11,7 @@ require_once __DIR__ . "/../../config/obj/DBObject.php";
 
 
 $edited_object = $id == 0 ? new $fullClass() : $fullClass::getByID($id);
-if (!$edited_object) header("Location: /admin/editor?class=$class");
+if (!$edited_object && $_SERVER['REQUEST_METHOD'] !== 'POST') header("Location: /admin/editor?class=$class");
 
 ?>
 
@@ -90,6 +90,7 @@ require_once __DIR__ . '/../assets/fragments/header.php';
                         if (!isset($_POST[$prop->getName()]) && $type !== 'bool') continue;
                         $newVal = match($type) {
                             'bool' => (isset($_POST[$prop->getName()]) && $_POST[$prop->getName()] == 'true' ? 1 : 0),
+                            'int' => isset($_POST[$prop->getName()]) ? (int) $_POST[$prop->getName()] : null,
                             'string' => trim($_POST[$prop->getName()]),
                             default => $_POST[$prop->getName()]
                         };

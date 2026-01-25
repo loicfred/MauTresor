@@ -98,6 +98,8 @@ require_once __DIR__ . '/../assets/fragments/header.php';
                         <option value="User">User Accounts</option>
                         <option value="Place">Place</option>
                         <option value="Place_Image">Place Images</option>
+                        <option value="Culture">Culture</option>
+                        <option value="Culture_Image">Culture Images</option>
                         <option value="Event">Event</option>
                         <option value="Event_Image">Event Images</option>
                         <option value="Event_Participant">Event Participants</option>

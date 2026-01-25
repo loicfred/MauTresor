@@ -75,8 +75,12 @@ let currentIndex = 0;
         move(e.clientX, e.clientY);
     });
 
-    window.addEventListener("mouseup", end);
-    window.addEventListener("mouseleave", end);
+    window.addEventListener("mouseup", e => {
+        if (e.button === 0) end();
+    });
+    window.addEventListener("mouseleave", e => {
+        if (e.button === 0) end();
+    });
 
     window.addEventListener("resize", () => {
         carousel.style.transition = "none";
