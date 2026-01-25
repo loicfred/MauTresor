@@ -70,12 +70,6 @@ require_once __DIR__ . '/assets/fragments/header.php';
                         <button class="btn btn-lg btn-primary px-5 mb-3 mt-4" onclick="goToPage(3)">
                             Events
                         </button>
-
-                        <!-- ✅ Added Enable Notifications Button -->
-                        <button class="btn btn-outline-light px-4 mt-2" onclick="enablePushNotifications()">
-                            Enable Notifications
-                        </button>
-
                     </div>
                 </div>
             </div>
@@ -147,6 +141,5 @@ require_once __DIR__ . '/assets/fragments/bottom-nav.html';
 
 <script src="/assets/js/app.js"></script>
 <script src="/assets/js/pagecarousel.js"></script>
-<script src="/assets/js/push.js"></script>
 </body>
 </html>
