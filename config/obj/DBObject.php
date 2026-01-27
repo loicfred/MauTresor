@@ -13,7 +13,7 @@ class DBObject {
 
     public static function getByID(int $id = 0) {
         global $pdo;
-        $table = (new \ReflectionClass(static::class))->getShortName();
+        $table = new ReflectionClass(static::class)->getShortName();
         $stmt = $pdo->prepare('SELECT * FROM ' . $table . ' WHERE ID = ? LIMIT 1');
         $stmt->execute([$id]);
         return $stmt->fetchObject(static::class);
@@ -21,14 +21,14 @@ class DBObject {
 
     public static function getAll() {
         global $pdo;
-        $table = (new \ReflectionClass(static::class))->getShortName();
+        $table = new ReflectionClass(static::class)->getShortName();
         $stmt = $pdo->prepare('SELECT * FROM ' . $table);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_CLASS, static::class);
     }
     public static function getAllLimit(int $limit = 0) {
         global $pdo;
-        $table = (new \ReflectionClass(static::class))->getShortName();
+        $table = new ReflectionClass(static::class)->getShortName();
         $stmt = $pdo->prepare('SELECT * FROM ' . $table . ' LIMIT ' . $limit);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_CLASS, static::class);
@@ -36,14 +36,15 @@ class DBObject {
 
     public static function selectWhere(?string $select = null, ?string $where = null, ...$object) {
         global $pdo;
-        $table = (new \ReflectionClass(static::class))->getShortName();
-        $stmt = $pdo->prepare('SELECT ' . ($select != null ? $select : '*') .' FROM ' . $table . ($where != null ? ' WHERE ' . $where : '') . ' LIMIT 1');
+        $table = new ReflectionClass(static::class)->getShortName();
+        $stmt = $pdo->prepare('SELECT ' . ($select != null ? $select : '*') .
+            ' FROM ' . $table . ($where != null ? ' WHERE ' . $where : '') . ' LIMIT 1');
         $stmt->execute($object);
         return $stmt->fetchObject(static::class);
     }
     public static function getWhere(?string $where = null, ...$object) {
         global $pdo;
-        $table = (new \ReflectionClass(static::class))->getShortName();
+        $table = new ReflectionClass(static::class)->getShortName();
         $stmt = $pdo->prepare('SELECT * FROM ' . $table . ($where != null ? ' WHERE ' . $where : '') . ' LIMIT 1');
         $stmt->execute($object);
         return $stmt->fetchObject(static::class);
@@ -51,14 +52,15 @@ class DBObject {
 
     public static function selectAllWhere(?string $select = null, ?string $where = null, ...$object) {
         global $pdo;
-        $table = (new \ReflectionClass(static::class))->getShortName();
-        $stmt = $pdo->prepare('SELECT ' . ($select != null ? $select : '*') .' FROM ' . $table . ($where != null ? ' WHERE ' . $where : ''));
+        $table = new ReflectionClass(static::class)->getShortName();
+        $stmt = $pdo->prepare('SELECT ' . ($select != null ? $select : '*') .
+            ' FROM ' . $table . ($where != null ? ' WHERE ' . $where : ''));
         $stmt->execute($object);
         return $stmt->fetchAll(PDO::FETCH_CLASS, static::class);
     }
     public static function getAllWhere(?string $where = null, ...$object) {
         global $pdo;
-        $table = (new \ReflectionClass(static::class))->getShortName();
+        $table = new ReflectionClass(static::class)->getShortName();
         $stmt = $pdo->prepare('SELECT * FROM ' . $table . ($where != null ? ' WHERE ' . $where : ''));
         $stmt->execute($object);
         return $stmt->fetchAll(PDO::FETCH_CLASS, static::class);
@@ -96,11 +98,9 @@ class DBObject {
         $properties = $reflection->getProperties(ReflectionProperty::IS_PUBLIC);
 
         $fieldValues = [];
-
         $table = $reflection->getShortName();
         $insertFieldNames  = [];
         $insertFieldNamesQ  = [];
-
         $updateFieldNames  = [];
         foreach ($properties as $prop) {
             $insertFieldNames[]  = $prop->getName();
@@ -113,13 +113,11 @@ class DBObject {
         }
 
         foreach ($properties as $prop) {
-            if ($prop->getName() === 'ID') continue;
             $updateFieldNames[] = $prop->getName() . ' = VALUES(' . $prop->getName() . ')';
         }
-        $stmt = $pdo->prepare("INSERT INTO " . $table . " (" . implode(', ', $insertFieldNames) . ") VALUES (" . implode(', ', $insertFieldNamesQ) . ")
-        ON DUPLICATE KEY UPDATE " . implode(', ', $updateFieldNames) . ";");
+        $stmt = $pdo->prepare("INSERT INTO " . $table . " (" . implode(', ', $insertFieldNames) . ") VALUES (" .
+            implode(', ', $insertFieldNamesQ) . ") ON DUPLICATE KEY UPDATE " . implode(', ', $updateFieldNames) . ";");
         $stmt->execute($fieldValues);
-        $this->ID = $pdo->lastInsertId();
         return $this;
     }
     public function Update() {
@@ -151,7 +149,7 @@ class DBObject {
     }
     public function Delete() {
         global $pdo;
-        $table = (new \ReflectionClass($this))->getShortName();
+        $table = new ReflectionClass($this)->getShortName();
         $stmt = $pdo->prepare('DELETE FROM ' . $table . ' WHERE ID = ?');
         $stmt->execute([$this->ID]);
         return $stmt->rowCount();

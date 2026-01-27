@@ -10,7 +10,7 @@ use assets\obj\Notification;
         <div class="container d-flex align-items-center gap-2" style="flex-wrap: nowrap;">
             <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open menu">☰</button>
             <a class="navbar-brand me-auto" href="/">
-                <img src="/assets/img/logo_transparent.png" draggable="false" height="40" alt="logo.png">
+                <img style="border-radius: 50%" src="/assets/img/logo_transparent.png" draggable="false" height="40" alt="logo.png">
             </a>
 
             <div class="sidebar d-flex flex-column" id="sidebar">
@@ -140,6 +140,25 @@ use assets\obj\Notification;
                         });
                         document.addEventListener("click", () => {
                             notificationDropdown.classList.remove("active");
+                        });
+                    </script>
+                </div>
+                <div class="nav-item">
+                    <img src="/api/v1/img/avatar/<?= $_SESSION['user_id'] ?>" draggable="false" height="28" class="position-relative"
+                         style="border-radius: 50%; cursor: pointer;" alt="avatar.png" id="avatarBtn"/>
+                    <div class="avatar-popup" id="avatarPopup">
+                        <a href="/settings">Settings</a>
+                        <a href='/accounts/login?logout'>Log out</a>
+                    </div>
+                    <script>
+                        const avatarBtn = document.getElementById("avatarBtn");
+                        const avatarPopup = document.getElementById("avatarPopup");
+                        avatarBtn.addEventListener("click", (e) => {
+                            e.stopPropagation();
+                            avatarPopup.classList.toggle("active");
+                        });
+                        document.addEventListener("click", () => {
+                            avatarPopup.classList.remove("active");
                         });
                     </script>
                 </div>
