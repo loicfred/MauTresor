@@ -8,19 +8,28 @@ use assets\obj\Place;
 use assets\obj\Event;
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $search = $_GET['s'];
-
     $items = [];
 
-    foreach (Event::getAll() as $event) {
-       if (stripos($event->Name, $search) !== false) {
-           $items[] = ["id" => $event->ID, "type" => "event", "name" => $event->Name];
-       }
-    }
-
-    foreach (Place::getAll() as $place) {
-        if (stripos($place->Name, $search) !== false) {
-            $items[] = ["id" => $place->ID, "type" => "place", "name" => $place->Name];
+    if (isset($_GET['s'])) {
+        $search = $_GET['s'];
+        if (strlen($search) > 0) {
+            foreach (Event::getAll() as $event) {
+                if (stripos($event->Name, $search) !== false) {
+                    $items[] = ["id" => $event->ID, "type" => "event", "name" => $event->Name, "description" => $event->Description];
+                }
+            }
+            foreach (Place::getAll() as $place) {
+                if (stripos($place->Name, $search) !== false) {
+                    $items[] = ["id" => $place->ID, "type" => "place", "name" => $place->Name, "description" => $place->Description];
+                }
+            }
+        }
+    } else {
+        foreach (Event::getAll() as $event) {
+            $items[] = ["id" => $event->ID, "type" => "event", "name" => $event->Name, "description" => $event->Description];
+        }
+        foreach (Place::getAll() as $place) {
+            $items[] = ["id" => $place->ID, "type" => "place", "name" => $place->Name, "description" => $place->Description];
         }
     }
 

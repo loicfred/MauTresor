@@ -180,53 +180,57 @@ use assets\obj\Notification;
 
         </div>
     </nav>
-    <div class="position-absolute d-none flex-column w-100" style="z-index: 10; max-height: 80vh; overflow-y: scroll;" id="resultBox">
+    <div class="position-absolute d-none flex-column w-100" id="resultBox">
 
     </div>
-</div>
-<script>
-    const searchBtn = document.getElementById("searchBtn");
-    const searchBar = document.getElementById("searchBar");
-    const searchField = document.getElementById("searchField");
-    const resultBox = document.getElementById("resultBox");
-    searchBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        if (searchBar.classList.contains("d-none")) searchBar.classList.remove("d-none");
-        if (resultBox.classList.contains("d-none")) resultBox.classList.remove("d-none");
-        searchBtn.classList.add("d-none")
-        searchBar.querySelector("input").focus();
-    });
-    document.addEventListener("click", (e) => {
-        if (!searchBar.contains(e.target)) {
-            searchBar.classList.add("d-none");
-            resultBox.classList.add("d-none");
-            searchBtn.classList.remove("d-none")
-        }
-    });
-    searchField.addEventListener("input", (e) => {
-         fetch(`/api/searchbar?s=${searchField.value}`, {method: "GET"}
-        ).then(res => res.json()).then(
-            datas => {
-                resultBox.innerHTML = "";
-                datas.forEach(data => {
-                    if (data.type === "event") {
-                        resultBox.innerHTML += `<div class="d-flex p-2">
+    <script>
+        const searchBtn = document.getElementById("searchBtn");
+        const searchBar = document.getElementById("searchBar");
+        const resultBox = document.getElementById("resultBox");
+        const searchField = document.getElementById("searchField");
+        searchBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            if (searchBar.classList.contains("d-none")) searchBar.classList.remove("d-none");
+            if (resultBox.classList.contains("d-none")) resultBox.classList.remove("d-none");
+            searchBtn.classList.add("d-none")
+            searchBar.querySelector("input").focus();
+        });
+        document.addEventListener("click", (e) => {
+            if (!searchBar.contains(e.target)) {
+                searchBar.classList.add("d-none");
+                resultBox.classList.add("d-none");
+                searchBtn.classList.remove("d-none")
+            }
+        });
+        let searchdata = [];
+        searchField.addEventListener("input", async (e) => {
+            if (searchdata.length === 0) {
+                await fetch(`/api/searchbar`, {method: "GET"}).then(res => res.json()).then(
+                    datas => {
+                        searchdata = datas;
+                    }
+                )
+            }
+            resultBox.innerHTML = "";
+            if (searchField.value.length === 0) return;
+            searchdata.forEach(data => {
+                if (!(data.name.toLowerCase().includes(searchField.value.toLowerCase()) || data.description.toLowerCase().includes(searchField.value.toLowerCase()))) return;
+                if (data.type === "event") {
+                    resultBox.innerHTML += `<div class="d-flex p-2">
                                                               <svg viewBox="0 0 24 24" class="nav-icon">
                                                                   <path fill="white" d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/>
                                                               </svg>
-                                                              <a style="text-decoration: none;" href="/event/${data.id}">${data.name}</a>
+                                                              <a style="text-decoration: none; width: 100%;" href="/event/${data.id}">${data.name}</a>
                                                             </div>`;
-                    }
-                    else if (data.type === "place") {
-                        resultBox.innerHTML += `<div class="d-flex p-2">
+                } else if (data.type === "place") {
+                    resultBox.innerHTML += `<div class="d-flex p-2">
                                                               <svg viewBox="0 0 24 24" class="nav-icon">
                                                                   <path fill="white" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
                                                               </svg>
-                                                              <a style="text-decoration: none;" href="/site/${data.id}">${data.name}</a>
+                                                              <a style="text-decoration: none; width: 100%;" href="/site/${data.id}">${data.name}</a>
                                                             </div>`;
-                    }
-                });
-            }
-        )
-    });
-</script>
+                }
+            });
+        });
+    </script>
+</div>

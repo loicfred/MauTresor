@@ -1,4 +1,4 @@
-const carousel = document.getElementById("pageCarousel");
+const pgCarousel = document.getElementById("pageCarousel");
 const pages = document.querySelectorAll(".page");
 let currentIndex = 0;
 (() => {
@@ -35,8 +35,8 @@ let currentIndex = 0;
         if (preventDefault) preventDefault();
 
         const offset = (-currentIndex * window.innerWidth) + deltaX;
-        carousel.style.transition = "none";
-        carousel.style.transform = `translateX(${offset}px)`;
+        pgCarousel.style.transition = "none";
+        pgCarousel.style.transform = `translateX(${offset}px)`;
     }
 
     function end() {
@@ -54,37 +54,42 @@ let currentIndex = 0;
     }
 
     // 🔹 TOUCH EVENTS
-    carousel.addEventListener("touchstart", e => {
+    pgCarousel.addEventListener("touchstart", e => {
         const t = e.touches[0];
         start(t.clientX, t.clientY);
     }, { passive: true });
 
-    carousel.addEventListener("touchmove", e => {
+    pgCarousel.addEventListener("touchmove", e => {
         const t = e.touches[0];
         move(t.clientX, t.clientY, () => e.preventDefault());
     }, { passive: false });
 
-    carousel.addEventListener("touchend", end);
+    pgCarousel.addEventListener("touchend", end);
 
     // 🔹 MOUSE EVENTS (DESKTOP)
-    carousel.addEventListener("mousedown", e => {
+    pgCarousel.addEventListener("mousedown", e => {
+        if (e.button !== 0) return;
+        if (e.target.closest("button")) return;
+        if (e.target.closest(".slide")) return;
         start(e.clientX, e.clientY);
     });
-
     window.addEventListener("mousemove", e => {
+        if (e.button !== 0) return;
+        if (e.target.closest("button")) return;
+        if (e.target.closest(".slide")) return;
         move(e.clientX, e.clientY);
     });
 
     window.addEventListener("mouseup", e => {
-        if (e.button === 0) end();
+        end();
     });
     window.addEventListener("mouseleave", e => {
-        if (e.button === 0) end();
+        end();
     });
 
     window.addEventListener("resize", () => {
-        carousel.style.transition = "none";
-        carousel.style.transform = `translateX(-${currentIndex * window.innerWidth}px)`;
+        pgCarousel.style.transition = "none";
+        pgCarousel.style.transform = `translateX(-${currentIndex * window.innerWidth}px)`;
     });
 })();
 
@@ -92,8 +97,8 @@ function goToPage(i) {
     if (i == null) i = 0;
     closeSidebar();
     currentIndex = i;
-    carousel.style.transform = `translateX(-${i * 100}%)`;
-    carousel.style.transition = "transform 0.3s ease";
+    pgCarousel.style.transform = `translateX(-${i * 100}%)`;
+    pgCarousel.style.transition = "transform 0.3s ease";
     document.querySelectorAll(".bottom-nav .nav-item").forEach(item => {
         item.classList.remove("active");
     });
