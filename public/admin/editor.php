@@ -34,6 +34,7 @@ if (!$edited_object && $_SERVER['REQUEST_METHOD'] !== 'POST') header("Location: 
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <style>
         main {
@@ -135,6 +136,28 @@ require_once __DIR__ . '/../assets/fragments/header.php';
                     <?php elseif ($name === "Description"): ?>
                         <label class="form-label" for="<?= $name ?>"><?= $name ?></label>
                         <textarea class="form-control" id="<?= $name ?>" name="<?= $name ?>" maxlength="1024" rows="8"><?= $value ?></textarea>
+                    <?php elseif ($name === "QRCode"): ?>
+                        <div style="border: 1px solid #ced4da; display: flex; flex-direction: column; align-items: center; border-radius: 5px; padding: 5px">
+                            <div class="d-flex gap-1 align-items-center">
+                                <label class="form-label w-50 mb-0" for="<?= $name ?>"><?= $name ?></label>
+                                <input class="form-control w-50 mb-0" type="text" id="<?= $name ?>" name="<?= $name ?>" maxlength="32" value="<?= $value ?>">
+                            </div>
+                            <div class="m-2" id="qrcode"></div>
+                            <script>
+                                const input = document.getElementById('<?= $name ?>');
+                                const qrContainer = document.getElementById("qrcode");
+                                const qr = new QRCode(qrContainer, {
+                                    text: "", width: 200, height: 200,
+                                    correctLevel: QRCode.CorrectLevel.H
+                                });
+                                input.addEventListener("input", () => {
+                                    const value = input.value.trim();
+                                    qr.clear();
+                                    if (value !== "") qr.makeCode(value);
+                                });
+                                qr.makeCode(<?= $value ?>);
+                            </script>
+                        </div>
                     <?php elseif ($name === "Gender"): ?>
                         <label class="form-label" for="<?= $name ?>"><?= $name ?></label>
                         <select class="form-select" id="<?= $name ?>" name="<?= $name ?>">

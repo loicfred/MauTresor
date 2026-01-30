@@ -1,11 +1,9 @@
 <?php
-
 function isUnauthorized() {
     http_response_code(401);
     echo json_encode(["message" => "Unauthorized", "code" => "401", ]);
     exit;
 }
-
 function isIDNum($id) {
     if (!isset($id) || !is_numeric($id)) {
         http_response_code(400);
@@ -13,7 +11,6 @@ function isIDNum($id) {
         exit;
     }
 }
-
 function isFound($object) {
     if (!isset($object) || !$object) {
         http_response_code(404);
@@ -21,3 +18,4 @@ function isFound($object) {
         exit;
     }
 }
+

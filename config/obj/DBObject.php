@@ -155,13 +155,26 @@ class DBObject {
         return $stmt->rowCount();
     }
 
+    public static function getAllLimitExcept(int $limit = 0, string ...$except) {
+        global $pdo;
+        $reflection = new ReflectionClass(static::class);
+        $properties = $reflection->getProperties(ReflectionProperty::IS_PUBLIC);
+        $table = $reflection->getShortName();
 
+        $selectSql = implode(', ', array_map(function ($prop) {
+            return $prop->getName();
+        }, array_filter($properties, function ($prop) use ($except) {
+            return array_all($except, fn($ex) => !str_contains($prop->getName(), $ex));
+        })));
+        $stmt = $pdo->prepare('SELECT ' . $selectSql . ' FROM ' . $table . ' LIMIT ' . $limit);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_CLASS, static::class);
+    }
 
 
 
     public static function getDatabaseDetails(): array {
         global $pdo;
-        $dbName = 'treasurehunt';
         $sql = "
         SELECT table_type, COUNT(*) AS total, SUM(TABLE_ROWS) as table_rows
         FROM information_schema.tables
@@ -169,9 +182,8 @@ class DBObject {
         GROUP BY table_type
         ";
         $stmt = $pdo->prepare($sql);
-        $stmt->execute(['db' => $dbName]);
+        $stmt->execute(['db' => 'treasurehunt']);
         $result = $stmt->fetchAll();
-
         $details = ['tables' => 0, 'views' => 0, 'rows' => 0];
         foreach ($result as $row) {
             if ($row['table_type'] === 'BASE TABLE') {
@@ -186,8 +198,6 @@ class DBObject {
 
     public static function getTableDetails(string $tableName): array {
         global $pdo;
-        $dbName = 'treasurehunt';
-
         $sqlColumns = "
         SELECT COLUMN_NAME, DATA_TYPE, COLUMN_KEY
         FROM information_schema.columns
@@ -195,9 +205,8 @@ class DBObject {
         ORDER BY ORDINAL_POSITION
         ";
         $stmt = $pdo->prepare($sqlColumns);
-        $stmt->execute(['db' => $dbName, 'table' => $tableName]);
+        $stmt->execute(['db' => 'treasurehunt', 'table' => $tableName]);
         $columns = $stmt->fetchAll();
-
         $columnCount = count($columns);
         $sqlRows = "
         SELECT table_rows
@@ -205,7 +214,7 @@ class DBObject {
         WHERE table_schema = :db AND table_name = :table
         ";
         $stmt = $pdo->prepare($sqlRows);
-        $stmt->execute(['db' => $dbName, 'table' => $tableName]);
+        $stmt->execute(['db' => 'treasurehunt', 'table' => $tableName]);
         $row = $stmt->fetch();
         $rowCount = $row ? (int)$row['table_rows'] : 0;
         return [

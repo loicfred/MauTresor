@@ -10,6 +10,21 @@ session_set_cookie_params([
 session_name("MAUTRESOR_MU");
 session_start();
 
+require_once __DIR__ . '/obj/RememberMe.php';
+use assets\obj\RememberMe;
+if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_me'])) {
+    $rememberMe = RememberMe::getByToken($_COOKIE['remember_me']);
+    if ($rememberMe && !$rememberMe->isExpired()) {
+        $_SESSION['user_id'] = $rememberMe->ID;
+        $newToken = bin2hex(random_bytes(32));
+        $rememberMe->Token = $newToken;
+        $rememberMe->Update();
+        setcookie('remember_me', $rememberMe->Token, strtotime($rememberMe->ExpiryDate), '/');
+    } else {
+        setcookie('remember_me', '', time() - 3600, '/');
+    }
+}
+
 set_error_handler(function($errno, $errstr, $errfile, $errline) {
     error_log("PHP ERROR [$errno] $errstr in $errfile:$errline");
     header('Location: /error.php?msg=' . urlencode($errstr));
@@ -31,10 +46,8 @@ register_shutdown_function(function() {
     }
 });
 
-
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $requestedFile = __DIR__ . '/../public' . $uri;
-
 
 if (is_file($requestedFile)) {
     return false;

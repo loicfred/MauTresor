@@ -2,7 +2,6 @@
 require_once __DIR__ . "/../../../config/auth.php";
 global $segments;
 header("Content-Type: application/json");
-header("Access-Control-Allow-Origin : *");
 
 require_once __DIR__ . "/../../../config/api.php";
 

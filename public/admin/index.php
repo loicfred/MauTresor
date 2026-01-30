@@ -114,7 +114,7 @@ require_once __DIR__ . '/../assets/fragments/header.php';
                 <div class="mb-3 d-flex align-items-center">
                     <label for="ID" class="form-label w-25 me-1">ID</label>
                     <select id="IDs" class="form-control me-1" style="width: 50%" disabled></select>
-                    <input type="text" id="ID" maxlength="16" style="width: 50%" class="form-control" disabled>
+                    <input type="text" id="ID" maxlength="16" style="width: 50%" class="form-control" placeholder="Enter ID manually..." disabled>
                 </div>
 
                 <div class="mb-3">

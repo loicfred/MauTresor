@@ -1,22 +1,7 @@
 <?php
-require_once __DIR__ . '/obj/RememberMe.php';
 require_once __DIR__ . '/obj/User.php';
 
-use assets\obj\RememberMe;
 use assets\obj\User;
-
-if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_me'])) {
-    $rememberMe = RememberMe::getByToken($_COOKIE['remember_me']);
-    if ($rememberMe && !$rememberMe->isExpired()) {
-        $_SESSION['user_id'] = $rememberMe->ID;
-        $newToken = bin2hex(random_bytes(32));
-        $rememberMe->Token = $newToken;
-        $rememberMe->Update();
-        setcookie('remember_me', $rememberMe->Token, strtotime($rememberMe->ExpiryDate), '/');
-    } else {
-        setcookie('remember_me', '', time() - 3600, '/');
-    }
-}
 
 function checksForLogin() {
     if (!isLoggedIn()) {

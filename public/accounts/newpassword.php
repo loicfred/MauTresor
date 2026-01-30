@@ -8,7 +8,7 @@ use assets\obj\Notification;
 use assets\obj\Email_Verification;
 
 $emailVerif = Email_Verification::getByToken($_GET["token"]);
-if (!$emailVerif || $emailVerif->Type === "PASSWORD_RESET") {
+if (!$emailVerif || $emailVerif->Type !== "PASSWORD_RESET") {
     header("Location: /accounts/resetpassword?expired");
 } else if ($emailVerif->isExpired()) {
     $emailVerif->Delete();
