@@ -13,7 +13,7 @@ class DBObject {
 
     public static function getByID(int $id = 0) {
         global $pdo;
-        $table = new ReflectionClass(static::class)->getShortName();
+        $table = (new ReflectionClass(static::class))->getShortName();
         $stmt = $pdo->prepare('SELECT * FROM ' . $table . ' WHERE ID = ? LIMIT 1');
         $stmt->execute([$id]);
         return $stmt->fetchObject(static::class);
@@ -21,14 +21,14 @@ class DBObject {
 
     public static function getAll() {
         global $pdo;
-        $table = new ReflectionClass(static::class)->getShortName();
+        $table = (new ReflectionClass(static::class))->getShortName();
         $stmt = $pdo->prepare('SELECT * FROM ' . $table);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_CLASS, static::class);
     }
     public static function getAllLimit(int $limit = 0) {
         global $pdo;
-        $table = new ReflectionClass(static::class)->getShortName();
+        $table = (new ReflectionClass(static::class))->getShortName();
         $stmt = $pdo->prepare('SELECT * FROM ' . $table . ' LIMIT ' . $limit);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_CLASS, static::class);
@@ -36,7 +36,7 @@ class DBObject {
 
     public static function selectWhere(?string $select = null, ?string $where = null, ...$object) {
         global $pdo;
-        $table = new ReflectionClass(static::class)->getShortName();
+        $table = (new ReflectionClass(static::class))->getShortName();
         $stmt = $pdo->prepare('SELECT ' . ($select != null ? $select : '*') .
             ' FROM ' . $table . ($where != null ? ' WHERE ' . $where : '') . ' LIMIT 1');
         $stmt->execute($object);
@@ -44,7 +44,7 @@ class DBObject {
     }
     public static function getWhere(?string $where = null, ...$object) {
         global $pdo;
-        $table = new ReflectionClass(static::class)->getShortName();
+        $table = (new ReflectionClass(static::class))->getShortName();
         $stmt = $pdo->prepare('SELECT * FROM ' . $table . ($where != null ? ' WHERE ' . $where : '') . ' LIMIT 1');
         $stmt->execute($object);
         return $stmt->fetchObject(static::class);
@@ -52,7 +52,7 @@ class DBObject {
 
     public static function selectAllWhere(?string $select = null, ?string $where = null, ...$object) {
         global $pdo;
-        $table = new ReflectionClass(static::class)->getShortName();
+        $table = (new ReflectionClass(static::class))->getShortName();
         $stmt = $pdo->prepare('SELECT ' . ($select != null ? $select : '*') .
             ' FROM ' . $table . ($where != null ? ' WHERE ' . $where : ''));
         $stmt->execute($object);
@@ -60,7 +60,7 @@ class DBObject {
     }
     public static function getAllWhere(?string $where = null, ...$object) {
         global $pdo;
-        $table = new ReflectionClass(static::class)->getShortName();
+        $table = (new ReflectionClass(static::class))->getShortName();
         $stmt = $pdo->prepare('SELECT * FROM ' . $table . ($where != null ? ' WHERE ' . $where : ''));
         $stmt->execute($object);
         return $stmt->fetchAll(PDO::FETCH_CLASS, static::class);
@@ -149,7 +149,7 @@ class DBObject {
     }
     public function Delete() {
         global $pdo;
-        $table = new ReflectionClass($this)->getShortName();
+        $table = (new ReflectionClass($this))->getShortName();
         $stmt = $pdo->prepare('DELETE FROM ' . $table . ' WHERE ID = ?');
         $stmt->execute([$this->ID]);
         return $stmt->rowCount();
@@ -164,7 +164,9 @@ class DBObject {
         $selectSql = implode(', ', array_map(function ($prop) {
             return $prop->getName();
         }, array_filter($properties, function ($prop) use ($except) {
-            return array_all($except, fn($ex) => !str_contains($prop->getName(), $ex));
+            foreach ($except as $ex): if (str_contains($prop->getName(), $ex)) return false;
+            endforeach;
+            return true;
         })));
         $stmt = $pdo->prepare('SELECT ' . $selectSql . ' FROM ' . $table . ' LIMIT ' . $limit);
         $stmt->execute();
