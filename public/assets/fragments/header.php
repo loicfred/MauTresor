@@ -231,7 +231,14 @@ use assets\obj\Notification;
                                                               </svg>
                                                               <a style="text-decoration: none; width: 100%;" href="/site/${data.id}">${data.name}</a>
                                                             </div>`;
-                }
+                } else if (data.type === "culture") {
+                    resultBox.innerHTML += `<div class="d-flex p-2">
+                                                              <svg viewBox="0 0 24 24" class="nav-icon">
+                                                                  <path fill="white" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                                              </svg>
+                                                              <a style="text-decoration: none; width: 100%;" href="/culture/${data.id}">${data.name}</a>
+                                                            </div>`;
+        }
             });
         });
     </script>
