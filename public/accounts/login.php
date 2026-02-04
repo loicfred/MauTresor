@@ -115,7 +115,7 @@ if (isLoggedIn() && !isset($_GET["logout"])) header("Location: /");
 </main>
 
 <!-- FIREBASE CORE -->
-<script type="module" src="/assets/js/firebase.js"></script>
+<script type="module" src="/assets/js/firebase.js?v=1"></script>
 
 <script type="module">
     import { GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";

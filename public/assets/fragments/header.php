@@ -1,5 +1,7 @@
 <?php
-
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 require __DIR__ . "/../../../config/obj/Notification.php";
 
 use assets\obj\Notification;
@@ -148,7 +150,7 @@ use assets\obj\Notification;
                          style="border-radius: 50%; cursor: pointer;" alt="avatar.png" id="avatarBtn"/>
                     <div class="avatar-popup" id="avatarPopup">
                         <a href="/settings">Settings</a>
-                        <a href='/accounts/login?logout'>Log out</a>
+                        <a href="/accounts/logout.php">Log out</a>
                     </div>
                     <script>
                         const avatarBtn = document.getElementById("avatarBtn");
