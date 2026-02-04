@@ -18,6 +18,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                     $items[] = ["id" => $event->ID, "type" => "event", "name" => $event->Name, "description" => $event->Description];
                 }
             }
+            foreach (Culture::getAll() as $culture) {
+                if (stripos($place->Name, $search) !== false) {
+                    $items[] = ["id" => $culture->ID, "type" => "culture", "name" => $culture->Name, "description" => $culture->Description];
+                }
+            }
             foreach (Place::getAll() as $place) {
                 if (stripos($place->Name, $search) !== false) {
                     $items[] = ["id" => $place->ID, "type" => "place", "name" => $place->Name, "description" => $place->Description];
@@ -27,6 +32,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     } else {
         foreach (Event::getAll() as $event) {
             $items[] = ["id" => $event->ID, "type" => "event", "name" => $event->Name, "description" => $event->Description];
+        }
+        foreach (Culture::getAll() as $culture) {
+            $items[] = ["id" => $culture->ID, "type" => "culture", "name" => $culture->Name, "description" => $culture->Description];
         }
         foreach (Place::getAll() as $place) {
             $items[] = ["id" => $place->ID, "type" => "place", "name" => $place->Name, "description" => $place->Description];
