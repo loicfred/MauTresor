@@ -4,6 +4,7 @@
         "zircote/swagger-php": "^5.7",
         "google/apiclient": "^2.18",
         "minishlink/web-push": "^8.0",
-        "ext-pdo": "*"
+        "ext-pdo": "*",
+        "kreait/firebase-php": "^8.1"
     }
 }

@@ -117,10 +117,8 @@ if (isLoggedIn() && !isset($_GET["logout"])) header("Location: /");
 <!-- FIREBASE CORE -->
 <script type="module" src="/assets/js/firebase.js"></script>
 
-<!-- GOOGLE LOGIN LOGIC -->
 <script type="module">
-    import { GoogleAuthProvider, signInWithPopup }
-        from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
     const provider = new GoogleAuthProvider();
 
@@ -135,7 +133,7 @@ if (isLoggedIn() && !isset($_GET["logout"])) header("Location: /");
                 body: JSON.stringify({ token })
             });
 
-            if (!res.ok) throw new Error("Backend verification failed");
+            if (!res.ok) throw new Error(await res.text());
 
             window.location.href = "/";
         } catch (err) {
@@ -144,5 +142,6 @@ if (isLoggedIn() && !isset($_GET["logout"])) header("Location: /");
         }
     });
 </script>
+
 </body>
 </html>
