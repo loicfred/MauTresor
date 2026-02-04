@@ -114,15 +114,19 @@ if (isLoggedIn() && !isset($_GET["logout"])) header("Location: /");
     </div>
 </main>
 
-<!-- FIREBASE -->
-<script src="/assets/js/firebase.js"></script>
+<!-- FIREBASE CORE -->
+<script type="module" src="/assets/js/firebase.js"></script>
 
-<script>
-    const provider = new firebase.auth.GoogleAuthProvider();
+<!-- GOOGLE LOGIN LOGIC -->
+<script type="module">
+    import { GoogleAuthProvider, signInWithPopup }
+        from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    const provider = new GoogleAuthProvider();
 
     document.getElementById("googleLogin").addEventListener("click", async () => {
         try {
-            const result = await auth.signInWithPopup(provider);
+            const result = await signInWithPopup(window.auth, provider);
             const token = await result.user.getIdToken();
 
             const res = await fetch("/accounts/firebase_login.php", {
@@ -135,10 +139,10 @@ if (isLoggedIn() && !isset($_GET["logout"])) header("Location: /");
 
             window.location.href = "/";
         } catch (err) {
+            console.error(err);
             alert(err.message);
         }
     });
 </script>
-
 </body>
 </html>

@@ -1,17 +1,17 @@
-<!-- Firebase App (core) -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+// Firebase App (core)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 
-<!-- Firebase Auth -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
+// Firebase Authentication
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-<script>
-    const firebaseConfig = {
+const firebaseConfig = {
     apiKey: "AIzaSyDz3H38XDOCTMPo7ujErq8laeOVJDY-qdg",
     authDomain: "mautresor-defcc.firebaseapp.com",
     projectId: "mautresor-defcc",
     appId: "1:480424944215:web:657b70fb2cfff78e1ff912"
 };
 
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-</script>
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+window.auth = auth;
