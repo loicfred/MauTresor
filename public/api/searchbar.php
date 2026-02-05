@@ -3,9 +3,11 @@ header("Content-Type: application/json");
 
 require __DIR__ . "/../../config/obj/Place.php";
 require __DIR__ . "/../../config/obj/Event.php";
+require __DIR__ . "/../../config/obj/Culture.php";
 
 use assets\obj\Place;
 use assets\obj\Event;
+use assets\obj\Culture;
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $items = [];
