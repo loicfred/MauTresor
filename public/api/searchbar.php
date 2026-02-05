@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 }
             }
             foreach (Culture::getAll() as $culture) {
-                if (stripos($place->Name, $search) !== false) {
+                if (stripos($culture->Name, $search) !== false) {
                     $items[] = ["id" => $culture->ID, "type" => "culture", "name" => $culture->Name, "description" => $culture->Description];
                 }
             }
