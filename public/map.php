@@ -103,6 +103,9 @@ include __DIR__ . '/../config/auth.php';
 <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
 
 <script>
+    // ✅ NEW: if we arrive from QR scan: /map?place=ID
+    const focusPlaceId = new URLSearchParams(window.location.search).get("place");
+
     let map = null;
 
     // Base layers + overlays (for layer toggle)
@@ -361,7 +364,6 @@ include __DIR__ . '/../config/auth.php';
             baseLayers,
             {
                 "Places": placesLayer
-                // Later you can add: "KML Layer": kmlLayer
             },
             { collapsed: true }
         ).addTo(map);
@@ -394,35 +396,41 @@ include __DIR__ . '/../config/auth.php';
 
         map = L.map('map').setView([latitude, longitude], 13);
 
-        // 1) Setup base layers (tiles) and add default
         setupBaseLayers();
-
-        // 2) Setup overlays + layer control (Places toggle)
         setupOverlaysAndControl();
 
-        // 3) User location marker
         updateUserLocation(latitude, longitude);
-
-        // Show recenter once we have a position
         showEl(recenterBtn, true);
-
-        // Start live updates
         startWatchingPosition();
 
-        // Load places into the overlay layer group
+        // ✅ UPDATED: Load places + store markers + auto-focus if ?place=ID
         fetch('/api/v1/places')
             .then(res => res.json())
-            .then(data => data.forEach(place => {
-                const distance = getDistanceFromLatLonInKm(latitude, longitude, place.Latitude, place.Longitude);
+            .then(data => {
+                const markersById = {};
 
-                const marker = L.marker([place.Latitude, place.Longitude]);
-                marker.setZIndexOffset(1000);
+                data.forEach(place => {
+                    const distance = getDistanceFromLatLonInKm(latitude, longitude, place.Latitude, place.Longitude);
 
-                const popupEl = buildPlacePopup(place, distance);
-                marker.bindPopup(popupEl);
+                    const marker = L.marker([place.Latitude, place.Longitude]);
+                    marker.setZIndexOffset(1000);
 
-                marker.addTo(placesLayer); // <--- Add to overlay layer (toggleable)
-            }));
+                    const popupEl = buildPlacePopup(place, distance);
+                    marker.bindPopup(popupEl);
+
+                    marker.addTo(placesLayer);
+
+                    markersById[String(place.ID)] = marker;
+                });
+
+                if (focusPlaceId && markersById[String(focusPlaceId)]) {
+                    const m = markersById[String(focusPlaceId)];
+                    const ll = m.getLatLng();
+
+                    map.setView([ll.lat, ll.lng], 16, { animate: true });
+                    m.openPopup();
+                }
+            });
     }, (error) => {
         console.error('Geolocation error:', error);
         console.error('Code:', error.code, 'Message:', error.message);
@@ -440,11 +448,9 @@ include __DIR__ . '/../config/auth.php';
 
         map = L.map('map').setView([fallbackLat, fallbackLng], 11);
 
-        // Base layers + overlay control even in fallback
         setupBaseLayers();
         setupOverlaysAndControl();
 
-        // Show markers anyway (no routing without user location)
         fetch('/api/v1/places')
             .then(res => res.json())
             .then(data => data.forEach(place => {

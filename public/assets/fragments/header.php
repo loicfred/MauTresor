@@ -74,9 +74,19 @@ use assets\obj\Notification;
             <div class="position-relative nav-item search-bar d-none d-flex flex-column" id="searchBar" style="border: 1px solid #ccc; border-radius: 4px; padding: 8px; width: 100%; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                 <input type="text" placeholder="Search..." id="searchField" style="border: 1px solid #ddd; border-radius: 4px; padding: 6px 10px; width: 100%; outline: none;">
             </div>
+
+            <!-- Search icon -->
             <div class="nav-item">
                 <svg viewBox="0 0 24 24" class="nav-icon" id="searchBtn">
                     <path fill="currentColor" d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                </svg>
+            </div>
+
+            <!-- NEW: QR scan icon (right side of search) -->
+            <div class="nav-item" title="Scan QR code" aria-label="Scan QR code">
+                <svg viewBox="0 0 24 24" class="nav-icon" id="qrScanBtn" style="cursor: pointer;">
+                    <path fill="currentColor" d="M3 3h7v2H5v5H3V3zm16 0h2v7h-2V5h-5V3h5zM3 14h2v5h5v2H3v-7zm16 0h2v7h-7v-2h5v-5z"/>
+                    <path fill="currentColor" d="M7 7h4v4H7V7zm6 0h4v4h-4V7zM7 13h4v4H7v-4zm8 0h2v2h-2v-2zm-2 2h4v2h-4v-2z"/>
                 </svg>
             </div>
 
@@ -182,14 +192,34 @@ use assets\obj\Notification;
 
         </div>
     </nav>
-    <div class="position-absolute d-none flex-column w-100" id="resultBox">
 
+    <div class="position-absolute d-none flex-column w-100" id="resultBox"></div>
+
+    <!-- NEW: QR scan modal -->
+    <div class="modal fade" id="qrScanModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Scan a Place QR Code</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="qr-reader" style="width: 100%;"></div>
+                    <div class="small text-muted mt-2" id="qr-scan-status">Point your camera at the QR code.</div>
+                </div>
+            </div>
+        </div>
     </div>
+
     <script>
+        // ----------------------------
+        // Search bar logic
+        // ----------------------------
         const searchBtn = document.getElementById("searchBtn");
         const searchBar = document.getElementById("searchBar");
         const resultBox = document.getElementById("resultBox");
         const searchField = document.getElementById("searchField");
+
         searchBtn.addEventListener("click", (e) => {
             e.stopPropagation();
             if (searchBar.classList.contains("d-none")) searchBar.classList.remove("d-none");
@@ -197,6 +227,7 @@ use assets\obj\Notification;
             searchBtn.classList.add("d-none")
             searchBar.querySelector("input").focus();
         });
+
         document.addEventListener("click", (e) => {
             if (!searchBar.contains(e.target)) {
                 searchBar.classList.add("d-none");
@@ -204,6 +235,7 @@ use assets\obj\Notification;
                 searchBtn.classList.remove("d-none")
             }
         });
+
         let searchdata = [];
         searchField.addEventListener("input", async (e) => {
             if (searchdata.length === 0) {
@@ -238,8 +270,141 @@ use assets\obj\Notification;
                                                               </svg>
                                                               <a style="text-decoration: none; width: 100%;" href="/culture/${data.id}">${data.name}</a>
                                                             </div>`;
-        }
+                }
             });
         });
+
+        // ----------------------------
+        // NEW: QR scanning (camera)
+        // ----------------------------
+        const qrScanBtn = document.getElementById("qrScanBtn");
+        const qrScanStatus = document.getElementById("qr-scan-status");
+        const qrScanModalEl = document.getElementById("qrScanModal");
+
+        let qrModalInstance = null;
+        let headerQrScanner = null;
+
+        function loadHtml5QrcodeLib() {
+            return new Promise((resolve, reject) => {
+                if (window.Html5QrcodeScanner) return resolve();
+
+                const existing = document.querySelector('script[data-html5-qrcode="1"]');
+                if (existing) {
+                    existing.addEventListener('load', () => resolve());
+                    existing.addEventListener('error', () => reject(new Error('Failed to load QR library')));
+                    return;
+                }
+
+                const s = document.createElement('script');
+                s.src = 'https://unpkg.com/html5-qrcode';
+                s.async = true;
+                s.dataset.html5Qrcode = "1";
+                s.onload = () => resolve();
+                s.onerror = () => reject(new Error('Failed to load QR library'));
+                document.head.appendChild(s);
+            });
+        }
+
+        async function startHeaderQrScanner() {
+            await loadHtml5QrcodeLib();
+
+            // Clean up any previous instance
+            if (headerQrScanner) {
+                try { await headerQrScanner.clear(); } catch (e) {}
+                headerQrScanner = null;
+            }
+
+            // Reset container
+            const readerEl = document.getElementById('qr-reader');
+            if (readerEl) readerEl.innerHTML = "";
+
+            headerQrScanner = new Html5QrcodeScanner(
+                "qr-reader",
+                { fps: 10, qrbox: 250 },
+                false
+            );
+
+            // const onScanSuccess = async (decodedText, decodedResult) => {
+            //     const code = (decodedText ?? "").toString().trim();
+            //
+            //     if (!code) {
+            //         console.warn("[QR] Detected callback but empty decodedText:", decodedText, decodedResult);
+            //         if (qrScanStatus) qrScanStatus.textContent = "Could not read QR. Try again (better lighting / hold steady).";
+            //         return;
+            //     }
+                let lastEmptyWarn = 0;
+
+                const onScanSuccess = async (decodedText, decodedResult) => {
+                    const code = (decodedText ?? "").toString().trim();
+
+                    if (!code) {
+                        const now = Date.now();
+                        if (now - lastEmptyWarn > 2000) { // warn at most once every 2s
+                            lastEmptyWarn = now;
+                            console.warn("[QR] Empty decodedText (QR not readable). Improve QR image/margin/quality.");
+                        }
+                        if (qrScanStatus) qrScanStatus.textContent = "Could not read QR. Move closer / improve lighting.";
+                        return;
+                    }
+
+                console.log("[QR] Decoded:", code);
+
+                try {
+                    if (qrScanStatus) qrScanStatus.textContent = "QR detected. Opening map...";
+
+                    // Stop scanning before redirect
+                    await headerQrScanner.clear();
+
+                    const res = await fetch(`/api/resolve_qr?code=${encodeURIComponent(code)}`, { method: "GET" });
+                    const data = await res.json();
+
+                    if (!data || !data.success || !data.place || !data.place.id) {
+                        alert(data && data.message ? data.message : "Could not recognize this QR code.");
+                        if (qrScanStatus) qrScanStatus.textContent = "Point your camera at the QR code.";
+                        return;
+                    }
+
+                    if (qrModalInstance) qrModalInstance.hide();
+                    window.location.href = `/map?place=${encodeURIComponent(data.place.id)}`;
+                } catch (err) {
+                    console.error(err);
+                    alert("Could not scan / resolve the QR code.");
+                    if (qrScanStatus) qrScanStatus.textContent = "Point your camera at the QR code.";
+                }
+            };
+            headerQrScanner.render(onScanSuccess);
+        }
+
+            async function openQrModal() {
+            try {
+                if (!qrScanModalEl) return;
+                if (!qrModalInstance) qrModalInstance = new bootstrap.Modal(qrScanModalEl);
+                if (qrScanStatus) qrScanStatus.textContent = "Point your camera at the QR code.";
+                qrModalInstance.show();
+                await startHeaderQrScanner();
+            } catch (e) {
+                console.error(e);
+                alert("Camera / QR scanner could not be started. Please allow camera permission.");
+            }
+        }
+
+        if (qrScanBtn) {
+            qrScanBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                openQrModal();
+            });
+        }
+
+        // Ensure camera stops when modal closes
+        if (qrScanModalEl) {
+            qrScanModalEl.addEventListener('hidden.bs.modal', async () => {
+                if (headerQrScanner) {
+                    try { await headerQrScanner.clear(); } catch (e) {}
+                    headerQrScanner = null;
+                }
+                const readerEl = document.getElementById('qr-reader');
+                if (readerEl) readerEl.innerHTML = "";
+            });
+        }
     </script>
 </div>
