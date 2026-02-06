@@ -453,25 +453,40 @@ include __DIR__ . '/../config/auth.php';
 
         fetch('/api/v1/places')
             .then(res => res.json())
-            .then(data => data.forEach(place => {
-                const marker = L.marker([place.Latitude, place.Longitude]);
+            .then(data => {
+                const markersById = {};
 
-                const wrap = document.createElement("div");
-                const title = document.createElement("b");
-                title.textContent = place.Name;
-                wrap.appendChild(title);
-                wrap.appendChild(document.createElement("br"));
-                wrap.appendChild(document.createElement("br"));
+                data.forEach(place => {
+                    const marker = L.marker([place.Latitude, place.Longitude]);
 
-                const btnGmaps = document.createElement("button");
-                btnGmaps.className = "btn btn-sm btn-outline-secondary";
-                btnGmaps.textContent = "Open in Google Maps";
-                btnGmaps.addEventListener("click", () => openGoogleMapsDirections(place.Latitude, place.Longitude));
-                wrap.appendChild(btnGmaps);
+                    const wrap = document.createElement("div");
+                    const title = document.createElement("b");
+                    title.textContent = place.Name;
+                    wrap.appendChild(title);
+                    wrap.appendChild(document.createElement("br"));
+                    wrap.appendChild(document.createElement("br"));
 
-                marker.bindPopup(wrap);
-                marker.addTo(placesLayer);
-            }));
+                    const btnGmaps = document.createElement("button");
+                    btnGmaps.className = "btn btn-sm btn-outline-secondary";
+                    btnGmaps.textContent = "Open in Google Maps";
+                    btnGmaps.addEventListener("click", () => openGoogleMapsDirections(place.Latitude, place.Longitude));
+                    wrap.appendChild(btnGmaps);
+
+                    marker.bindPopup(wrap);
+                    marker.addTo(placesLayer);
+
+                    markersById[String(place.ID)] = marker;
+                });
+
+                // ✅ Auto-focus even without geolocation
+                if (focusPlaceId && markersById[String(focusPlaceId)]) {
+                    const m = markersById[String(focusPlaceId)];
+                    const ll = m.getLatLng();
+
+                    map.setView([ll.lat, ll.lng], 16, { animate: true });
+                    m.openPopup();
+                }
+            });
     }, {
         enableHighAccuracy: true,
         timeout: 5000,

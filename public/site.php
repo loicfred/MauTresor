@@ -125,8 +125,8 @@ require_once __DIR__ . '/assets/fragments/header.php';
         </div>
         <div class="map-bottom align-items-center">
             <p id="km" class="text-center"></p>
-            <a href="/map" class="ms-auto btn btn-secondary d-flex align-items-center justify-content-center mb-3" style="color: white;">
-                <svg viewBox="0 0 20 20" style="height: 20px; width: 20px; margin-right: 0.3em;">
+            <a href="/map?place=<?= urlencode($place->ID) ?>" class="ms-auto btn btn-secondary d-flex align-items-center justify-content-center mb-3" style="color: white;">
+            <svg viewBox="0 0 20 20" style="height: 20px; width: 20px; margin-right: 0.3em;">
                     <path fill="white" d="M10 1.67C6.78 1.67 4.17 4.28 4.17 7.5c0 4.38 5.83 10.83 5.83 10.83s5.83-6.46 5.83-10.83c0-3.22-2.61-5.83-5.83-5.83zm0 7.92c-1.15 0-2.08-.93-2.08-2.09s.93-2.08 2.08-2.08 2.08.93 2.08 2.08-.93 2.09-2.08 2.09z"/>
                 </svg>
                 Locate
