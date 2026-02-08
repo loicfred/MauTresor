@@ -3,15 +3,20 @@ include __DIR__ . '/../../config/auth.php';
 checksForAdmin();
 
 $id = $_GET['id'] ?? 0;
-$class = $_GET['class'];
+$class = $_GET['class'] ?? '';
 $fullClass = "assets\\obj\\$class";
 
 require_once __DIR__ . "/../../config/obj/$class.php";
 require_once __DIR__ . "/../../config/obj/DBObject.php";
 
-
 $edited_object = $id == 0 ? new $fullClass() : $fullClass::getByID($id);
 if (!$edited_object && $_SERVER['REQUEST_METHOD'] !== 'POST') header("Location: /admin/editor?class=$class");
+
+// QR: always generate from Place ID (no DB changes)
+$isPlace = ($class === "Place");
+$placeMapQrValue = ($isPlace && $id != 0 && $edited_object && isset($edited_object->ID))
+        ? ("/map?place=" . $edited_object->ID)
+        : null;
 
 ?>
 
@@ -34,6 +39,8 @@ if (!$edited_object && $_SERVER['REQUEST_METHOD'] !== 'POST') header("Location: 
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Keep qrcodejs (per your request) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <style>
@@ -99,16 +106,30 @@ require_once __DIR__ . '/../assets/fragments/header.php';
                         $prop->setValue($edited_object, $newVal);
                     }
                 endforeach;
+
                 $edited_object->Upsert();
                 echo "<div class='alert alert-success'>Successfully saved this entry !</div>";
+
+                // Refresh object after save (so ID exists for new Place)
+                if ($id == 0 && isset($edited_object->ID) && $edited_object->ID) {
+                    $id = (int)$edited_object->ID;
+                } elseif ($id != 0) {
+                    $edited_object = $fullClass::getByID($id) ?? $edited_object;
+                }
+
+                // Recompute QR value after saving
+                $isPlace = ($class === "Place");
+                $placeMapQrValue = ($isPlace && $id != 0 && $edited_object && isset($edited_object->ID))
+                        ? ("/map?place=" . $edited_object->ID)
+                        : null;
+
             } catch (PDOException $e) {
                 echo "<div class='alert alert-danger'>" . $e->getMessage() . "</div>";
-
             }
         }
         ?>
 
-        <form action="/admin/editor?class=<?= $class ?><?= (isset($_GET['id']) ? '&id=' . $id : '') ?>" enctype="multipart/form-data" method="POST" class="d-flex flex-column">
+        <form action="/admin/editor?class=<?= htmlspecialchars($class) ?><?= (isset($_GET['id']) ? '&id=' . (int)$id : '') ?>" enctype="multipart/form-data" method="POST" class="d-flex flex-column">
             <?php foreach ($properties as $prop):
                 if ($prop->getName() === 'ID') continue;
                 if ($prop->getName() === 'MimeType') continue;
@@ -126,52 +147,97 @@ require_once __DIR__ . '/../assets/fragments/header.php';
                 <div class="mb-3">
                     <?php if ($name === "Email"): ?>
                         <label class="form-label" for="<?= $name ?>"><?= $name ?></label>
-                        <input class="form-control" type="email" id="<?= $name ?>" name="<?= $name ?>" maxlength="64" value="<?= $value ?>">
+                    <input class="form-control" type="email" id="<?= $name ?>" name="<?= $name ?>" maxlength="64" value="<?= htmlspecialchars((string)$value) ?>">
+
                     <?php elseif ($name === "Title" || $name === "Address"): ?>
                         <label class="form-label" for="<?= $name ?>"><?= $name ?></label>
-                        <input class="form-control" type="text" id="<?= $name ?>" name="<?= $name ?>" maxlength="128" value="<?= $value ?>">
+                    <input class="form-control" type="text" id="<?= $name ?>" name="<?= $name ?>" maxlength="128" value="<?= htmlspecialchars((string)$value) ?>">
+
                     <?php elseif ($name === "Message"): ?>
                         <label class="form-label" for="<?= $name ?>"><?= $name ?></label>
-                        <textarea class="form-control" id="<?= $name ?>" name="<?= $name ?>" maxlength="512" rows="4"><?= $value ?></textarea>
+                        <textarea class="form-control" id="<?= $name ?>" name="<?= $name ?>" maxlength="512" rows="4"><?= htmlspecialchars((string)$value) ?></textarea>
+
                     <?php elseif ($name === "Description"): ?>
                         <label class="form-label" for="<?= $name ?>"><?= $name ?></label>
-                        <textarea class="form-control" id="<?= $name ?>" name="<?= $name ?>" maxlength="1024" rows="8"><?= $value ?></textarea>
+                        <textarea class="form-control" id="<?= $name ?>" name="<?= $name ?>" maxlength="1024" rows="8"><?= htmlspecialchars((string)$value) ?></textarea>
+
                     <?php elseif ($name === "QRCode"): ?>
-                        <div style="border: 1px solid #ced4da; display: flex; flex-direction: column; align-items: center; border-radius: 5px; padding: 5px">
-                            <div class="d-flex gap-1 align-items-center">
+                        <div style="border: 1px solid #ced4da; display: flex; flex-direction: column; align-items: center; border-radius: 5px; padding: 10px; gap: 10px;">
+                            <div class="d-flex gap-1 align-items-center w-100">
                                 <label class="form-label w-50 mb-0" for="<?= $name ?>"><?= $name ?></label>
-                                <input class="form-control w-50 mb-0" type="text" id="<?= $name ?>" name="<?= $name ?>" maxlength="32" value="<?= $value ?>">
+                                <input class="form-control w-50 mb-0" type="text" id="<?= $name ?>" name="<?= $name ?>" maxlength="32" value="<?= htmlspecialchars((string)$value) ?>">
                             </div>
-                            <div class="m-2" id="qrcode"></div>
-                            <script>
-                                const input = document.getElementById('<?= $name ?>');
-                                const qrContainer = document.getElementById("qrcode");
-                                const qr = new QRCode(qrContainer, {
-                                    text: "", width: 200, height: 200,
-                                    correctLevel: QRCode.CorrectLevel.H
-                                });
-                                input.addEventListener("input", () => {
-                                    const value = input.value.trim();
-                                    qr.clear();
-                                    if (value !== "") qr.makeCode(value);
-                                });
-                                qr.makeCode(<?= $value ?>);
-                            </script>
+
+                            <?php if ($isPlace && $placeMapQrValue): ?>
+                                <div class="text-center w-100">
+                                    <div class="small text-muted mb-2">
+                                        Auto-generated QR for this Place (opens map directly):
+                                        <br><b><?= htmlspecialchars($placeMapQrValue) ?></b>
+                                    </div>
+
+                                    <img
+                                            src="/api/qrcode.php?code=<?= urlencode($placeMapQrValue) ?>"
+                                            alt="Place QR Code"
+                                            style="width:180px;height:180px;border:8px solid #fff;border-radius:10px;
+                                               image-rendering:pixelated;image-rendering:crisp-edges;"
+                                            draggable="false"
+                                    />
+
+                                    <div class="small text-muted mt-2">
+                                        Scan to open this place on the map
+                                    </div>
+                                </div>
+                            <?php else: ?>
+                                <div class="small text-muted text-center">
+                                    Save the Place entry first to generate the Place QR.
+                                </div>
+
+                                <!-- Keep old preview for non-Place classes (or before save) -->
+                                <div class="m-2" id="qrcode"></div>
+                                <script>
+                                    (function(){
+                                        const input = document.getElementById('<?= $name ?>');
+                                        const qrContainer = document.getElementById("qrcode");
+                                        if (!input || !qrContainer || !window.QRCode) return;
+
+                                        const qr = new QRCode(qrContainer, {
+                                            text: "",
+                                            width: 200,
+                                            height: 200,
+                                            correctLevel: QRCode.CorrectLevel.H
+                                        });
+
+                                        const render = () => {
+                                            const v = (input.value || "").toString().trim();
+                                            qr.clear();
+                                            if (v !== "") qr.makeCode(v);
+                                        };
+
+                                        input.addEventListener("input", render);
+
+                                        // initial render (safe)
+                                        render();
+                                    })();
+                                </script>
+                            <?php endif; ?>
                         </div>
+
                     <?php elseif ($name === "Gender"): ?>
                         <label class="form-label" for="<?= $name ?>"><?= $name ?></label>
                         <select class="form-select" id="<?= $name ?>" name="<?= $name ?>">
-                            <option value="" disabled selected>Select Gender</option>
+                            <option value="" disabled <?= ($value === null || $value === "") ? "selected" : "" ?>>Select Gender</option>
                             <option value="Male" <?= $value === "Male" ? "selected" : "" ?>>Male</option>
                             <option value="Female" <?= $value === "Female" ? "selected" : "" ?>>Female</option>
                             <option value="Other" <?= $value === "Other" ? "selected" : "" ?>>Other</option>
                         </select>
+
                     <?php elseif ($name === "ID"): ?>
                         <label class="form-label" for="<?= $name ?>"><?= $name ?></label>
-                        <input class="form-control" type="number" id="<?= $name ?>" name="<?= $name ?>" value="<?= $value ?>" disabled>
+                    <input class="form-control" type="number" id="<?= $name ?>" name="<?= $name ?>" value="<?= htmlspecialchars((string)$value) ?>" disabled>
+
                     <?php elseif ($name === "Image"): ?>
                         <label class="form-label" for="<?= $name ?>"><?= $name ?></label>
-                        <input class="form-control" type="file" accept="image/*" id="<?= $name ?>" name="<?= $name ?>">
+                    <input class="form-control" type="file" accept="image/*" id="<?= $name ?>" name="<?= $name ?>">
                         <script>
                             const MAX_SIZE = 2 * 1024 * 1024;
                             document.getElementById("<?= $name ?>").addEventListener('change', function () {
@@ -183,16 +249,22 @@ require_once __DIR__ . '/../assets/fragments/header.php';
                                 }
                             });
                         </script>
+
                     <?php elseif ($name === "Longitude"): ?>
-                    <script>
-                        document.getElementById("Longitude").value = <?= $value ?>;
-                    </script>
+                        <script>
+                            // Ensure Longitude input exists before setting (Latitude block creates it)
+                            document.addEventListener("DOMContentLoaded", () => {
+                                const el = document.getElementById("Longitude");
+                                if (el) el.value = <?= json_encode($value) ?>;
+                            });
+                        </script>
+
                     <?php elseif ($name === "Latitude"): ?>
                         <div style="border: 1px solid #ced4da; border-radius: 5px; padding: 5px">
                             <div class="d-flex gap-1">
                                 <div class="mb-3 w-50">
                                     <label class="form-label" for="Latitude">Latitude</label>
-                                    <input class="form-control" type="number" step="any" min="-90" max="90" id="Latitude" value="<?= $value ?>" name="Latitude">
+                                    <input class="form-control" type="number" step="any" min="-90" max="90" id="Latitude" value="<?= htmlspecialchars((string)$value) ?>" name="Latitude">
                                 </div>
                                 <div class="mb-3 w-50">
                                     <label class="form-label" for="Longitude">Longitude</label>
@@ -201,31 +273,35 @@ require_once __DIR__ . '/../assets/fragments/header.php';
                             </div>
                             <div id="map" style="height:200px"></div>
                         </div>
+
                     <?php elseif ($inputType === "number"): ?>
                         <label class="form-label" for="<?= $name ?>"><?= $name ?></label>
-                        <input class="form-control" type="number" id="<?= $name ?>" name="<?= $name ?>" value="<?= $value ?>">
+                    <input class="form-control" type="number" id="<?= $name ?>" name="<?= $name ?>" value="<?= htmlspecialchars((string)$value) ?>">
+
                     <?php elseif ($inputType === "checkbox"): ?>
-                        <input class="form-check-input" type="checkbox" id="<?= $name ?>" name="<?= $name ?>" value="true"<?= !empty($value) ? 'checked' : '' ?>>
+                    <input class="form-check-input" type="checkbox" id="<?= $name ?>" name="<?= $name ?>" value="true"<?= !empty($value) ? 'checked' : '' ?>>
                         <label class="form-label" for="<?= $name ?>"><?= $name ?></label>
+
                     <?php elseif ($inputType === "text"): ?>
                         <label class="form-label" for="<?= $name ?>"><?= $name ?></label>
-                    <input class="form-control" type="text" id="<?= $name ?>" name="<?= $name ?>" maxlength="64" value="<?= $value ?>">
+                    <input class="form-control" type="text" id="<?= $name ?>" name="<?= $name ?>" maxlength="64" value="<?= htmlspecialchars((string)$value) ?>">
                     <?php endif; ?>
                 </div>
             <?php endforeach; ?>
 
             <button type="submit" class="btn btn-success">Save Entry</button>
         </form>
+
         <?php if (isset($_GET['id'])): ?>
-            <form action="/admin/editor?class=<?= $class ?>&id=<?= $id ?>&delete" class="d-flex flex-column mt-3" method="post" onsubmit="return confirm('Are you sure you want to delete this entry?');">
+            <form action="/admin/editor?class=<?= htmlspecialchars($class) ?>&id=<?= (int)$id ?>&delete" class="d-flex flex-column mt-3" method="post" onsubmit="return confirm('Are you sure you want to delete this entry?');">
                 <button type="submit" class="btn btn-danger flex-grow-1">Delete Entry</button>
             </form>
             <div class="d-flex flex-row mt-3 gap-2">
                 <?php if ($fullClass::getByID($id-1)): ?>
-                    <a href="/admin/editor?class=<?= $class ?>&id=<?= $id-1 ?>" class="btn btn-primary flex-grow-1">Prev. Entry</a>
+                    <a href="/admin/editor?class=<?= htmlspecialchars($class) ?>&id=<?= (int)($id-1) ?>" class="btn btn-primary flex-grow-1">Prev. Entry</a>
                 <?php endif; ?>
                 <?php if ($fullClass::getByID($id+1)): ?>
-                    <a href="/admin/editor?class=<?= $class ?>&id=<?= $id+1 ?>" class="btn btn-primary flex-grow-1">Next Entry</a>
+                    <a href="/admin/editor?class=<?= htmlspecialchars($class) ?>&id=<?= (int)($id+1) ?>" class="btn btn-primary flex-grow-1">Next Entry</a>
                 <?php endif; ?>
             </div>
         <?php endif; ?>
@@ -235,25 +311,41 @@ require_once __DIR__ . '/../assets/fragments/header.php';
 <script src="/assets/js/app.js"></script>
 
 <script>
-    const map = L.map('map').setView([0, 0], 2);
+    // Leaflet map only if #map exists (Latitude field exists)
+    document.addEventListener("DOMContentLoaded", () => {
+        const mapEl = document.getElementById("map");
+        if (!mapEl) return;
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
+        const latEl = document.getElementById("Latitude");
+        const lngEl = document.getElementById("Longitude");
 
-    let marker;
+        const lat0 = latEl && latEl.value ? parseFloat(latEl.value) : 0;
+        const lng0 = lngEl && lngEl.value ? parseFloat(lngEl.value) : 0;
 
-    map.on('click', function (e) {
-        const { lat, lng } = e.latlng;
+        const map = L.map('map').setView([lat0, lng0], (lat0 === 0 && lng0 === 0) ? 2 : 13);
 
-        if (marker) {
-            marker.setLatLng(e.latlng);
-        } else {
-            marker = L.marker(e.latlng).addTo(map);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        let marker = null;
+
+        if (latEl && lngEl && !isNaN(lat0) && !isNaN(lng0) && (lat0 !== 0 || lng0 !== 0)) {
+            marker = L.marker([lat0, lng0]).addTo(map);
         }
 
-        document.getElementById('Latitude').value = lat.toFixed(6);
-        document.getElementById('Longitude').value = lng.toFixed(6);
+        map.on('click', function (e) {
+            const { lat, lng } = e.latlng;
+
+            if (marker) {
+                marker.setLatLng(e.latlng);
+            } else {
+                marker = L.marker(e.latlng).addTo(map);
+            }
+
+            if (latEl) latEl.value = lat.toFixed(6);
+            if (lngEl) lngEl.value = lng.toFixed(6);
+        });
     });
 </script>
 </body>

@@ -17,32 +17,48 @@ if ($code === "") {
     exit;
 }
 
-// 1) If QR contains a URL, try extracting place id from:
-//    - /site/{id}
-//    - /map?place={id}
 $placeId = null;
-if (preg_match('#^https?://#i', $code)) {
-    $parts = parse_url($code);
-    $path  = $parts["path"] ?? "";
-    $query = $parts["query"] ?? "";
 
+// Helper: extract ID from a path/query
+$extractPlaceIdFromPathQuery = function(string $path, string $query) use (&$placeId) {
     // /site/123
-    if (preg_match('#/site/(\d+)#', $path, $m)) {
+    if ($placeId === null && preg_match('#/site/(\d+)#', $path, $m)) {
         $placeId = (int)$m[1];
     }
 
     // /map?place=123
-    if ($placeId === null && $query) {
+    if ($placeId === null && $query !== "") {
         parse_str($query, $qs);
         if (isset($qs["place"]) && is_numeric($qs["place"])) {
             $placeId = (int)$qs["place"];
         }
     }
 
-    // If URL ends with just a number somewhere, last fallback:
+    // fallback: last number at end of path
     if ($placeId === null && preg_match('#(\d+)$#', $path, $m)) {
         $placeId = (int)$m[1];
     }
+};
+
+// 1A) If QR contains a RELATIVE URL like /site/123 or /map?place=123
+if ($placeId === null && preg_match('#^/#', $code)) {
+    $path = $code;
+    $query = "";
+
+    if (strpos($code, "?") !== false) {
+        [$path, $query] = explode("?", $code, 2);
+    }
+
+    $extractPlaceIdFromPathQuery($path, $query);
+}
+
+// 1B) If QR contains an ABSOLUTE URL (http/https)
+if ($placeId === null && preg_match('#^https?://#i', $code)) {
+    $parts = parse_url($code);
+    $path  = $parts["path"] ?? "";
+    $query = $parts["query"] ?? "";
+
+    $extractPlaceIdFromPathQuery($path, $query);
 }
 
 // 2) If scanned text is numeric, treat it as Place ID
