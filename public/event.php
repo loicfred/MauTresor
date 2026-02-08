@@ -104,7 +104,7 @@ $participant = Event_Participant::getByUserAndEvent($_SESSION['user_id'] ?? 0, $
             background-repeat: repeat-y;
             background-position: center top;
             background-size: 100% auto;
-            padding: 7.5% 20% 0;
+            padding: 4% 20% 0;
         }
         .map-table {
             z-index: 2;
@@ -115,7 +115,7 @@ $participant = Event_Participant::getByUserAndEvent($_SESSION['user_id'] ?? 0, $
             background-repeat: repeat-y;
             background-position: center top;
             background-size: 100% auto;
-            padding: 7.5% 15% 0;
+            padding: 4% 15% 0;
         }
         .map-bottom {
             z-index: 2;

@@ -162,27 +162,66 @@ require_once __DIR__ . '/../assets/fragments/header.php';
                         <textarea class="form-control" id="<?= $name ?>" name="<?= $name ?>" maxlength="1024" rows="8"><?= htmlspecialchars((string)$value) ?></textarea>
 
                     <?php elseif ($name === "QRCode"): ?>
-                        <div style="border: 1px solid #ced4da; display: flex; flex-direction: column; align-items: center; border-radius: 5px; padding: 5px">
-                            <div class="d-flex gap-1 align-items-center">
+                        <div style="border: 1px solid #ced4da; display: flex; flex-direction: column; align-items: center; border-radius: 5px; padding: 10px; gap: 10px;">
+                            <div class="d-flex gap-1 align-items-center w-100">
                                 <label class="form-label w-50 mb-0" for="<?= $name ?>"><?= $name ?></label>
-                                <input class="form-control w-50 mb-0" type="text" id="<?= $name ?>" name="<?= $name ?>" maxlength="32" value="<?= $value ?>">
+                                <input class="form-control w-50 mb-0" type="text" id="<?= $name ?>" name="<?= $name ?>" maxlength="32" value="<?= htmlspecialchars((string)$value) ?>">
                             </div>
-                            <div class="m-2" style="height:215px; border: 8px solid #fff;" id="qrcode"></div>
-                            <script>
-                                const input = document.getElementById('<?= $name ?>');
-                                const qrContainer = document.getElementById("qrcode");
-                                const qr = new QRCode(qrContainer, {
-                                    text: "", width: 200, height: 200,
-                                    correctLevel: QRCode.CorrectLevel.H
-                                });
-                                input.addEventListener("input", () => {
-                                    const value = input.value.trim();
-                                    qr.clear();
-                                    if (value !== "") qr.makeCode(value);
-                                });
-                                qr.makeCode(<?= $value ?>);
-                            </script>
+
+                            <?php if ($isPlace && $placeMapQrValue): ?>
+                                <div class="text-center w-100">
+                                    <div class="small text-muted mb-2">
+                                        Auto-generated QR for this Place (opens map directly):
+                                        <br><b><?= htmlspecialchars($placeMapQrValue) ?></b>
+                                    </div>
+
+                                    <img
+                                            src="/api/qrcode.php?code=<?= urlencode($placeMapQrValue) ?>"
+                                            alt="Place QR Code"
+                                            style="width:180px;height:180px;border:8px solid #fff;border-radius:10px;
+                                               image-rendering:pixelated;image-rendering:crisp-edges;"
+                                            draggable="false"
+                                    />
+
+                                    <div class="small text-muted mt-2">
+                                        Scan to open this place on the map
+                                    </div>
+                                </div>
+                            <?php else: ?>
+                                <div class="small text-muted text-center">
+                                    Save the Place entry first to generate the Place QR.
+                                </div>
+
+                                <!-- Keep old preview for non-Place classes (or before save) -->
+                                <div class="m-2" id="qrcode"></div>
+                                <script>
+                                    (function(){
+                                        const input = document.getElementById('<?= $name ?>');
+                                        const qrContainer = document.getElementById("qrcode");
+                                        if (!input || !qrContainer || !window.QRCode) return;
+
+                                        const qr = new QRCode(qrContainer, {
+                                            text: "",
+                                            width: 200,
+                                            height: 200,
+                                            correctLevel: QRCode.CorrectLevel.H
+                                        });
+
+                                        const render = () => {
+                                            const v = (input.value || "").toString().trim();
+                                            qr.clear();
+                                            if (v !== "") qr.makeCode(v);
+                                        };
+
+                                        input.addEventListener("input", render);
+
+                                        // initial render (safe)
+                                        render();
+                                    })();
+                                </script>
+                            <?php endif; ?>
                         </div>
+
                     <?php elseif ($name === "Gender"): ?>
                         <label class="form-label" for="<?= $name ?>"><?= $name ?></label>
                         <select class="form-select" id="<?= $name ?>" name="<?= $name ?>">

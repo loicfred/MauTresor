@@ -1,4 +1,13 @@
 <?php
+session_set_cookie_params([
+    'lifetime' => 0,
+    'path' => '/',
+    'domain' => '',
+    'secure' => false,
+    'httponly' => true,
+    'samesite' => 'Lax'
+]);
+session_name("MAUTRESOR_MU");
 session_start();
 
 require_once __DIR__ . '/../../vendor/autoload.php';

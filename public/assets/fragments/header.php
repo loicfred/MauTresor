@@ -25,7 +25,7 @@ use assets\obj\Notification;
                 <a href="/map">Map</a>
                 <a href="/about">About Us</a>
                 <?= !isset($_SESSION['user_id']) ? "<a href='/accounts/login'>Log in</a>" : '' ?>
-                <?= isset($_SESSION['user_id']) ? "<a href='/settings'>Settings</a>" : '' ?>
+<!--                --><?php //= isset($_SESSION['user_id']) ? "<a href='/settings'>Settings</a>" : '' ?>
                 <?= isset($_SESSION['user_id']) ? "<a href='/accounts/login?logout'>Log out</a>" : '' ?>
                 <script>
                     const url = window.location.href.split('?')[0];
@@ -159,8 +159,8 @@ use assets\obj\Notification;
                     <img src="/api/v1/img/avatar/<?= $_SESSION['user_id'] ?>" draggable="false" height="28" class="position-relative"
                          style="border-radius: 50%; cursor: pointer;" alt="avatar.png" id="avatarBtn"/>
                     <div class="avatar-popup" id="avatarPopup">
-                        <a href="/settings">Settings</a>
-                        <a href="/accounts/logout.php">Log out</a>
+<!--                        <a href="/settings">Settings</a>-->
+                        <a href="/accounts/login?logout">Log out</a>
                     </div>
                     <script>
                         const avatarBtn = document.getElementById("avatarBtn");

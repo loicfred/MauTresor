@@ -30,8 +30,18 @@ if (!$emailVerif || $emailVerif->Type !== "PASSWORD_RESET") {
     <link rel="icon"  href="/assets/img/logo_transparent.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        html {
+            background: url('/assets/img/bg2.png') no-repeat;
+            background-size: cover;
+        }
+        body {
+            background-color: #00000088;
+        }
+    </style>
 </head>
-<body class="bg-light d-flex align-items-center" style="height: 100vh;">
+<body class="d-flex align-items-center" style="height: 100vh;">
 <main class="container text-center">
     <div class="row justify-content-center">
         <div class="col-md-4">

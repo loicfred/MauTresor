@@ -21,6 +21,14 @@ if (isLoggedIn() && !isset($_GET["logout"])) header("Location: /");
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
+        html {
+            background: url('/assets/img/bg2.png') no-repeat;
+            background-size: cover;
+        }
+        body {
+            background-color: #00000088;
+        }
+
         .google-btn {
             display: flex;
             align-items: center;
@@ -61,7 +69,7 @@ if (isLoggedIn() && !isset($_GET["logout"])) header("Location: /");
     </style>
 </head>
 
-<body class="bg-light d-flex align-items-center" style="height: 100vh;">
+<body class="d-flex align-items-center" style="height: 100vh;">
 <main class="container text-center">
     <div class="row justify-content-center">
         <div class="col-md-4">
@@ -70,14 +78,45 @@ if (isLoggedIn() && !isset($_GET["logout"])) header("Location: /");
                 <h3 class="mb-3">Welcome Back</h3>
 
                 <?php
+                if (isset($_GET["successVerif"])) {
+                    echo "<div class='alert alert-success'>Your account has been verified! You can now log in.</div>";
+                }
+                if (isset($_GET["newpassword"])) {
+                    echo "<div class='alert alert-success'>Your password has been reset successfully.</div>";
+                }
+                if (isLoggedIn() && isset($_GET["logout"])) {
+                    session_destroy();
+                    setcookie(session_name(), '', time() - 3600, '/');
+                    setcookie('remember_me', '', time() - 3600);
+                    $rememberMe = RememberMe::getByID($_SESSION["user_id"]);
+                    if ($rememberMe) $rememberMe->Delete();
+                    echo "<div class='alert alert-success'>You have been logged out successfully.</div>";
+                }
+                if (isset($_GET["checkEmail"])) {
+                    echo "<div class='alert alert-success'>Please check your email to verify your account.</div>";
+                }
+                if (isset($_GET["deleted"])) {
+                    echo "<div class='alert alert-success'> Your account has been deleted! You can now register once again..</div>";
+                }
+
                 if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     $user = User::getByAuthentication(trim($_POST["Email"]), trim($_POST["Password"]));
                     if (!$user) {
                         echo "<div class='alert alert-danger'>Invalid email or password.</div>";
-                    } elseif ($user->Verified === false) {
+                    }
+                    else if ($user->Verified === false) {
                         echo "<div class='alert alert-danger'>Verify your email first.</div>";
                     } else {
                         $_SESSION["user_id"] = $user->ID;
+                        if (isset($_POST["remember-me"])) {
+                            $rememberMe = new RememberMe();
+                            $rememberMe->ID = $user->ID;
+                            $rememberMe->Token = bin2hex(random_bytes(32));
+                            $rememberMe->ExpiryDate = date('Y-m-d H:i:s', strtotime('+30 days'));
+                            if ($rememberMe->Upsert()->ID === $user->ID) {
+                                setcookie('remember_me', $rememberMe->Token, time() + 60*60*24*30, "/", "", true, true);
+                            }
+                        }
                         header("Location: /");
                     }
                 }
@@ -132,7 +171,6 @@ if (isLoggedIn() && !isset($_GET["logout"])) header("Location: /");
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ token })
             });
-
             if (!res.ok) throw new Error(await res.text());
 
             window.location.href = "/";

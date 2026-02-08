@@ -1,16 +1,7 @@
 <?php
-session_set_cookie_params([
-    'lifetime' => 0,
-    'path' => '/',
-    'domain' => '',
-    'secure' => false,
-    'httponly' => true,
-    'samesite' => 'Lax'
-]);
-session_name("MAUTRESOR_MU");
-session_start();
-
+require_once __DIR__ . '/start_session.php';
 require_once __DIR__ . '/obj/RememberMe.php';
+
 use assets\obj\RememberMe;
 if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_me'])) {
     $rememberMe = RememberMe::getByToken($_COOKIE['remember_me']);

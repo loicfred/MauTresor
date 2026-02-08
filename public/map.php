@@ -64,6 +64,10 @@ include __DIR__ . '/../config/auth.php';
             max-height: 45vh;
             overflow-y: auto;
         }
+
+        .leaflet-control-container span {
+            color: black;
+        }
     </style>
 </head>
 <body>
@@ -89,8 +93,8 @@ include __DIR__ . '/../config/auth.php';
     <!-- Travel mode buttons -->
     <div id="travelModeBar" class="btn-group shadow-sm" role="group" aria-label="Travel mode">
         <button type="button" class="btn btn-sm btn-primary" id="mode-driving">Driving</button>
-        <button type="button" class="btn btn-sm btn-outline-primary" id="mode-walking">Walking</button>
-        <button type="button" class="btn btn-sm btn-outline-primary" id="mode-cycling">Cycling</button>
+        <button type="button" class="btn btn-sm btn-secondary" id="mode-walking">Walking</button>
+        <button type="button" class="btn btn-sm btn-secondary" id="mode-cycling">Cycling</button>
     </div>
 
     <!-- Floating buttons -->
@@ -159,7 +163,7 @@ include __DIR__ . '/../config/auth.php';
         const setActive = (btn, active) => {
             if (!btn) return;
             btn.classList.toggle("btn-primary", active);
-            btn.classList.toggle("btn-outline-primary", !active);
+            btn.classList.toggle("btn-secondary", !active);
         };
         setActive(btnDriving, profile === "car");
         setActive(btnWalking, profile === "foot");

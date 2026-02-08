@@ -61,10 +61,13 @@ if (!$participant) header("Location: /");
             flex-direction: column;
             padding: 8% 22% 0;
         }
+        .map-body p {
+            font-size: 18px;
+        }
         .map-bottom {
             display: flex;
             flex-direction: column;
-            padding: 10% 20% 10%;
+            padding: 10% 20% 0;
         }
         .map-box * {
             color: black;
@@ -75,7 +78,7 @@ if (!$participant) header("Location: /");
         }
 
         .exitBtn {
-            position: absolute; background-color: #00000000; border: none; right: 15px; top: 5px; width: 10%; height: 5%; background-image: url('/assets/img/X.png'); background-position: center; background-size: contain; background-repeat: no-repeat;
+            position: absolute; background-color: #00000000; border: none; right: 15px; top: 5px; width: 10%; height: 10%; background-image: url('/assets/img/X.png'); background-position: center; background-size: contain; background-repeat: no-repeat;
         }
         .exitBtn:hover {
             cursor: pointer;
@@ -89,6 +92,12 @@ if (!$participant) header("Location: /");
             .map-body {
                 padding: 5% 22% 0;
             }
+            .map-body p {
+                font-size: 15px;
+            }
+            .exitBtn {
+                height: 5%;
+            }
         }
     </style>
 </head>
@@ -98,60 +107,53 @@ if (!$participant) header("Location: /");
 require_once __DIR__ . '/assets/fragments/header.php';
 ?>
 
-<main class="page position-relative">
-    <a href="/event/<?= $hint->EventID ?>" class="exitBtn"></a>
-    <div class="map-box">
+<main class="page pb-0">
+    <div class="map-box position-relative">
+        <a href="/event/<?= $hint->EventID ?>" class="exitBtn"></a>
         <div class="map-top">
             <h5 class="align-self-center" style="text-align: center;"><?= $hint->Name ?></h5>
         </div>
         <div class="map-body">
-            <p style="font-size: 14px;"><?= $hint->Description ?></p>
+            <p><?= $hint->Description ?></p>
 
             <?php
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 try {
                     $participant = Event_Participant::getByUserAndEvent($_SESSION['user_id'], $hint->EventID);
-                    if (!isset($participant)) {
-                        echo "<div class='alert alert-danger'>You are not participating in this event.</div>";
-                        return;
-                    }
-
                     $event = Event::getByID($hint->EventID);
-                    if ($event->EndAt == null) {
-                        echo "<div class='alert alert-danger'>This event hasn't started yet.</div>";
-                        return;
-                    }
-                    if (strtotime($event->EndAt) < time()) {
-                        echo "<div class='alert alert-danger'>This event has already ended.</div>";
-                        return;
-                    }
-
-
-                    if (!isset($_POST['latitude']) || !isset($_POST['longitude'])) {
-                        echo "<div class='alert alert-danger'>No geolocation data sent.</div>";
-                        return;
-                    }
-
-
                     $place = Place::getByQRCode($_POST['qrcode']);
-                    if (!$place) {
-                        echo "<div class='alert alert-danger'>Place not found.</div>";
-                        return;
-                    }
-
-                    if ($place->ID !== $hint->PlaceID) {
-                        echo "<div class='alert alert-danger'>This hint is not for this place.</div>";
-                        return;
-                    }
-
-                    if (Hint_Found::getByParticipantAndHint($participant->ID, $hint->ID)) {
-                        echo "<div class='alert alert-success'>You have already found this hint.</div>";
-                        return;
-                    }
-
                     $lat = $_POST['latitude'];
                     $long = $_POST['longitude'];
-                    if (isClose($lat, $place->Latitude, 0.03) && isClose($long, $place->Longitude, 0.03)) {
+                    if (!isset($participant)) {
+                        echo "<div class='alert alert-danger'>You are not participating in this event.</div>";
+                    }
+
+                    elseif ($event->EndAt == null) {
+                        echo "<div class='alert alert-danger'>This event hasn't started yet.</div>";
+                    }
+                    elseif (strtotime($event->EndAt) < time()) {
+                        echo "<div class='alert alert-danger'>This event has already ended.</div>";
+                    }
+
+
+                    elseif (!isset($_POST['latitude']) || !isset($_POST['longitude'])) {
+                        echo "<div class='alert alert-danger'>No geolocation data sent.</div>";
+                    }
+
+
+                    elseif (!$place) {
+                        echo "<div class='alert alert-danger'>Place not found.</div>";
+                    }
+
+                    elseif ($place->ID !== $hint->PlaceID) {
+                        echo "<div class='alert alert-danger'>This hint is not for this place.</div>";
+                    }
+
+                    elseif (Hint_Found::getByParticipantAndHint($participant->ID, $hint->ID)) {
+                        echo "<div class='alert alert-success'>You have already found this hint.</div>";
+                    }
+
+                    elseif (isClose($lat, $place->Latitude, 0.03) && isClose($long, $place->Longitude, 0.03)) {
                         $hintFound = new Hint_Found();
                         $hintFound->ParticipantID = $participant->ID;
                         $hintFound->HintID = $hint->ID;
@@ -203,11 +205,12 @@ require_once __DIR__ . '/assets/fragments/header.php';
     function onScanSuccess(decodedText, decodedResult) {
         navigator.geolocation.getCurrentPosition(
             function(position) {
+                console.log('text: ' + decodedText);
                 html5QrcodeScanner.clear();
                 document.getElementById("qrcode").value = decodedText;
                 document.getElementById("latitude").value = position.coords.latitude;
                 document.getElementById("longitude").value = position.coords.longitude;
-                document.getElementById("scanModal").submit();
+                //document.getElementById("scanModal").submit();
             },
             function() {
                 alert("Location access denied");
@@ -218,7 +221,7 @@ require_once __DIR__ . '/assets/fragments/header.php';
 
     const html5QrcodeScanner = new Html5QrcodeScanner(
         "reader",
-        { fps: 10, qrbox: 250 }
+        { fps: 10 }
     );
     html5QrcodeScanner.render(onScanSuccess);
 </script>
