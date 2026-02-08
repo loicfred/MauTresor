@@ -14,7 +14,7 @@ class DBObject {
     public static function getByID(int $id = 0) {
         global $pdo;
         $table = (new ReflectionClass(static::class))->getShortName();
-        $stmt = $pdo->prepare('SELECT * FROM ' . $table . ' WHERE ID = ? LIMIT 1');
+        $stmt = $pdo->prepare('SELECT * FROM ' . strtolower($table) . ' WHERE ID = ? LIMIT 1');
         $stmt->execute([$id]);
         return $stmt->fetchObject(static::class);
     }
@@ -22,14 +22,14 @@ class DBObject {
     public static function getAll() {
         global $pdo;
         $table = (new ReflectionClass(static::class))->getShortName();
-        $stmt = $pdo->prepare('SELECT * FROM ' . $table);
+        $stmt = $pdo->prepare('SELECT * FROM ' . strtolower($table));
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_CLASS, static::class);
     }
     public static function getAllLimit(int $limit = 0) {
         global $pdo;
         $table = (new ReflectionClass(static::class))->getShortName();
-        $stmt = $pdo->prepare('SELECT * FROM ' . $table . ' LIMIT ' . $limit);
+        $stmt = $pdo->prepare('SELECT * FROM ' . strtolower($table) . ' LIMIT ' . $limit);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_CLASS, static::class);
     }
@@ -38,14 +38,14 @@ class DBObject {
         global $pdo;
         $table = (new ReflectionClass(static::class))->getShortName();
         $stmt = $pdo->prepare('SELECT ' . ($select != null ? $select : '*') .
-            ' FROM ' . $table . ($where != null ? ' WHERE ' . $where : '') . ' LIMIT 1');
+            ' FROM ' . strtolower($table) . ($where != null ? ' WHERE ' . $where : '') . ' LIMIT 1');
         $stmt->execute($object);
         return $stmt->fetchObject(static::class);
     }
     public static function getWhere(?string $where = null, ...$object) {
         global $pdo;
         $table = (new ReflectionClass(static::class))->getShortName();
-        $stmt = $pdo->prepare('SELECT * FROM ' . $table . ($where != null ? ' WHERE ' . $where : '') . ' LIMIT 1');
+        $stmt = $pdo->prepare('SELECT * FROM ' . strtolower($table) . ($where != null ? ' WHERE ' . $where : '') . ' LIMIT 1');
         $stmt->execute($object);
         return $stmt->fetchObject(static::class);
     }
@@ -54,14 +54,14 @@ class DBObject {
         global $pdo;
         $table = (new ReflectionClass(static::class))->getShortName();
         $stmt = $pdo->prepare('SELECT ' . ($select != null ? $select : '*') .
-            ' FROM ' . $table . ($where != null ? ' WHERE ' . $where : ''));
+            ' FROM ' . strtolower($table) . ($where != null ? ' WHERE ' . $where : ''));
         $stmt->execute($object);
         return $stmt->fetchAll(PDO::FETCH_CLASS, static::class);
     }
     public static function getAllWhere(?string $where = null, ...$object) {
         global $pdo;
         $table = (new ReflectionClass(static::class))->getShortName();
-        $stmt = $pdo->prepare('SELECT * FROM ' . $table . ($where != null ? ' WHERE ' . $where : ''));
+        $stmt = $pdo->prepare('SELECT * FROM ' . strtolower($table) . ($where != null ? ' WHERE ' . $where : ''));
         $stmt->execute($object);
         return $stmt->fetchAll(PDO::FETCH_CLASS, static::class);
     }
@@ -87,7 +87,7 @@ class DBObject {
             }
         }
 
-        $stmt = $pdo->prepare("INSERT INTO " . $table . " (" . implode(', ', $fieldNames) . ") VALUES (" . implode(', ', $fieldNamesQ) . ")");
+        $stmt = $pdo->prepare("INSERT INTO " . strtolower($table) . " (" . implode(', ', $fieldNames) . ") VALUES (" . implode(', ', $fieldNamesQ) . ")");
         $stmt->execute($fieldValues);
         $this->ID = $pdo->lastInsertId();
         return $this;
@@ -115,7 +115,7 @@ class DBObject {
         foreach ($properties as $prop) {
             $updateFieldNames[] = $prop->getName() . ' = VALUES(' . $prop->getName() . ')';
         }
-        $stmt = $pdo->prepare("INSERT INTO " . $table . " (" . implode(', ', $insertFieldNames) . ") VALUES (" .
+        $stmt = $pdo->prepare("INSERT INTO " . strtolower($table) . " (" . implode(', ', $insertFieldNames) . ") VALUES (" .
             implode(', ', $insertFieldNamesQ) . ") ON DUPLICATE KEY UPDATE " . implode(', ', $updateFieldNames) . ";");
         $stmt->execute($fieldValues);
         return $this;
@@ -143,14 +143,14 @@ class DBObject {
             return $prop->getName() !== 'ID';
         })));
 
-        $stmt = $pdo->prepare('UPDATE ' . $table . ' SET ' . $setSql . ' WHERE ID = ?');
+        $stmt = $pdo->prepare('UPDATE ' . strtolower($table) . ' SET ' . $setSql . ' WHERE ID = ?');
         $stmt->execute($fieldActualValues);
         return $stmt->rowCount();
     }
     public function Delete() {
         global $pdo;
         $table = (new ReflectionClass($this))->getShortName();
-        $stmt = $pdo->prepare('DELETE FROM ' . $table . ' WHERE ID = ?');
+        $stmt = $pdo->prepare('DELETE FROM ' . strtolower($table) . ' WHERE ID = ?');
         $stmt->execute([$this->ID]);
         return $stmt->rowCount();
     }
@@ -168,7 +168,7 @@ class DBObject {
             endforeach;
             return true;
         })));
-        $stmt = $pdo->prepare('SELECT ' . $selectSql . ' FROM ' . $table . ' LIMIT ' . $limit);
+        $stmt = $pdo->prepare('SELECT ' . $selectSql . ' FROM ' . strtolower($table) . ' LIMIT ' . $limit);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_CLASS, static::class);
     }
