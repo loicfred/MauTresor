@@ -83,7 +83,7 @@ use assets\obj\Notification;
             </div>
 
             <!-- NEW: QR scan icon (right side of search) -->
-            <div class="nav-item" title="Scan QR code" aria-label="Scan QR code">
+            <div class="nav-item" title="Scan QR code" aria-label="Scan QR code" onclick="openHeaderScanner()">
                 <svg viewBox="0 0 24 24" class="nav-icon" id="qrScanBtn" style="cursor: pointer;">
                     <path fill="currentColor" d="M3 3h7v2H5v5H3V3zm16 0h2v7h-2V5h-5V3h5zM3 14h2v5h5v2H3v-7zm16 0h2v7h-7v-2h5v-5z"/>
                     <path fill="currentColor" d="M7 7h4v4H7V7zm6 0h4v4h-4V7zM7 13h4v4H7v-4zm8 0h2v2h-2v-2zm-2 2h4v2h-4v-2z"/>
@@ -196,7 +196,7 @@ use assets\obj\Notification;
     <div class="position-absolute d-none flex-column w-100" id="resultBox"></div>
 
     <!-- NEW: QR scan modal -->
-    <div class="modal fade" id="qrScanModal" tabindex="-1" aria-hidden="true">
+    <div class="modal fade" id="qrScanModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -211,6 +211,7 @@ use assets\obj\Notification;
         </div>
     </div>
 
+    <script src="https://unpkg.com/html5-qrcode"></script>
     <script>
         // ----------------------------
         // Search bar logic
@@ -274,137 +275,34 @@ use assets\obj\Notification;
             });
         });
 
-        // ----------------------------
-        // NEW: QR scanning (camera)
-        // ----------------------------
-        const qrScanBtn = document.getElementById("qrScanBtn");
-        const qrScanStatus = document.getElementById("qr-scan-status");
-        const qrScanModalEl = document.getElementById("qrScanModal");
 
-        let qrModalInstance = null;
-        let headerQrScanner = null;
 
-        function loadHtml5QrcodeLib() {
-            return new Promise((resolve, reject) => {
-                if (window.Html5QrcodeScanner) return resolve();
-
-                const existing = document.querySelector('script[data-html5-qrcode="1"]');
-                if (existing) {
-                    existing.addEventListener('load', () => resolve());
-                    existing.addEventListener('error', () => reject(new Error('Failed to load QR library')));
-                    return;
-                }
-
-                const s = document.createElement('script');
-                s.src = 'https://unpkg.com/html5-qrcode';
-                s.async = true;
-                s.dataset.html5Qrcode = "1";
-                s.onload = () => resolve();
-                s.onerror = () => reject(new Error('Failed to load QR library'));
-                document.head.appendChild(s);
-            });
+        function openHeaderScanner() {
+            const modal = new bootstrap.Modal(document.getElementById("qrScanModal"));
+            modal.show();
         }
 
-        async function startHeaderQrScanner() {
-            await loadHtml5QrcodeLib();
-
-            // Clean up any previous instance
-            if (headerQrScanner) {
-                try { await headerQrScanner.clear(); } catch (e) {}
-                headerQrScanner = null;
-            }
-
-            // Reset container
-            const readerEl = document.getElementById('qr-reader');
-            if (readerEl) readerEl.innerHTML = "";
-
-            headerQrScanner = new Html5QrcodeScanner(
-                "qr-reader",
-                { fps: 10, qrbox: 250 },
-                false
-            );
-
-            // const onScanSuccess = async (decodedText, decodedResult) => {
-            //     const code = (decodedText ?? "").toString().trim();
-            //
-            //     if (!code) {
-            //         console.warn("[QR] Detected callback but empty decodedText:", decodedText, decodedResult);
-            //         if (qrScanStatus) qrScanStatus.textContent = "Could not read QR. Try again (better lighting / hold steady).";
-            //         return;
-            //     }
-                let lastEmptyWarn = 0;
-
-                const onScanSuccess = async (decodedText, decodedResult) => {
-                    const code = (decodedText ?? "").toString().trim();
-
-                    if (!code) {
-                        const now = Date.now();
-                        if (now - lastEmptyWarn > 2000) { // warn at most once every 2s
-                            lastEmptyWarn = now;
-                            console.warn("[QR] Empty decodedText (QR not readable). Improve QR image/margin/quality.");
-                        }
-                        if (qrScanStatus) qrScanStatus.textContent = "Could not read QR. Move closer / improve lighting.";
-                        return;
+        function onHeaderScanSuccess(decodedText, decodedResult) {
+            fetch(`/api/placebyqrcode/${decodedText}`, {method: "GET"}).then(res => res.json()).then(
+                data => {
+                    if (data.ID) {
+                        document.location.href = `/map?place=${data.ID}`;
+                    } else {
+                        alert("Invalid QR code.");
                     }
-
-                console.log("[QR] Decoded:", code);
-
-                try {
-                    if (qrScanStatus) qrScanStatus.textContent = "QR detected. Opening map...";
-
-                    // Stop scanning before redirect
-                    await headerQrScanner.clear();
-
-                    const res = await fetch(`/api/resolve_qr?code=${encodeURIComponent(code)}`, { method: "GET" });
-                    const data = await res.json();
-
-                    if (!data || !data.success || !data.place || !data.place.id) {
-                        alert(data && data.message ? data.message : "Could not recognize this QR code.");
-                        if (qrScanStatus) qrScanStatus.textContent = "Point your camera at the QR code.";
-                        return;
-                    }
-
-                    if (qrModalInstance) qrModalInstance.hide();
-                    window.location.href = `/map?place=${encodeURIComponent(data.place.id)}`;
-                } catch (err) {
-                    console.error(err);
-                    alert("Could not scan / resolve the QR code.");
-                    if (qrScanStatus) qrScanStatus.textContent = "Point your camera at the QR code.";
                 }
-            };
-            headerQrScanner.render(onScanSuccess);
+            )
         }
-
-            async function openQrModal() {
-            try {
-                if (!qrScanModalEl) return;
-                if (!qrModalInstance) qrModalInstance = new bootstrap.Modal(qrScanModalEl);
-                if (qrScanStatus) qrScanStatus.textContent = "Point your camera at the QR code.";
-                qrModalInstance.show();
-                await startHeaderQrScanner();
-            } catch (e) {
-                console.error(e);
-                alert("Camera / QR scanner could not be started. Please allow camera permission.");
+        const html5QrcodeScanner = new Html5QrcodeScanner(
+            "qr-reader",
+            { fps: 10 }
+        );
+        html5QrcodeScanner.render(onHeaderScanSuccess);
+        document.getElementById("qrScanModal").addEventListener('hidden.bs.modal', async () => {
+            if (html5QrcodeScanner) {
+                try { await html5QrcodeScanner.clear(); } catch (e) {}
+                html5QrcodeScanner.render(onHeaderScanSuccess);
             }
-        }
-
-        if (qrScanBtn) {
-            qrScanBtn.addEventListener("click", (e) => {
-                e.stopPropagation();
-                openQrModal();
-            });
-        }
-
-        // Ensure camera stops when modal closes
-        if (qrScanModalEl) {
-            qrScanModalEl.addEventListener('hidden.bs.modal', async () => {
-                if (headerQrScanner) {
-                    try { await headerQrScanner.clear(); } catch (e) {}
-                    headerQrScanner = null;
-                }
-                const readerEl = document.getElementById('qr-reader');
-                if (readerEl) readerEl.innerHTML = "";
-            });
-        }
+        });
     </script>
 </div>

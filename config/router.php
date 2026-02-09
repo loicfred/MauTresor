@@ -41,7 +41,45 @@ $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $requestedFile = __DIR__ . '/../public' . $uri;
 
 if (is_file($requestedFile)) {
-    return false;
+    $extension = strtolower(pathinfo($requestedFile, PATHINFO_EXTENSION));
+    if ($extension != 'php') {
+        $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg', 'ico'];
+        if (in_array($extension, $imageExtensions)) {
+            $mimeTypes = [
+                'jpg' => 'image/jpeg',
+                'jpeg' => 'image/jpeg',
+                'png' => 'image/png',
+                'gif' => 'image/gif',
+                'bmp' => 'image/bmp',
+                'webp' => 'image/webp',
+                'svg' => 'image/svg+xml',
+                'ico' => 'image/x-icon'
+            ];
+            header('Content-Type: ' . ($mimeTypes[$extension] ?? 'application/octet-stream'));
+            readfile($requestedFile);
+        } else {
+            $mimeTypes = [
+                'css' => 'text/css',
+                'js' => 'application/javascript',
+                'json' => 'application/json',
+                'xml' => 'application/xml',
+                'html' => 'text/html',
+                'txt' => 'text/plain',
+                'pdf' => 'application/pdf',
+                'zip' => 'application/zip',
+                'woff' => 'font/woff',
+                'woff2' => 'font/woff2',
+                'ttf' => 'font/ttf',
+                'eot' => 'application/vnd.ms-fontobject',
+                'otf' => 'font/otf'
+            ];
+            header('Content-Type: ' . ($mimeTypes[$extension] ?? 'application/octet-stream'));
+            readfile($requestedFile);
+        }
+        return true;
+    } else {
+        $uri = str_replace('.php', '', $uri);
+    }
 }
 
 switch ($uri) {
@@ -58,6 +96,10 @@ switch ($uri) {
 
         if (str_contains($uri, '/api/v1/admin/table/')) {
             include __DIR__ . '/../public/api/v1/admin/table.php';
+        }
+
+        else if (str_contains($uri, '/api/placebyqrcode')) {
+            include __DIR__ . '/../public/api/placebyqrcode.php';
         }
 
 
@@ -90,7 +132,3 @@ switch ($uri) {
         }
         return true;
 }
-
-
-
-

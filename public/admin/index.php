@@ -1,10 +1,15 @@
 <?php
 include __DIR__ . '/../../config/auth.php';
+include __DIR__ . '/../../config/mailer.php';
 checksForAdmin();
 
 require_once __DIR__ . "/../../config/obj/User.php";
+require_once __DIR__ . "/../../config/obj/Notification.php";
 require_once __DIR__ . "/../../config/obj/DBObject.php";
+use assets\obj\User;
+use assets\obj\Notification;
 use assets\obj\DBObject;
+
 ?>
 
 <!DOCTYPE html>
@@ -63,6 +68,10 @@ use assets\obj\DBObject;
             #databaseForm {
                 padding: 10px 10px;
             }
+
+            #emailForm {
+                padding: 10px 10px !important;
+            }
         }
     </style>
 </head>
@@ -78,7 +87,49 @@ require_once __DIR__ . '/../assets/fragments/header.php';
 
         <!-- PAGE 1 -->
         <section class="page">
-
+            <h2 class="settings-header">Send Customized Notification</h2>
+            <?php
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['sendEmail'])) {
+                $email = filter_var($_POST['email'] ?? '', FILTER_VALIDATE_EMAIL);
+                $title = $_POST['subject'] ?? '';
+                $content = $_POST['content'] ?? '';
+                if ($email && !empty($title) && !empty($content)) {
+                    $user = User::getByEmail($email);
+                    if ($user) {
+                        sendEmail($email, $title, $content);
+                        $notification = new Notification();
+                        $notification->UserID = $user->ID;
+                        $notification->Title = $title;
+                        $notification->Message = $content;
+                        $notification->CreatedAt = date('Y-m-d H:i:s');
+                        $notification->isRead = false;
+                        $notification->Write();
+                        echo "<div class='alert alert-success'>Email sent successfully.</div>";
+                    } else {
+                        echo "<div class='alert alert-danger'>User not found.</div>";
+                    }
+                } else {
+                    echo "<div class='alert alert-danger'>Please fill in all fields.</div>";
+                }
+            }
+            ?>
+            <form id="emailForm" action="/?page=0&sendmail" method="post" style="padding: 10px 300px;">
+                <div class="mb-3 d-flex align-items-center">
+                    <label for="email" class="form-label mb-0 w-25 me-1">Email</label>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="Enter email address..." required>
+                </div>
+                <div class="mb-3 d-flex align-items-center">
+                    <label for="subject" class="form-label mb-0 w-25 me-1">Subject</label>
+                    <input type="text" id="subject" name="subject" class="form-control" placeholder="Enter subject..." required>
+                </div>
+                <div class="mb-3 d-flex align-items-start">
+                    <label for="content" class="form-label mb-0 w-25 me-1">Content</label>
+                    <textarea id="content" name="content" class="form-control" rows="8" placeholder="Enter content..." required></textarea>
+                </div>
+                <div class="d-flex mb-3">
+                    <button type="submit" class="btn btn-primary w-100">Send Email</button>
+                </div>
+            </form>
         </section>
 
         <!-- PAGE 2 -->

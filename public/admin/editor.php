@@ -180,7 +180,7 @@ require_once __DIR__ . '/../assets/fragments/header.php';
                                     qr.clear();
                                     if (value !== "") qr.makeCode(value);
                                 });
-                                qr.makeCode(<?= $value ?>);
+                                qr.makeCode('<?= $value ?>');
                             </script>
                         </div>
                     <?php elseif ($name === "Gender"): ?>
@@ -197,10 +197,13 @@ require_once __DIR__ . '/../assets/fragments/header.php';
                     <input class="form-control" type="number" id="<?= $name ?>" name="<?= $name ?>" value="<?= htmlspecialchars((string)$value) ?>" disabled>
 
                     <?php elseif ($name === "Image"): ?>
-                        <label class="form-label" for="<?= $name ?>"><?= $name ?></label>
-                    <input class="form-control" type="file" accept="image/*" id="<?= $name ?>" name="<?= $name ?>">
+                    <div style="border: 1px solid #ced4da; display: flex; flex-direction: column; align-items: center; border-radius: 5px; padding: 5px">
+                        <div class="w-100 p-1">
+                            <label class="form-label" for="<?= $name ?>"><?= $name ?></label>
+                            <input class="form-control" type="file" accept="image/*" id="<?= $name ?>" name="<?= $name ?>">
+                        </div>
                         <script>
-                            const MAX_SIZE = 2 * 1024 * 1024;
+                            const MAX_SIZE = 1024 * 1024;
                             document.getElementById("<?= $name ?>").addEventListener('change', function () {
                                 const file = this.files[0];
                                 if (!file) return;
@@ -210,7 +213,11 @@ require_once __DIR__ . '/../assets/fragments/header.php';
                                 }
                             });
                         </script>
-
+                        <?php if (isset($value) && $value != null): ?>
+                        <img id="img" src="data:<?= $edited_object->MimeType ?? 'image/jpeg' ?>;base64,<?= $value ?>"
+                             style="max-width: 100%; max-height: 200px; border-radius: 5px" alt="<?= $name ?>">
+                        <?php endif; ?>
+                    </div>
                     <?php elseif ($name === "Longitude"): ?>
                         <script>
                             // Ensure Longitude input exists before setting (Latitude block creates it)
