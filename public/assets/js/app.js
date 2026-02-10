@@ -58,7 +58,7 @@ navigator.geolocation.watchPosition(pos =>{
     const myLon = pos.coords.longitude;
     if (places.length === 0) return;
     if (Date.now() < sessionStorage.getItem('lastCheckPlaceRadius')) return;
-    sessionStorage.setItem('lastCheckPlaceRadius', (Date.now() + 60 * 60 * 1000));
+    sessionStorage.setItem('lastCheckPlaceRadius', (Date.now() + 5 * 60 * 1000));
     places.sort((a, b) =>
         getDistanceFromLatLonInKm(myLat, myLon, a.Latitude, a.Longitude)
         - getDistanceFromLatLonInKm(myLat, myLon, b.Latitude, b.Longitude)
@@ -66,8 +66,6 @@ navigator.geolocation.watchPosition(pos =>{
     for (const p of places) {
         if (isClose(myLat, p.Latitude, 0.015) && isClose(myLon, p.Longitude, 0.015)) {
             sendNotification('Place Detected Nearby', p.Name + ' is within ' + getDistanceFromLatLonInKm(myLat, myLon, p.Latitude, p.Longitude).toFixed(2) + ' km from you!');
-            console.log(myLat, myLon)
-            console.log(p.Name)
             return;
         }
     }
