@@ -88,7 +88,7 @@ require_once __DIR__ . '/../assets/fragments/header.php';
         <section class="page">
             <h2 class="settings-header">Send Customized Notification</h2>
             <?php
-            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['sendEmail'])) {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['sendEmail'])) {
                 $email = filter_var($_POST['email'] ?? '', FILTER_VALIDATE_EMAIL);
                 $title = $_POST['subject'] ?? '';
                 $content = $_POST['content'] ?? '';
@@ -113,7 +113,7 @@ require_once __DIR__ . '/../assets/fragments/header.php';
                 }
             }
             ?>
-            <form id="emailForm" action="/?page=0&sendmail" method="post" style="padding: 10px;">
+            <form id="emailForm" action="/admin?page=0&sendEmail" method="post" style="padding: 10px;">
                 <div class="mb-3 d-flex align-items-center">
                     <label for="email" class="form-label mb-0 w-25 me-1">Email</label>
                     <input type="email" id="email" name="email" class="form-control" placeholder="Enter email address..." required>

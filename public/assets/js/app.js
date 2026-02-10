@@ -53,7 +53,7 @@ fetch('/api/v1/places')
     .then(res=>res.json())
     .then(ps => places = ps);
 
-navigator.geolocation.watchPosition(pos =>{
+navigator.geolocation.watchPosition(pos => {
     const myLat = pos.coords.latitude;
     const myLon = pos.coords.longitude;
     if (places.length === 0) return;
