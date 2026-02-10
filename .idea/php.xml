@@ -1,13 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="LaravelPint">
+    <laravel_pint_settings>
+      <laravel_pint_by_interpreter asDefaultInterpreter="true" interpreter_id="ec8cf99b-d26c-4508-9652-8db3b9f50cd8">
+        <option name="timeout" value="30000" />
+      </laravel_pint_by_interpreter>
+    </laravel_pint_settings>
+  </component>
   <component name="MessDetector">
     <phpmd_settings>
-      <MessDetectorConfiguration asDefaultInterpreter="true" timeout="30000" />
+      <phpmd_by_interpreter asDefaultInterpreter="true" interpreter_id="ec8cf99b-d26c-4508-9652-8db3b9f50cd8" timeout="30000" />
     </phpmd_settings>
+  </component>
+  <component name="PhpCSFixer">
+    <phpcsfixer_settings>
+      <phpcs_fixer_by_interpreter asDefaultInterpreter="true" interpreter_id="ec8cf99b-d26c-4508-9652-8db3b9f50cd8" timeout="30000" />
+    </phpcsfixer_settings>
   </component>
   <component name="PhpCodeSniffer">
     <phpcs_settings>
-      <PhpCSConfiguration asDefaultInterpreter="true" timeout="30000" />
+      <phpcs_by_interpreter asDefaultInterpreter="true" interpreter_id="ec8cf99b-d26c-4508-9652-8db3b9f50cd8" timeout="30000" />
     </phpcs_settings>
   </component>
   <component name="PhpIncludePathManager">
@@ -71,7 +83,7 @@
       <path value="$PROJECT_DIR$/vendor/zircote/swagger-php" />
     </include_path>
   </component>
-  <component name="PhpProjectSharedConfiguration" php_language_level="8.0" />
+  <component name="PhpProjectSharedConfiguration" php_language_level="8.2" />
   <component name="PhpUnit">
     <phpunit_settings>
       <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/vendor/autoload.php" />

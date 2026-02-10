@@ -277,7 +277,12 @@ use assets\obj\Notification;
 
 
 
+        const html5QrcodeScanner = new Html5QrcodeScanner(
+            "qr-reader",
+            { fps: 10 }
+        );
         function openHeaderScanner() {
+            html5QrcodeScanner.render(onHeaderScanSuccess);
             const modal = new bootstrap.Modal(document.getElementById("qrScanModal"));
             modal.show();
         }
@@ -293,15 +298,9 @@ use assets\obj\Notification;
                 }
             )
         }
-        const html5QrcodeScanner = new Html5QrcodeScanner(
-            "qr-reader",
-            { fps: 10 }
-        );
-        html5QrcodeScanner.render(onHeaderScanSuccess);
         document.getElementById("qrScanModal").addEventListener('hidden.bs.modal', async () => {
             if (html5QrcodeScanner) {
                 try { await html5QrcodeScanner.clear(); } catch (e) {}
-                html5QrcodeScanner.render(onHeaderScanSuccess);
             }
         });
     </script>

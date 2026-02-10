@@ -1,80 +1,95 @@
-const CACHE_NAME = 'mautresor-assets-v1';
+// sw.js
+const CACHE = "mautresor-v1";
+const OFFLINE_URL = "/offline.html"; // optional (create it or remove related lines)
 
-self.addEventListener('install', event => {
-    console.log('[SW] Installing');
+const ASSET_EXT = /\.(?:css|js|mjs|png|jpg|jpeg|gif|svg|webp|ico|woff2?|ttf|otf|eot|map)(?:\?.*)?$/i;
+
+self.addEventListener("install", (e) => {
+    e.waitUntil(
+        caches.open(CACHE).then((c) => c.addAll([OFFLINE_URL]).catch(() => {}))
+    );
     self.skipWaiting();
 });
 
-self.addEventListener('activate', event => {
-    console.log('[SW] Activating');
-    event.waitUntil(
-        caches.keys().then(keys =>
-            Promise.all(
-                keys
-                    .filter(key => key !== CACHE_NAME)
-                    .map(key => caches.delete(key))
-            )
+self.addEventListener("activate", (e) => {
+    e.waitUntil(
+        caches.keys().then((keys) =>
+            Promise.all(keys.map((k) => (k === CACHE ? null : caches.delete(k))))
         )
     );
     self.clients.claim();
 });
 
-self.addEventListener('fetch', event => {
-    const req = event.request;
-
-    if (req.method !== 'GET') return;
-
+self.addEventListener("fetch", (e) => {
+    const req = e.request;
     const url = new URL(req.url);
 
-    if (url.origin === self.location.origin && url.pathname.startsWith('/assets/')) {
-        event.respondWith(
-            caches.open(CACHE_NAME).then(async cache => {
-                const cached = await cache.match(req);
-                if (cached) return cached;
-                const response = await fetch(req);
-                if (response.ok && response.type === 'basic') {
-                    cache.put(req, response.clone());
-                }
-                return response;
-            }).catch(err => {
-                console.error('[SW] Asset fetch failed:', url.pathname, err);
-                return new Response('', { status: 504 });
+    // Only handle same-origin GET requests
+    if (req.method !== "GET" || url.origin !== location.origin) return;
+
+    // 1) Cache-first for static assets
+    if (ASSET_EXT.test(url.pathname)) {
+        e.respondWith(
+            caches.match(req).then((hit) => {
+                if (hit) return hit;
+                return fetch(req).then((res) => {
+                    // Cache successful basic responses
+                    if (res.ok && res.type === "basic") {
+                        const copy = res.clone();
+                        caches.open(CACHE).then((c) => c.put(req, copy));
+                    }
+                    return res;
+                });
             })
         );
+        return;
     }
+
+    // 2) Network-first for navigations (HTML)
+    if (req.mode === "navigate") {
+        e.respondWith(
+            fetch(req)
+                .then((res) => {
+                    const copy = res.clone();
+                    caches.open(CACHE).then((c) => c.put(req, copy));
+                    return res;
+                })
+                .catch(() => caches.match(req).then((hit) => hit || caches.match(OFFLINE_URL)))
+        );
+        return;
+    }
+
+    // 3) Default: cache-first fallback to network
+    e.respondWith(caches.match(req).then((hit) => hit || fetch(req)));
 });
 
-self.addEventListener("push", (event) => {
-    let data = {};
-    try {
-        data = event.data ? event.data.json() : {};
-    } catch (e) {
-        data = { title: "MauTresor", body: event.data ? event.data.text() : "" };
-    }
+/* ---------- Notifications / Push ---------- */
 
-    const title = data.title || "MauTresor";
+// Works with Web Push (server -> push service -> SW)
+self.addEventListener("push", (e) => {
+    let data = {};
+    try { data = e.data ? e.data.json() : {}; } catch (_) {}
+
+    const title = data.title || "Notification";
     const options = {
         body: data.body || "",
-        icon: data.icon || "/assets/img/logo.png",
-        badge: data.badge || "/assets/img/logo.png",
-        data: {
-            url: data.url || "/",
-        },
+        icon: data.icon || "/assets/img/icon-192.png",
+        badge: data.badge || "/assets/img/icon-192.png",
+        data: { url: data.url || "/" }
     };
 
-    event.waitUntil(self.registration.showNotification(title, options));
+    e.waitUntil(self.registration.showNotification(title, options));
 });
 
-self.addEventListener("notificationclick", (event) => {
-    event.notification.close();
-    const url = event.notification?.data?.url || "/";
+self.addEventListener("notificationclick", (e) => {
+    e.notification.close();
+    const url = (e.notification.data && e.notification.data.url) || "/";
 
-    event.waitUntil(
-        clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {
-            for (const client of clientList) {
-                if (client.url.includes(url) && "focus" in client) return client.focus();
-            }
-            if (clients.openWindow) return clients.openWindow(url);
-        })
-    );
+    e.waitUntil((async () => {
+        const all = await clients.matchAll({ type: "window", includeUncontrolled: true });
+        for (const c of all) {
+            if ("focus" in c) return c.focus();
+        }
+        if (clients.openWindow) return clients.openWindow(url);
+    })());
 });

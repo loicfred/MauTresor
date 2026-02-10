@@ -56,6 +56,7 @@ use assets\obj\User;
                         $notif->Title = "Account Verification";
                         $notif->Message = "Your account has been verified successfully.";
                         $notif->Write();
+                        echo "<script>sendNotification('Account Verification', 'Your account has been verified successfully.');</script>";
                     }
                 }
                 ?>

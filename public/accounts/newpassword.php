@@ -68,6 +68,7 @@ if (!$emailVerif || $emailVerif->Type !== "PASSWORD_RESET") {
                         $notif->Title = "Password has been changed!";
                         $notif->Message = "Your password has been reset successfully.";
                         $notif->Write();
+                        echo "<script>sendNotification('Password has been changed!', 'Your password has been reset successfully.');</script>";
                         header("Location: /accounts/login?newpassword");
                     }
                 }

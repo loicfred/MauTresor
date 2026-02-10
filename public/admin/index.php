@@ -4,11 +4,10 @@ include __DIR__ . '/../../config/mailer.php';
 checksForAdmin();
 
 require_once __DIR__ . "/../../config/obj/User.php";
-require_once __DIR__ . "/../../config/obj/Notification.php";
 require_once __DIR__ . "/../../config/obj/DBObject.php";
 use assets\obj\User;
-use assets\obj\Notification;
 use assets\obj\DBObject;
+use assets\obj\Notification;
 
 ?>
 
@@ -97,13 +96,14 @@ require_once __DIR__ . '/../assets/fragments/header.php';
                     $user = User::getByEmail($email);
                     if ($user) {
                         sendEmail($email, $title, $content);
-                        $notification = new Notification();
-                        $notification->UserID = $user->ID;
-                        $notification->Title = $title;
-                        $notification->Message = $content;
-                        $notification->CreatedAt = date('Y-m-d H:i:s');
-                        $notification->isRead = false;
-                        $notification->Write();
+                        $notif = new Notification();
+                        $notif->UserID = $user->ID;
+                        $notif->Title = $title;
+                        $notif->Message = $content;
+                        $notif->CreatedAt = date('Y-m-d H:i:s');
+                        $notif->isRead = false;
+                        $notif->Write();
+                        echo "<script>sendNotification('$title', '$content');</script>";
                         echo "<div class='alert alert-success'>Email sent successfully.</div>";
                     } else {
                         echo "<div class='alert alert-danger'>User not found.</div>";
@@ -113,7 +113,7 @@ require_once __DIR__ . '/../assets/fragments/header.php';
                 }
             }
             ?>
-            <form id="emailForm" action="/?page=0&sendmail" method="post" style="padding: 10px 300px;">
+            <form id="emailForm" action="/?page=0&sendmail" method="post" style="padding: 10px;">
                 <div class="mb-3 d-flex align-items-center">
                     <label for="email" class="form-label mb-0 w-25 me-1">Email</label>
                     <input type="email" id="email" name="email" class="form-control" placeholder="Enter email address..." required>

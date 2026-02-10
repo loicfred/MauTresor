@@ -152,7 +152,7 @@ require_once __DIR__ . '/assets/fragments/header.php';
                         echo "<div class='alert alert-success'>You have already found this hint.</div>";
                     }
 
-                    elseif (isClose($lat, $place->Latitude, 0.03) && isClose($long, $place->Longitude, 0.03)) {
+                    elseif (isClose($lat, $place->Latitude, 0.015) && isClose($long, $place->Longitude, 0.015)) {
                         $hintFound = new Hint_Found();
                         $hintFound->ParticipantID = $participant->ID;
                         $hintFound->HintID = $hint->ID;
@@ -172,7 +172,7 @@ require_once __DIR__ . '/assets/fragments/header.php';
             ?>
         </div>
         <div class="map-bottom align-items-center">
-            <button class="btn btn-primary" style="color: white; width: 100px;" onclick="openScanner()">Scan</button>
+            <button class="btn btn-primary" style="color: white; width: 100px;" onclick="openHintScanner()">Scan</button>
         </div>
     </div>
 
@@ -195,7 +195,12 @@ require_once __DIR__ . '/assets/fragments/header.php';
 
 <script src="/assets/js/app.js"></script>
 <script>
-    function openScanner() {
+    const hintScanner = new Html5QrcodeScanner(
+        "reader",
+        { fps: 10}
+    );
+    function openHintScanner() {
+        hintScanner.render(onHintScanSuccess);
         const modal = new bootstrap.Modal(document.getElementById("scanModal"));
         modal.show();
         document.getElementById("reader").style.border = "none";
@@ -203,13 +208,11 @@ require_once __DIR__ . '/assets/fragments/header.php';
     function onHintScanSuccess(decodedText, decodedResult) {
         navigator.geolocation.getCurrentPosition(
             function(position) {
-                if (decodedText.length > 1) {
-                    html5QrcodeScanner.clear();
-                    document.getElementById("qrcode").value = decodedText;
-                    document.getElementById("latitude").value = position.coords.latitude;
-                    document.getElementById("longitude").value = position.coords.longitude;
-                    document.getElementById("scanModal").submit();
-                }
+                html5QrcodeScanner.clear();
+                document.getElementById("qrcode").value = decodedText;
+                document.getElementById("latitude").value = position.coords.latitude;
+                document.getElementById("longitude").value = position.coords.longitude;
+                document.getElementById("scanModal").submit();
             },
             function() {
                 alert("Location access denied");
@@ -217,15 +220,9 @@ require_once __DIR__ . '/assets/fragments/header.php';
             { enableHighAccuracy: true }
         );
     }
-    const hintScanner = new Html5QrcodeScanner(
-        "reader",
-        { fps: 10}
-    );
-    hintScanner.render(onHintScanSuccess);
     document.getElementById("scanModal").addEventListener('hidden.bs.modal', async () => {
         if (hintScanner) {
             try { await hintScanner.clear(); } catch (e) {}
-            hintScanner.render(onHintScanSuccess);
         }
     });
 </script>

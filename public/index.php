@@ -1,5 +1,4 @@
 <?php
-
 include __DIR__ . '/../config/auth.php';
 
 require_once __DIR__ . "/../config/obj/Culture.php";
