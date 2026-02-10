@@ -1,7 +1,0 @@
-{
-    "publicKey": "UGTKd6KfnwN0IsRs7aD8-7YtABVUtpLg1LFKhVYubEGk5k7O1dHe0iRHlaMWB6DHMjErvpVi_iLh8MsLnKaO_J",
-    "privateKey": "dpwHoWCQkuSTqYu6GFkIH9GWv2KT9N7NGxcg78xj-9X",
-    "generated_at": "2026-02-10 16:55:53",
-    "method": "random_fallback",
-    "note": "These are test keys only. For production, upgrade to PHP 7.1+"
-}
