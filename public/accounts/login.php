@@ -166,14 +166,15 @@ if (isLoggedIn() && !isset($_GET["logout"])) header("Location: /");
             const result = await signInWithPopup(window.auth, provider);
             const token = await result.user.getIdToken();
 
-            const res = await fetch("/accounts/firebase_login.php", {
+            const res = await fetch("firebase_login.php", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ token })
             });
+            console.log(res)
             if (!res.ok) throw new Error(await res.text());
 
-            window.location.href = "/";
+            //window.location.href = "/";
         } catch (err) {
             console.error(err);
             alert(err.message);

@@ -62,7 +62,7 @@ try {
     $_SESSION['user_id'] = $user->ID;
 
     http_response_code(200);
-    echo json_encode(['ok' => true]);
+    echo json_encode(['ok' => true, 'session' => $_SESSION['user_id']]);
     exit;
 
 } catch (Throwable $e) {
