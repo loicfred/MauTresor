@@ -171,7 +171,6 @@ if (isLoggedIn() && !isset($_GET["logout"])) header("Location: /");
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ token })
             });
-            console.log(res)
             if (!res.ok) throw new Error(await res.text());
 
             //window.location.href = "/";
