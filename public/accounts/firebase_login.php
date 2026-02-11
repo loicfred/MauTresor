@@ -1,14 +1,4 @@
 <?php
-session_set_cookie_params([
-    'lifetime' => 0,
-    'path' => '/',
-    'domain' => '',
-    'secure' => false,
-    'httponly' => true,
-    'samesite' => 'Lax'
-]);
-session_name("MAUTRESOR_MU");
-session_start();
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 require_once __DIR__ . '/../../config/obj/User.php';
@@ -33,7 +23,6 @@ try {
     $factory = (new Factory)->withServiceAccount(__DIR__ . '/../../config/firebase_service_account.json');
     $auth = $factory->createAuth();
 
-    // ✅ Works with Kreait/firebase-php 8.1.0
     $verifiedToken = $auth->verifyIdToken($tokenString);
 
     $claims = $verifiedToken->claims();
@@ -49,7 +38,7 @@ try {
     if (!$user) {
         $user = new User();
         $user->Email = $email;
-        $user->Password = null;
+        $user->Password = password_hash(random_bytes(12), PASSWORD_DEFAULT);
         $user->AccountProvider = 'Firebase';
         $user->Verified = true;
         $user->Enabled = true;
@@ -58,11 +47,23 @@ try {
         $user->UpdatedAt = date('Y-m-d H:i:s');
         $user->Write();
     }
+    if ($claims->get('picture')) {
+        $url = $claims->get('picture');
+        $imageBytes = file_get_contents($url);
+        if ($imageBytes !== false) {
+            $finfo = new finfo(FILEINFO_MIME_TYPE);
+            $mimeType = $finfo->buffer($imageBytes);
+
+            $user->Image = base64_encode($imageBytes);
+            $user->MimeType = $mimeType;
+            $user->Update();
+        }
+    }
 
     $_SESSION['user_id'] = $user->ID;
 
     http_response_code(200);
-    echo json_encode(['ok' => true, 'session' => $_SESSION['user_id']]);
+    echo json_encode(['ok' => true]);
     exit;
 
 } catch (Throwable $e) {
