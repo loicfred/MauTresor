@@ -260,7 +260,6 @@ include __DIR__ . '/../config/auth.php';
 
     // watchPosition: keep user marker updated + re-route (throttled)
     let lastRouteUpdateAt = 0;
-
     function updateUserLocation(lat, lng) {
         userLatLng = L.latLng(lat, lng);
 
@@ -286,7 +285,6 @@ include __DIR__ . '/../config/auth.php';
             }
         }
     }
-
     function startWatchingPosition() {
         if (!navigator.geolocation) return;
         if (watchId !== null) return;
@@ -344,7 +342,6 @@ include __DIR__ . '/../config/auth.php';
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
             maxZoom: 19
         });
-
         const topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://opentopomap.org">OpenTopoMap</a> contributors',
             maxZoom: 17
@@ -354,11 +351,8 @@ include __DIR__ . '/../config/auth.php';
             "OpenStreetMap": osm,
             "Topo": topo
         };
-
-        // Default base layer
         osm.addTo(map);
     }
-
     function setupOverlaysAndControl() {
         // Overlays
         placesLayer = L.layerGroup().addTo(map);
@@ -407,7 +401,6 @@ include __DIR__ . '/../config/auth.php';
         showEl(recenterBtn, true);
         startWatchingPosition();
 
-        // ✅ UPDATED: Load places + store markers + auto-focus if ?place=ID
         fetch('/api/v1/places')
             .then(res => res.json())
             .then(data => {
@@ -482,7 +475,7 @@ include __DIR__ . '/../config/auth.php';
                     markersById[String(place.ID)] = marker;
                 });
 
-                // ✅ Auto-focus even without geolocation
+                // Auto-focus even without geolocation
                 if (focusPlaceId && markersById[String(focusPlaceId)]) {
                     const m = markersById[String(focusPlaceId)];
                     const ll = m.getLatLng();
