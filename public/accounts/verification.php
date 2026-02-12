@@ -8,7 +8,6 @@ require_once __DIR__ . '/../../config/obj/User.php';
 use assets\obj\Email_Verification;
 use assets\obj\Notification;
 use assets\obj\User;
-
 ?>
 <!DOCTYPE html>
 <html>
@@ -41,7 +40,6 @@ use assets\obj\User;
                         echo "<h3 class='mb-3'>This verification code has expired. Try again.</h3>";
                         echo "<a href='/accounts/signup' class='btn btn-secondary mt-3'>Try Again</a>";
                         $emailVerif->Delete();
-                        clearFailedSignUps();
                     } else {
                         $user = User::getByID($emailVerif->UserID);
                         $user->Verified = true;
@@ -69,3 +67,10 @@ use assets\obj\User;
 
 </body>
 </html>
+<?php
+function clearExpiredEmails() {
+    $verifications = Email_Verification::getAll();
+    foreach ($verifications as $v) if ($v->isExpired()) $v->Delete();
+}
+clearExpiredEmails();
+?>

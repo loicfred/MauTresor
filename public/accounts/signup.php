@@ -43,7 +43,7 @@ use assets\obj\User;
                 <?php
                 try {
                     if ($_SERVER["REQUEST_METHOD"] === "POST") {
-                        clearFailedSignUps();
+                        clearFailedSignUp(trim($_POST["Email"]));
                         if (User::getByEmail(trim($_POST["Email"]))) {
                             echo "<div class='alert alert-danger'>Email already registered.</div>";
                         }
@@ -124,3 +124,9 @@ use assets\obj\User;
 
 </body>
 </html>
+<?php
+function clearFailedSignUp($email) {
+    $user = User::getByEmail($email);
+    if ($user && !$user->Enabled && !$user->Verified) $user->Delete();
+}
+?>

@@ -43,7 +43,7 @@ if (!$participant) header("Location: /");
 
         .map-box {
             margin: 0 -15px 0;
-            height: 100vh;
+            height: 100%;
             display: flex;
             flex-direction: column;
             background: url("/assets/img/scroll_treasure.png") no-repeat center top;
