@@ -43,6 +43,7 @@ use assets\obj\User;
                 <?php
                 try {
                     if ($_SERVER["REQUEST_METHOD"] === "POST") {
+                        clearFailedSignUps();
                         if (User::getByEmail(trim($_POST["Email"]))) {
                             echo "<div class='alert alert-danger'>Email already registered.</div>";
                         }

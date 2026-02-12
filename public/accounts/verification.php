@@ -41,6 +41,7 @@ use assets\obj\User;
                         echo "<h3 class='mb-3'>This verification code has expired. Try again.</h3>";
                         echo "<a href='/accounts/signup' class='btn btn-secondary mt-3'>Try Again</a>";
                         $emailVerif->Delete();
+                        clearFailedSignUps();
                     } else {
                         $user = User::getByID($emailVerif->UserID);
                         $user->Verified = true;

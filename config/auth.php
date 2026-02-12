@@ -30,3 +30,8 @@ function isAdmin() {
         if ($user && $user->Role == 'ADMIN') return true;
     } return false;
 }
+
+function clearFailedSignUps() {
+    $users = User::getAllWhere("NOT Verified AND NOT Enabled");
+    foreach ($users as $u) $u->Delete();
+}

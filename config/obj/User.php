@@ -25,6 +25,7 @@ class User extends DBObject {
     public static function getByAuthentication(string $email, string $password) {
         $user = self::getByEmail($email);
         if (!$user) return null;
+        if (!$user->Enabled) return null;
         if (password_verify($password, $user->Password)) return $user;
         return null;
     }
