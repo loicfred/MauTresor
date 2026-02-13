@@ -173,7 +173,7 @@ if (isLoggedIn() && !isset($_GET["logout"])) header("Location: /");
             });
             if (!res.ok) throw new Error(await res.text());
 
-            //window.location.href = "/";
+            window.location.href = "/";
         } catch (err) {
             console.error(err);
             alert(err.message);

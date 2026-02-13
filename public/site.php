@@ -17,7 +17,7 @@ if (!$place) header("Location: /");
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#822BD9">
+    <meta name="theme-color" content="#957304">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -35,6 +35,10 @@ if (!$place) header("Location: /");
             background:linear-gradient(180deg,#07172a,#041226);height:350px;
             border: 2px solid black;
             margin: 5px 5px 25px;
+            touch-action: none;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
         }
         .carousel {
             display:flex;transition:transform .28s ease;height:100%
@@ -136,34 +140,7 @@ require_once __DIR__ . '/assets/fragments/header.php';
 </main>
 
 <script src="/assets/js/app.js"></script>
-<script>
-    const carousel = document.getElementById('carousel');
-    const carouselWrap = document.getElementById('carouselWrap');
-    const slides = carousel.querySelectorAll('.slide');
-    const dots = document.getElementById('dots');
-    let current = 0;
-    slides.forEach((s,i)=>{ const d=document.createElement('div'); d.className='dot' + (i===0?' active':''); d.dataset.i=i; d.addEventListener('click', ()=> goTo(i)); dots.appendChild(d); });
-    function updateCarousel(){ carousel.style.transform = `translateX(-${current*100}%)`; Array.from(dots.children).forEach((d,i)=>d.classList.toggle('active', i===current)); }
-    function goTo(i){ current = (i+slides.length)%slides.length; updateCarousel(); }
-    let startX=0, isDown=false;
-    carouselWrap.addEventListener('pointerdown', e=>{ isDown=true; startX=e.clientX; carouselWrap.setPointerCapture(e.pointerId); });
-    carouselWrap.addEventListener('pointermove', e=>{
-        if(!isDown) return;
-        const dx = e.clientX - startX;
-        carousel.style.transition='none';
-        carousel.style.transform = `translateX(calc(-${current*100}% + ${dx}px))`;
-    });
-    carouselWrap.addEventListener('pointerup', e=>{
-        isDown=false; carousel.style.transition='';
-        const dx = e.clientX - startX;
-        if(Math.abs(dx) > 60){
-            if(dx < 0) current = Math.min(current+1, slides.length-1);
-            else current = Math.max(current-1, 0);
-        }
-        updateCarousel();
-    });
-    carouselWrap.addEventListener('pointerleave', ()=>{ if(isDown){ isDown=false; updateCarousel(); }});
-</script>
+<script src="/assets/js/imagecarousel.js"></script>
 <script
         src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"
         async

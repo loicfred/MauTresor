@@ -1,12 +1,12 @@
 // sw.js
 const CACHE = "mautresor-v1";
-const OFFLINE_URL = "/offline.html"; // optional (create it or remove related lines)
+const URLS = ["/offline.html", "/manifest.json", "/assets/css/main.css", "/assets/js/app.js"]; // optional (create it or remove related lines)
 
 const ASSET_EXT = /\.(?:css|js|mjs|png|jpg|jpeg|gif|svg|webp|ico|woff2?|ttf|otf|eot|map)(?:\?.*)?$/i;
 
 self.addEventListener("install", (e) => {
     e.waitUntil(
-        caches.open(CACHE).then((c) => c.addAll([OFFLINE_URL]).catch(() => {}))
+        caches.open(CACHE).then((c) => c.addAll(URLS).catch(() => {}))
     );
     self.skipWaiting();
 });
