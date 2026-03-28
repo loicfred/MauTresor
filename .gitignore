@@ -1,0 +1,16 @@
+vendor/
+node_modules/
+.env
+.env.*
+composer.lock
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+*.log
+*.cache
+*.tmp
+public/storage/
+storage/*.key
+
+firebase_service_account.json

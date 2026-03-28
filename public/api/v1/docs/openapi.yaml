@@ -1,0 +1,312 @@
+openapi: 3.0.3
+info:
+  title: MauTresor API
+  description: The official MauTresor API for places and events
+  version: 1.0.0
+
+servers:
+  - url: '/api/v1'
+
+components:
+  schemas:
+    Place:
+      type: object
+      properties:
+        ID:
+          type: integer
+          example: 1
+        Name:
+          type: string
+          example: Port Louis
+        Description:
+          type: string
+          example: Capital of Mauritius
+        Latitude:
+          type: number
+          example: -20.2184542
+        Longitude:
+          type: number
+          example: 16.5011538
+        Category:
+          type: string
+          example: Local
+    Culture:
+      type: object
+      properties:
+        ID:
+          type: integer
+          example: 1
+        Name:
+          type: string
+          example: Diwali
+        Description:
+          type: string
+          example: A very popular festival in Mauritius.
+    Event:
+      type: object
+      properties:
+        ID:
+          type: integer
+          example: 10
+        $Name:
+          type: string
+          example: Treasure Hunt Summer 2025
+        $Description:
+          type: string
+          example: Join the festival !
+        CreatedAt:
+          type: string
+          format: date
+          example: '2026-01-01'
+        StartAt:
+          type: string
+          format: date
+          example: '2026-01-01'
+        EndAt:
+          type: string
+          format: date
+          example: '2026-02-01'
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 404
+        message:
+          type: string
+          example: Not found
+
+paths:
+  /places:
+    get:
+      operationId: getPlaces
+      summary: Get all places
+      responses:
+        '200':
+          description: List of places
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Place'
+        '404':
+          description: No places found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /place/{id}:
+    get:
+      operationId: getPlaceById
+      summary: Get a place by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Place details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Place'
+        '400':
+          description: Invalid ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Place not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /cultures:
+    get:
+      operationId: getCultures
+      summary: Get all cultures
+      responses:
+        '200':
+          description: List of cultures
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Culture'
+        '404':
+          description: No cultures found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /culture/{id}:
+    get:
+      operationId: getCultureById
+      summary: Get a culture by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Culture details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Culture'
+        '400':
+          description: Invalid ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Culture not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /events:
+    get:
+      operationId: getEvents
+      summary: Get all events
+      responses:
+        '200':
+          description: List of events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
+        '404':
+          description: No events found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /event/{id}:
+    get:
+      operationId: getEventById
+      summary: Get an event by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Event details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '400':
+          description: Invalid ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Event not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /img/event/{id}:
+    get:
+      operationId: getEventImageById
+      summary: Get an image for a specific event
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Event image
+          content:
+            image/png: {}
+        '400':
+          description: Invalid ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Image not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /img/place/{id}:
+    get:
+      operationId: getPlaceImageById
+      summary: Get an image for a specific place
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Place image
+          content:
+            image/png: {}
+        '400':
+          description: Invalid ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Image not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /img/culture/{id}:
+    get:
+      operationId: getCultureImageById
+      summary: Get an image for a specific culture
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Culture illustration
+          content:
+            image/png: {}
+        '400':
+          description: Invalid ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Image not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
