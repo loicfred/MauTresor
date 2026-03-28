@@ -3,6 +3,10 @@ This project is a progressive web application made for my **Mobile Application D
 I was introduced to **ASP.NET** for the first time and developed a sophisticated web application with dynamic pages using data from **Microsoft SQL Server** database.
 I could experiment working with **Master Pages**, **Server Controls** and **Code-behind** in C#.
 
+**Contributors:**
+- ❤️ [Loïc Fred](https://github.com/loicfred)
+- 💚 [Zayaan Dulmeer](https://github.com/mzayaan)
+
 **Applied Skills:**
 - PHP Programming
 - WAMP Server (Self-hosting with HTTPS)
