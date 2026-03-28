@@ -81,5 +81,6 @@ The application makes use of Reflection to generate input fields based on the cl
 <img width="750" alt="image" src="https://github.com/user-attachments/assets/a2dc2b4d-c114-4307-aa0b-a3b3bfd4f90e" />
 
 
+
 **See also:**
 - [MauDonate](https://github.com/loicfred/MauDonate)
