@@ -4,8 +4,8 @@ I was introduced to **ASP.NET** for the first time and developed a sophisticated
 I could experiment working with **Master Pages**, **Server Controls** and **Code-behind** in C#.
 
 **Contributors:**
-- ❤️ [Loïc Fred](https://github.com/loicfred)
-- 💚 [Zayaan Dulmeer](https://github.com/mzayaan)
+- ❤️ [Loïc Fred](https://github.com/loicfred) (Admin, API, Design...)
+- 💚 [Zayaan Dulmeer](https://github.com/mzayaan) (Authentication, SSO, Maps...)
 
 **Applied Skills:**
 - PHP Programming
